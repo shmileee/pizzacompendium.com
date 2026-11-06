@@ -1,0 +1,17 @@
+{
+  "name": "pizzacompendium",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pizza Compendium: multilingual static site about making pizza at home (pizzacompendium.com)",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.mjs\""
+  },
+  "dependencies": {
+    "image-size": "^2.1.0",
+    "marked": "^18.1.3"
+  }
+}

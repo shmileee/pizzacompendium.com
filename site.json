@@ -1,0 +1,8 @@
+{
+  "siteUrl": "https://pizzacompendium.com",
+  "ogImage": "img/og.jpg",
+  "themeColor": {
+    "light": "#f8f2e7",
+    "dark": "#1b1612"
+  }
+}
