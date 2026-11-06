@@ -1,7 +1,7 @@
 // The language picker: it remembers the choice, takes the
 // reader to the section they are reading in the other language, and closes
-// on Esc (focus back on its button), on a click outside, when focus leaves it
-// and when the page is left (so that the back button finds it shut).
+// on Esc (focus back on its button), on a click outside, when focus moves to
+// something outside it and when the page is left (so that the back button finds it shut).
 import { LANG_KEY, query, queryAll, storage } from './util.js';
 
 /** Where a section counts as being read: this far down the window. */
@@ -54,8 +54,12 @@ export function init(root = document) {
       query('summary', picker).focus({ preventScroll: true });
     }
   });
+  // Focus moving to something else outside the picker closes it. Focus
+  // moving to nothing does not: Safari on iOS and macOS does not focus a link
+  // that is pressed, so pressing a language reports "focus went nowhere",
+  // and closing then would take the link away before the tap's click arrives.
   picker.addEventListener('focusout', (event) => {
-    if (!picker.contains(event.relatedTarget)) close();
+    if (event.relatedTarget && !picker.contains(event.relatedTarget)) close();
   });
   view.addEventListener('pagehide', close);
 }

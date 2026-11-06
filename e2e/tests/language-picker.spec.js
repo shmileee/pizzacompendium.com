@@ -119,6 +119,20 @@ test.describe('picker', () => {
     await expect(picker(page)).not.toHaveAttribute('open', '');
   });
 
+  test('stays open when focus goes nowhere, as when Safari presses a link', async ({
+    page,
+  }) => {
+    await visit(page, '/en/');
+    await summary(page).click();
+    await picker(page).locator('a[data-lang="uk"]').focus();
+    await picker(page).evaluate((el) => {
+      el.dispatchEvent(
+        new FocusEvent('focusout', { bubbles: true, relatedTarget: null }),
+      );
+    });
+    await expect(picker(page)).toHaveAttribute('open', '');
+  });
+
   test('is shut again when the page is left and comes back from the cache', async ({
     page,
   }) => {
