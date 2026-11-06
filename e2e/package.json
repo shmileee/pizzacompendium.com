@@ -1,0 +1,18 @@
+{
+  "name": "pizzacompendium-e2e",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end tests and the coverage gate for the site. Kept apart so the site itself keeps two dependencies.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "coverage": "node support/coverage.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "axe-core": "4.14.0",
+    "c8": "12.0.0"
+  }
+}
