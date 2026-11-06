@@ -201,6 +201,24 @@ describe('createHandler: paths', () => {
     });
   });
 
+  it('refuses an address whose real path differs only in case', async () => {
+    // A case-insensitive disk (macOS) reports the stored spelling; a
+    // case-sensitive one (Linux) never does, so the disk is faked here.
+    await withSite(({ dist }) => {
+      const real = fs.realpathSync.native;
+      const folded = Object.create(fs);
+      folded.realpathSync = Object.assign((file) => fs.realpathSync(file), {
+        native: (file) =>
+          file.endsWith('upper-link.css')
+            ? file.replace('upper-link', 'UPPER-LINK')
+            : real(file),
+      });
+      const handler = createHandler({ distDir: dist, fs: folded });
+      assert.equal(call(handler, '/upper-link.css').status, 404);
+      assert.equal(call(handler, '/UPPER.CSS').status, 200);
+    });
+  });
+
   it('answers 400 for malformed percent-encoding and for NUL', async () => {
     await withSite(({ handler }) => {
       for (const url of ['/%', '/%E0%A4%A', '/%zz', '/a%00b', '/%00']) {

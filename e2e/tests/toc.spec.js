@@ -280,7 +280,9 @@ test.describe('the drawer (narrow)', () => {
     expect(
       await html(page).evaluate((el) => getComputedStyle(el).overflow),
     ).toBe('hidden');
-    expect(await topOf(page, 'recipe')).toBeCloseTo(before, 0);
+    // Locking the scroll must not move the page (sub-pixel layout differs by
+    // platform, so a pixel of slack).
+    expect(Math.abs((await topOf(page, 'recipe')) - before)).toBeLessThan(1.5);
   });
 
   test('opened at the top it focuses the first link', async ({ page }) => {
