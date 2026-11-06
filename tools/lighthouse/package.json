@@ -1,0 +1,12 @@
+{
+  "name": "pizzacompendium-lighthouse",
+  "private": true,
+  "type": "module",
+  "description": "Lighthouse gate for the built site (mise run lighthouse). Kept apart so the site itself keeps two dependencies.",
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "lighthouse": "13.6.0"
+  }
+}

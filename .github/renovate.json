@@ -1,0 +1,90 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    ":enablePreCommit",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "timezone": "Europe/Warsaw",
+  "schedule": ["* 0-5 * * 1"],
+  "updateNotScheduled": false,
+  "minimumReleaseAge": "3 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
+  "prConcurrentLimit": 4,
+  "prHourlyLimit": 2,
+  "rebaseWhen": "conflicted",
+  "groupSingleUpdates": true,
+  "semanticCommits": "enabled",
+  "major": {
+    "dependencyDashboardApproval": true
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "semanticCommitType": "fix",
+    "semanticCommitScope": "security"
+  },
+  "mise": {
+    "managerFilePatterns": [
+      "/^mise\\/conf\\.d\\/[^/]+\\.toml$/",
+      "/^mise\\.toml$/"
+    ]
+  },
+  "packageRules": [
+    {
+      "description": "Use CI commit semantics for GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "semanticCommitType": "ci",
+      "semanticCommitScope": "deps",
+      "groupName": "GitHub Actions",
+      "groupSlug": "github-actions"
+    },
+    {
+      "description": "Group tools used to develop and validate this repository",
+      "matchManagers": ["mise", "pre-commit"],
+      "matchFileNames": [
+        "mise/conf.d/10-validation.toml",
+        ".pre-commit-config.yaml"
+      ],
+      "groupName": "development dependencies",
+      "groupSlug": "development-dependencies",
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "tooling"
+    },
+    {
+      "description": "Use build commit semantics for the Node.js runtime",
+      "matchDepNames": ["node"],
+      "matchFileNames": ["mise.toml"],
+      "semanticCommitType": "build",
+      "semanticCommitScope": "node"
+    },
+    {
+      "description": "Use build commit semantics for the packages the site is built with",
+      "matchManagers": ["npm"],
+      "matchFileNames": ["package.json"],
+      "semanticCommitType": "build",
+      "semanticCommitScope": "deps"
+    },
+    {
+      "description": "Group the end-to-end test tooling: Playwright, axe-core and c8 move together",
+      "matchManagers": ["npm"],
+      "matchFileNames": ["e2e/package.json"],
+      "groupName": "end-to-end test tooling",
+      "groupSlug": "e2e-tooling",
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "tooling"
+    },
+    {
+      "description": "Use tooling commit semantics for the packages under tools/ (images, Lighthouse), which are not part of the site",
+      "matchManagers": ["npm"],
+      "matchFileNames": ["tools/**/package.json"],
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "tooling"
+    },
+    {
+      "description": "Skip lock-file maintenance for mise without lockfiles",
+      "matchManagers": ["mise"],
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "enabled": false
+    }
+  ]
+}

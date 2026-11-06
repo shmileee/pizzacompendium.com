@@ -1,0 +1,39 @@
+---
+# What a pull request adds or bumps: fails the check when a runtime dependency
+# with a known vulnerability comes in (the action's default scope: the packages
+# the site is built with and what they bring in, not the development tooling in
+# e2e/ and tools/). The result is the check and the job summary; the action
+# posts no comment, so it needs no write permission. There is no merge_group
+# trigger, so it must not be a required check of a merge queue.
+name: dependency review
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: review dependency changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: review
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate
+          # There is no license policy to enforce yet.
+          license-check: false
+          comment-summary-in-pr: never

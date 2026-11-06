@@ -1,0 +1,352 @@
+---
+# Every check, then the deploy. A change reaches pizzacompendium.com only by
+# passing all five checks (lint, test, e2e-coverage, build, lighthouse):
+# `deploy` needs them and runs only for main, and `smoke` tests the live site
+# afterwards. A pull request or a merge queue runs the checks and stops there.
+#
+# Actions are pinned to full commit SHAs (the release they came from is in the
+# comment), and so is mise itself (`version` of every mise step); Renovate
+# proposes the bumps. What the linters do not enforce is checked by
+# scripts/ci/check-workflows.sh, a hook of `lint`: which job may write, that the
+# job that builds the Pages artifact restores no cache, and that `deploy` needs
+# every other job.
+name: checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # A run on main that is running is never cancelled by the next push: it may
+  # be publishing. Later runs queue, which keeps an older commit from being
+  # deployed after a newer one. GitHub keeps one pending run per group, though:
+  # with pushes A, B and C while A runs, B is dropped and C follows A.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # prek detects no TTY here and would drop colour from hook output.
+      PREK_COLOR: always
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # mise is pinned, like the tools it installs: a new release of mise
+      # changes a job only through a reviewed bump. The same `version` is in
+      # every mise step below.
+      - name: set up mise
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          version: 2026.11.0
+
+      # prek builds a hook environment for the one remote hook repository,
+      # which pulls in a Node toolchain. The key covers the pinned prek
+      # version and the hook revisions; restore-keys lets a config edit
+      # still reuse the toolchain.
+      - name: restore prek cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/prek
+          key: ${{ runner.os }}-prek-${{ hashFiles('mise/conf.d/10-validation.toml', '.pre-commit-config.yaml') }}
+          restore-keys: ${{ runner.os }}-prek-
+
+      # The token is read-only. zizmor runs its online audits (impostor
+      # commits, known vulnerabilities, stale references) when it has one, and
+      # only this step gets it: not the checkout, the caches or mise, which
+      # takes its own through its github_token input.
+      - name: lint
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: mise run lint
+
+  test:
+    name: unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Only Node is needed. Without this `mise run` would install every
+      # pinned lint tool before the task.
+      MISE_TASK_RUN_AUTO_INSTALL: "false"
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: set up mise
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          version: 2026.11.0
+          install_args: node
+
+      - name: test
+        run: mise run test
+
+  # Browser tests plus coverage of the generator and the browser code together.
+  # Fails if coverage drops below 100%.
+  e2e-coverage:
+    name: end-to-end tests and coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      MISE_TASK_RUN_AUTO_INSTALL: "false"
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: set up mise
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          version: 2026.11.0
+          install_args: node
+
+      # The site is built by the tests, so the site's own packages are needed
+      # too, not only Playwright's. No install scripts run: none of the locked
+      # packages has one.
+      - name: install dependencies
+        run: |
+          mise run install
+          npm ci --prefix e2e --ignore-scripts --no-audit --no-fund
+
+      - name: cache browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('e2e/package-lock.json') }}
+
+      # The browser comes with the pinned Playwright, and its system libraries
+      # with --with-deps. `--no`: npx must find Playwright in e2e/node_modules
+      # and never fetch whatever version the registry has today.
+      - name: install Chromium
+        working-directory: e2e
+        run: npx --no playwright install --with-deps chromium-headless-shell
+
+      - name: test with coverage
+        run: mise run coverage
+
+      # A re-run of the job may find the artifact of the first attempt under
+      # the same name: `overwrite` replaces it instead of failing the upload.
+      - name: upload coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage
+          path: |
+            coverage/
+            !coverage/tmp/**
+          retention-days: 14
+          if-no-files-found: ignore
+          overwrite: true
+
+      # What Playwright wrote when a test failed: traces and screenshots in
+      # test-results/, and the HTML report if the configuration makes one.
+      - name: upload playwright results
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+          overwrite: true
+
+  # The strict build (a warning is an error). On main its output is the Pages
+  # artifact, so the job restores no cache: nothing but the checkout, the
+  # pinned Node and the locked packages may end up in what is published.
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      MISE_TASK_RUN_AUTO_INSTALL: "false"
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: set up mise
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          version: 2026.11.0
+          install_args: node
+          cache: false
+
+      - name: build
+        run: mise run build:strict
+
+      # Keep this condition in step with the one of the deploy job. The
+      # artifact keeps one name, which `deploy` and `smoke` look for, and an
+      # upload fails when its name exists: to publish again, use "Re-run failed
+      # jobs" or "Run workflow", not "Re-run all jobs".
+      - name: upload the site for deployment
+        if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+          retention-days: 7
+
+      # Built by the pull request's own generator, which the pull request can
+      # change, so the guarantees of the build (the Content-Security-Policy, no
+      # inline scripts) do not hold for this output. To look at it, serve it
+      # with the repository's server from a throwaway folder: never open it
+      # from disk, and never in a signed-in browser.
+      - name: upload the site for review
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site
+          path: dist
+          retention-days: 7
+          overwrite: true
+
+  # Lighthouse, mobile, against the built site served by the repository's own
+  # server (accessibility 100, best practices and SEO 95, performance 90 on
+  # every page of the sitemap). A page that falls short is measured once more
+  # and the retry is annotated; a real regression fails both times. It blocks
+  # the deploy. If it ever proves flaky on the hosted runner, take it out of
+  # the deploy job's `needs` and list it in NOT_BLOCKING in
+  # scripts/ci/check-workflows.sh: it then reports without blocking.
+  lighthouse:
+    name: lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      MISE_TASK_RUN_AUTO_INSTALL: "false"
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: set up mise
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          version: 2026.11.0
+          install_args: node
+
+      # The runner image has Google Chrome; Lighthouse itself comes from the
+      # lockfile in tools/lighthouse. The gate starts no page after 8 minutes
+      # and kills a run after 90 seconds, so a hanging Chrome costs at most 11
+      # minutes and the job ends with a report, inside its timeout.
+      - name: lighthouse
+        env:
+          LIGHTHOUSE_OUT: ${{ runner.temp }}/lighthouse
+        run: mise run lighthouse
+
+      - name: upload lighthouse reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lighthouse-reports
+          path: ${{ runner.temp }}/lighthouse
+          retention-days: 14
+          if-no-files-found: ignore
+          overwrite: true
+
+  deploy:
+    name: deploy to github pages
+    needs: [lint, test, e2e-coverage, build, lighthouse]
+    # main only: a pull request, a merge queue or a run started on another
+    # branch stops after the checks. Keep this condition in step with the
+    # upload of the Pages artifact in the build job.
+    if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+    runs-on: ubuntu-latest
+    # deploy-pages itself gives up on a deployment after 10 minutes and
+    # cancels it; the job has to outlast that.
+    timeout-minutes: 15
+    permissions:
+      pages: write # publish the artifact
+      id-token: write # prove to Pages that the deployment comes from this run
+    # Pages serialises deployments, and a queued run must never cancel one
+    # that is already publishing.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # A re-run keeps the commit of the run it repeats, so re-running an old
+      # run of main would put an older site over a newer one. A re-run
+      # publishes only while its commit is still the tip of main. (A first
+      # attempt queues behind the earlier runs of main, so it cannot be older
+      # than what is live.) git ls-remote reads the public repository: no
+      # token, no checkout and no permission besides the two above.
+      - name: check that this commit is still the tip of main
+        if: ${{ github.run_attempt > 1 }}
+        shell: bash
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          tip="$(git ls-remote "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" refs/heads/main | cut -f1)"
+          if [ "$tip" != "$GITHUB_SHA" ]; then
+            echo "::error title=deploy::$GITHUB_SHA is not the tip of main ($tip), so it is not published over a newer site. Push a commit, or use Run workflow on main."
+            exit 1
+          fi
+
+      - name: deploy
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  # The live site, over the network, the way a visitor reaches it. A failure
+  # here cannot undo the deployment, but it fails the run and shows on the
+  # commit: fix forward or revert.
+  smoke:
+    name: smoke test the live site
+    needs: deploy
+    runs-on: ubuntu-latest
+    # A new deployment can take minutes to reach the CDN; the script retries
+    # until SMOKE_TIMEOUT.
+    timeout-minutes: 20
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # What was deployed, to compare the live files with.
+      - name: download the deployed site
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/deployed
+
+      - name: unpack the deployed site
+        run: |
+          mkdir "$RUNNER_TEMP/site"
+          tar -xf "$RUNNER_TEMP/deployed/artifact.tar" -C "$RUNNER_TEMP/site"
+
+      # Every check is retried for 10 minutes, a failing one is then tried
+      # once, and none starts later than 5 minutes after that. A request takes
+      # 15 seconds at most, so the script ends within 16 minutes, with its
+      # report, inside the timeout of the job.
+      - name: smoke test
+        env:
+          SMOKE_TIMEOUT: "600"
+          SMOKE_GRACE: "300"
+        run: bash scripts/ci/smoke.sh --built "$RUNNER_TEMP/site"
