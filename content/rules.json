@@ -1,0 +1,245 @@
+{
+  "views": {
+    "no-ids": [
+      {
+        "replace": "\\{#[\\w-]+\\}",
+        "with": ""
+      }
+    ],
+    "prose": [
+      "no-ids",
+      {
+        "replace": "\\bimg=\\S+",
+        "with": ""
+      },
+      {
+        "replace": "\\(img/[^)]+\\)",
+        "with": "()"
+      },
+      {
+        "replace": "\\]\\(#[\\w-]+\\)",
+        "with": "](#)"
+      }
+    ],
+    "prose-no-urls": [
+      "prose",
+      {
+        "replace": "https?:\\S+",
+        "with": ""
+      }
+    ],
+    "quotes": [
+      "prose",
+      {
+        "replace": "\\]\\([^)]*\\)",
+        "with": "]()"
+      },
+      {
+        "replace": "::: .*",
+        "with": ""
+      }
+    ],
+    "unindented": [
+      {
+        "replace": "^\\s+",
+        "with": ""
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "exclamation-chain",
+      "level": "error",
+      "message": "no chains of exclamation marks",
+      "patterns": ["!!"]
+    },
+    {
+      "id": "control-characters",
+      "level": "error",
+      "message": "no control or invisible characters (a terminal escape, a right-to-left override, a zero-width space)",
+      "patterns": [
+        "[\\u0000-\\u0008\\u000B-\\u000C\\u000E-\\u001F\\u007F-\\u009F\\u061C-\\u061C\\u200B-\\u200F\\u2028-\\u2029\\u202A-\\u202E\\u2060-\\u2064\\u2066-\\u2069\\uFEFF-\\uFEFF]"
+      ]
+    },
+    {
+      "id": "smiley",
+      "level": "error",
+      "message": "no smileys or emoji",
+      "patterns": [
+        "(?<![\\w)])(:\\)|;\\)|:-\\)|;-\\)|:\\(|:-\\(|:D|:-D|;D|:P|:-P|=\\)|xD|XD)(?![\\w])",
+        "\\p{Emoji_Presentation}|\\p{Extended_Pictographic}|\\uFE0F"
+      ],
+      "flags": "u"
+    },
+    {
+      "id": "plus-minus",
+      "level": "error",
+      "message": "no +/- marks",
+      "patterns": ["\\+/-"]
+    },
+    {
+      "id": "external-link",
+      "level": "error",
+      "message": "no outside links, not even mailto: or tel: (a link points at #id on the same page)",
+      "patterns": [
+        "\\]\\((https?:|mailto:|tel:)",
+        "https?://",
+        "\\]\\((?!#|img/)",
+        "\\bwww\\.",
+        "(?<![\\w.+-])[\\w.+-]+@[\\w-]+\\.[\\w.-]+"
+      ],
+      "flags": "i"
+    },
+    {
+      "id": "retailer-or-where-to-buy",
+      "level": "error",
+      "message": "no shop, retailer or marketplace names and no where-to-buy advice",
+      "patterns": [
+        "Biedronk",
+        "Lidl",
+        "Allegro",
+        "Makro\\b",
+        "Leclerc",
+        "Auchan",
+        "\\bObi\\b",
+        "Castorama",
+        "Del Duca",
+        "delduca",
+        "supermarket",
+        "супермаркет",
+        "hurtown",
+        "where to buy",
+        "gdzie kupować",
+        "де купувати"
+      ],
+      "flags": "i"
+    },
+    {
+      "id": "non-dollar-currency",
+      "level": "error",
+      "message": "prices are in US dollars only, written with the symbol first and no space: $250",
+      "patterns": [
+        "(?<![\\wąćęłńóśźż])(zł|złotych|złote|złoty|złotówk\\w*|zlotys?|PLN|злотих|злотий|EUR|euro|євро|USD)(?![\\wąćęłńóśźż])",
+        "€",
+        "\\d\\s?\\$",
+        "\\$\\s\\d",
+        "\\d\\s*(?:dollars?|dolar[a-ząćęłńóśźż]*|долар[а-яіїєґ]*)"
+      ],
+      "flags": "i"
+    },
+    {
+      "id": "club-mention",
+      "level": "error",
+      "message": "the club is credited in the footer (lang.json), not in the text",
+      "patterns": ["KMP", "Klub Mi"],
+      "flags": "i"
+    },
+    {
+      "id": "social-link",
+      "level": "error",
+      "message": "no social-media or document links",
+      "patterns": ["facebook", "youtube", "docs\\.google", "drive\\.google"],
+      "flags": "i"
+    },
+    {
+      "id": "jargon-to-tk",
+      "level": "error",
+      "message": "write the plain words, not the abbreviations TO and TK",
+      "patterns": ["(?<![\\w])(TO|TK)(?![\\w])"],
+      "view": "no-ids",
+      "languages": ["pl"]
+    },
+    {
+      "id": "jargon-hydro",
+      "level": "error",
+      "message": "write \"hydration\", not the jargon \"hydro\"",
+      "patterns": ["\\bhydro\\b"],
+      "flags": "i"
+    },
+    {
+      "id": "hyphen-range-use-en-dash",
+      "level": "error",
+      "message": "numeric ranges use an en dash: 3–5, not 3-5",
+      "patterns": ["(?<=\\d)-(?=\\d)"],
+      "view": "prose-no-urls"
+    },
+    {
+      "id": "uk-ascii-apostrophe",
+      "level": "error",
+      "message": "in Ukrainian the apostrophe is U+2019 (’), not the ASCII '",
+      "patterns": ["(?<=[А-Яа-яІіЇїЄєҐґ])'(?=[А-Яа-яІіЇїЄєҐґ])"],
+      "languages": ["uk"]
+    },
+    {
+      "id": "country-specific-remark-outside-local-block",
+      "level": "error",
+      "message": "shared text is country-neutral: put country notes in a ::: local lang=<code> block of that language's own file",
+      "patterns": [
+        "(?<![\\p{L}])(?:Poland|Polish|Ukraine|Ukrainian|Ukrainians|Poles)(?![\\p{L}])",
+        "(?<![\\p{L}])(?:Polsk\\p{L}*|polsk\\p{L}*|Polsc\\p{L}*|Polak\\p{L}*|Polac\\p{L}*|Polaków|Ukrain\\p{L}*|ukraińsk\\p{L}*)(?![\\p{L}])",
+        "(?<![\\p{L}])(?:Польщ\\p{L}*|[Пп]ольськ\\p{L}*|[Пп]оляк\\p{L}*|Україн\\p{L}*|[Уу]країнськ\\p{L}*)(?![\\p{L}])",
+        "\\bour country\\b|w naszym kraju|у нашій країні|у нашому краї|у нас в країні"
+      ],
+      "flags": "u",
+      "localExempt": true
+    },
+    {
+      "id": "en-american-spelling",
+      "level": "warning",
+      "message": "British spelling in English",
+      "patterns": [
+        "\\b(flavor|color|colorful|jewelry|liter|liters|center|favorite|gray|aluminum|meter|fiber|neighbor|honor|humor)\\b"
+      ],
+      "flags": "i",
+      "languages": ["en"]
+    },
+    {
+      "id": "straight-double-quote",
+      "level": "warning",
+      "message": "use typographic quotes, not the straight \"",
+      "patterns": ["(?<![\\w])\""],
+      "view": "quotes",
+      "skip": "^\\s*!\\["
+    },
+    {
+      "id": "all-caps-word",
+      "level": "warning",
+      "message": "no ALL-CAPS words (acronyms go in this rule's allow list)",
+      "patterns": ["(?<![\\w#-])[A-ZĄĆĘŁŃÓŚŹŻ]{4,}(?![\\w-])"],
+      "view": "prose",
+      "allow": [
+        "AVPN",
+        "APITER",
+        "INOX",
+        "GFCI",
+        "LPG",
+        "PLN",
+        "HTML",
+        "FAQ",
+        "STG",
+        "DOP",
+        "IGP",
+        "AGD",
+        "USDA",
+        "FDA",
+        "ISO",
+        "DOC"
+      ]
+    },
+    {
+      "id": "double-space",
+      "level": "warning",
+      "message": "remove the double space",
+      "patterns": ["(?<![^\\S\\n])[^\\S\\n]{2,}\\S"],
+      "view": "unindented",
+      "skip": "^\\|"
+    },
+    {
+      "id": "exclamation-mark",
+      "level": "warning",
+      "message": "keep the tone calm: avoid exclamation marks",
+      "patterns": ["(?<!<)!(?!\\[)"],
+      "skip": "^!\\["
+    }
+  ]
+}
