@@ -1,0 +1,34 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+# Installed packages and generated output. Gitignored, so they can never be
+# committed - but `gitleaks dir` scans the filesystem, not git, so it needs an
+# explicit exemption.
+description = "ignore installed packages and build output"
+paths = ['''^node_modules/''', '''^dist/''', '''^coverage/''']
+
+[[allowlists]]
+# Playwright installs its own packages and writes traces and reports here.
+# Gitignored, and scanned as a filesystem path by `dir`.
+description = "ignore end-to-end test state"
+paths = [
+  '''^e2e/node_modules/''',
+  '''^e2e/test-results/''',
+  '''^e2e/playwright-report/''',
+]
+
+[[allowlists]]
+# Agent scratch state. Gitignored, so it can never be committed - but
+# `gitleaks dir` scans the filesystem, not git, so it needs an explicit
+# exemption.
+description = "ignore agent scratch state"
+paths = ['''^\.omo/''']
+
+[[allowlists]]
+# Translation bookkeeping written by `mise run i18n:sync`: section file name ->
+# sha256 of the source text. A hash is public by construction, but a file name
+# such as "09-shaping-baking.md" contains the keyword "api", so the
+# generic-api-key rule would take the hash for a secret.
+description = "ignore translation sync records"
+paths = ['''^content/[^/]+/\.sync\.json$''']

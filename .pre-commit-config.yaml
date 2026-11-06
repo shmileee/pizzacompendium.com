@@ -1,0 +1,174 @@
+---
+# Hook scheduling.
+#
+# prek runs hooks sequentially unless they share an explicit `priority`; hooks
+# with equal priority run concurrently. Hooks that rewrite files stay
+# unprioritised (sequential) so concurrent writers cannot drop each other's
+# edits; hooks that only read share `readonly` and run together afterwards,
+# still observing the formatters' output.
+#
+# Adding a hook: leave `priority` unset unless you are sure the hook never
+# writes to the working tree. Omitting it is always safe, only slower. Use
+# `PREK_NO_CONCURRENCY=1` to force everything sequential when debugging.
+priorities:
+  readonly: 100
+
+# Shim lifecycle.
+#
+# `prek install` bakes the absolute path of the prek binary that generated it
+# into .git/hooks/*. mise keeps old installs on disk, so once the pinned
+# version moves, every commit would keep running the previous prek. The
+# prek-shim-refresh hook regenerates the shims through mise after the
+# operations that can change the pin (`git pull` via post-merge, a rebase via
+# post-rewrite). post-checkout is deliberately NOT installed: its exit status
+# becomes the exit status of `git checkout`, and prek refuses to run it while
+# this file has uncommitted changes.
+#
+# For a fresh clone run `mise run prek:install`.
+default_stages: [pre-commit]
+default_install_hook_types:
+  - pre-commit
+  - post-merge
+  - post-rewrite
+
+repos:
+  - repo: builtin
+    hooks:
+      - id: check-added-large-files
+        name: check added large files
+        # --enforce-all: under `mise run lint` in CI nothing is staged, so without
+        # it the hook would check no file at all.
+        args: ["--maxkb=1024", "--enforce-all"]
+        priority: readonly
+      - id: check-case-conflict
+        name: check case conflicts
+        priority: readonly
+      - id: check-merge-conflict
+        name: check merge conflicts
+        # Conflict markers are looked for outside a merge too (CI, --no-verify).
+        args: [--assume-in-merge]
+        priority: readonly
+      - id: check-symlinks
+        name: check symlinks
+        priority: readonly
+      - id: end-of-file-fixer
+        name: fix end of files
+      - id: trailing-whitespace
+        name: trim trailing whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: mixed-line-ending
+        name: fix mixed line endings
+      - id: check-executables-have-shebangs
+        name: check executable shebangs
+        priority: readonly
+      - id: detect-private-key
+        name: detect private keys
+        priority: readonly
+      - id: destroyed-symlinks
+        name: detect destroyed symlinks
+        priority: readonly
+      - id: check-vcs-permalinks
+        name: check vcs permalinks
+        priority: readonly
+      - id: deny-pattern
+        name: deny absolute home paths
+        # A committed file must not hard-code one machine's home directory.
+        args: ["/Users/[a-z][a-z0-9._-]*/"]
+        types: [text]
+        priority: readonly
+
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    # The commit of the release, so a moved tag cannot change what runs here.
+    # Renovate bumps the SHA and the comment together.
+    rev: 3a7f7698396aa6c95f3c02eab01e8d6ff86ca5a4 # frozen: 44.206.0
+    hooks:
+      - id: renovate-config-validator
+        name: validate renovate configuration
+        args: [--strict]
+        priority: readonly
+
+  - repo: local
+    hooks:
+      - id: prek-shim-refresh
+        name: refresh prek git shims
+        entry: mise exec -- prek install --force
+        language: system
+        stages: [post-merge, post-rewrite]
+        always_run: true
+        pass_filenames: false
+      - id: gitleaks
+        name: scan secrets with gitleaks
+        entry: gitleaks dir --config .github/.gitleaks.toml --redact
+          --no-banner .
+        language: system
+        pass_filenames: false
+        priority: readonly
+      - id: biome
+        name: lint and format web files with biome
+        entry: biome check --write --no-errors-on-unmatched
+        language: system
+        files: \.(css|jsonc?|m?[jt]sx?|c[jt]s)$
+      - id: taplo
+        name: format toml with taplo
+        entry: taplo format
+        language: system
+        types: [toml]
+      # The hard content rules (content/rules.json): errors fail the commit,
+      # warnings are only printed. It reads every language at once, so the
+      # whole of content/ is checked whichever file changed.
+      - id: content-lint
+        name: check the hard content rules
+        entry: node scripts/lint-content.mjs
+        language: system
+        files: ^content/
+        pass_filenames: false
+        priority: readonly
+      - id: rumdl
+        name: format markdown with rumdl
+        entry: rumdl fmt --config .github/.rumdl.toml
+        language: system
+        types: [markdown]
+        # The content uses a custom ::: block syntax and typographic quotes;
+        # reflowing it would break both.
+        exclude: ^content/
+      - id: shfmt
+        name: format shell with shfmt
+        entry: shfmt --write
+        language: system
+        files: \.(sh|bash)$
+      - id: shellcheck
+        name: lint shell with shellcheck
+        entry: shellcheck
+        language: system
+        files: \.(sh|bash)$
+        priority: readonly
+      - id: yamllint
+        name: lint yaml with yamllint
+        entry: yamllint --config-file .github/.yamllint.yaml
+        language: system
+        types: [yaml]
+        priority: readonly
+      - id: actionlint
+        name: lint github actions with actionlint
+        entry: actionlint
+        language: system
+        files: ^\.github/workflows/.*\.ya?ml$
+        types: [yaml]
+        priority: readonly
+      - id: zizmor
+        name: audit github actions with zizmor
+        entry: zizmor --min-severity medium --min-confidence medium
+        language: system
+        files: ^\.github/(actions|workflows)/.*\.ya?ml$
+        types: [yaml]
+        priority: readonly
+      # What actionlint and zizmor do not enforce: write permissions per job,
+      # a Pages artifact built without a cache, a deploy that needs every job.
+      # It reads every workflow at once, so a changed file is not passed in.
+      - id: workflow-invariants
+        name: check the workflow invariants
+        entry: bash scripts/ci/check-workflows.sh
+        language: system
+        files: ^(\.github/workflows/|scripts/ci/check-workflows\.sh$)
+        pass_filenames: false
+        priority: readonly

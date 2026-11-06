@@ -1,0 +1,128 @@
+# Install is a task of its own so the build tasks can depend on it.
+# mise skips it while node_modules is newer than the lockfile. Only the build
+# and the preview need the npm packages: the content linter, the translation
+# bookkeeping and the language scaffold run on Node alone. Only what the site
+# needs at build time is installed (marked and image-size have no install
+# scripts, so none are run).
+[tasks.install]
+description = "Install the npm dependencies (marked, image-size)"
+run = "npm ci --omit=dev --ignore-scripts --no-audit --no-fund --loglevel=error"
+sources = ["package-lock.json"]
+outputs = ["node_modules/.package-lock.json"]
+
+# Writes the whole site to dist/, atomically: it is built next to dist/ and
+# swapped in, and a failed build leaves the last good dist/ alone. Errors fail
+# the build (broken links, missing images, the hard content rules, structure
+# drift between languages); warnings (untranslated or stale files) do not.
+# Options pass through: `mise run build -- --out /tmp/site --no-fingerprint
+# --quiet`. COMPENDIUM_ROOT=<folder> points every script at another tree.
+[tasks.build]
+description = "Build the site into dist/"
+depends = ["install"]
+run = "node scripts/build.mjs"
+
+# What CI runs: the same build, but a warning fails it too. GitHub Actions
+# gets the problems as annotations on the changed files.
+[tasks."build:strict"]
+description = "Build with every warning treated as an error"
+depends = ["install"]
+run = "node scripts/build.mjs --strict"
+
+# The hard content rules (content/rules.json) and the structure parity of the
+# languages, without building anything. The content-lint hook runs this too.
+# `mise run content:lint -- --file 08-first-bake.md` checks one section.
+[tasks."content:lint"]
+description = "Check the hard content rules (no build, no npm packages)"
+run = "node scripts/lint-content.mjs"
+
+[tasks."i18n:status"]
+description = "Show which translated sections are ok, stale, untranslated, missing or extra"
+run = "node scripts/i18n.mjs status"
+
+# Run it after bringing a translation in line with the source text:
+# `mise run i18n:sync en` for every file, `mise run i18n:sync en 01-types.md`
+# for one.
+[tasks."i18n:sync"]
+description = "Confirm translated sections against the current source text"
+run = "node scripts/i18n.mjs sync"
+
+# Builds first, because the server only serves what is already in dist/.
+[tasks.serve]
+description = "Build, then preview on http://localhost:8080 (PORT=..., HOST=... to change)"
+depends = ["build"]
+run = "node scripts/serve.mjs"
+raw = true
+
+# Arguments pass straight through: `mise run new-lang de "Deutsch"`. The new
+# language is a draft until its lang.json says "status": "published".
+[tasks.new-lang]
+description = "Start a language as a draft copy of the source (code and name)"
+run = "node scripts/new-language.mjs"
+raw = true
+
+# The image tool has a package.json of its own (sharp), so the two
+# dependencies of the site stay two. Like `install`, this is skipped while
+# node_modules is newer than the lockfile.
+[tasks."images:install"]
+description = "Install the dependencies of the image tool (sharp)"
+dir = "{{config_root}}/tools/images"
+run = "npm ci --no-audit --no-fund --loglevel=error"
+sources = ["package-lock.json"]
+outputs = ["node_modules/.package-lock.json"]
+
+# Regenerates what can be derived from the shipped files: the -480w and -800w
+# copies of the photos, static/img/og.jpg (cut from the hero) and the app icons
+# (drawn from src/favicon.svg). The photos themselves were cropped by hand and
+# are never rewritten; the header of tools/images/process.mjs says how to add
+# one. A second run changes nothing.
+[tasks.images]
+description = "Regenerate the derived images (srcset copies, og.jpg, icons)"
+depends = ["images:install"]
+run = "node tools/images/process.mjs"
+
+# The unit and integration tests: node:test over the generator, its command
+# lines and the browser code that runs in Node (test/, helpers in
+# test/helpers/). It needs Node and the two npm packages of the site that
+# `install` provides, nothing from e2e/, so CI's "unit tests" job installs
+# nothing more. The same command as `npm test`. One file, measuring what it
+# covers: `mise exec -- node e2e/support/measure.mjs -i scripts/lib/files.mjs
+# test/files.test.mjs`.
+[tasks.test]
+description = "Run the unit tests (node:test, no browser)"
+depends = ["install"]
+run = "node --test \"test/**/*.test.mjs\""
+
+# Playwright drives the real site in headless Chromium: it is built once
+# (--no-fingerprint) and served by the repository's own server on a free port
+# (e2e/support/site.js). e2e/ has its own package.json, like tools/lighthouse,
+# so it needs its packages and the browser: once per machine and whenever
+# e2e/package-lock.json changes, `mise run e2e:install`. Arguments pass
+# through: `mise run e2e -- --headed tests/smoke.spec.js`.
+[tasks.e2e]
+description = "Run the end-to-end tests (Playwright, headless Chromium)"
+depends = ["install"]
+dir = "{{config_root}}/e2e"
+run = "npx --no playwright test"
+
+# The packages of e2e/ from its lockfile (no install scripts run) and the
+# browser of the Playwright version they pin, which goes to Playwright's cache
+# in your home folder (~/.cache/ms-playwright, ~/Library/Caches/ms-playwright
+# on a Mac). CI does the same with --with-deps, which adds the system
+# libraries of a fresh Ubuntu runner. `--no`: npx must find Playwright in
+# e2e/node_modules, never fetch the version the registry has today.
+[tasks."e2e:install"]
+description = "Install the end-to-end packages and the Playwright browser"
+dir = "{{config_root}}/e2e"
+run = "npm ci --ignore-scripts --no-audit --no-fund --loglevel=error && npx --no playwright install chromium-headless-shell"
+
+# Every test with ONE coverage report of what the site ships: the generator and
+# its command lines (scripts/), measured while the unit tests run, and the
+# scripts of the browser (src/**/*.js), measured in the browser. It fails below
+# 100% of lines, branches, functions and statements, and lists what no test
+# executed; the report is coverage/index.html. It assumes what CI's job has done
+# before it: the packages of e2e/ and the browser (`mise run e2e:install`).
+# Arguments pass on to Playwright.
+[tasks.coverage]
+description = "All tests with merged coverage of scripts/ and src/; fails below 100%"
+depends = ["install"]
+run = "node e2e/support/coverage.mjs"

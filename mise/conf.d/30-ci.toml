@@ -1,0 +1,26 @@
+# What the CI workflow runs besides the build and the tests, so that every job
+# can be reproduced with one command.
+
+# Lighthouse (mobile) against the built site, served by the repository's own
+# server on a free port: accessibility 100, best practices and SEO 95,
+# performance 90 on every page of the sitemap. It builds first, because it
+# audits what is in dist/. Lighthouse is the version in the lockfile of
+# tools/lighthouse (installed here with scripts off, like Playwright in e2e/);
+# it needs Chrome or Chromium (CHROME_PATH points at one). The reports go to
+# $LIGHTHOUSE_OUT or <tmp>/pizzacompendium-lighthouse:
+# `mise run lighthouse -- --out <dir>`.
+[tasks.lighthouse]
+description = "Lighthouse (mobile) against the built site; fails below the minimum scores"
+depends = ["build"]
+run = "npm ci --prefix tools/lighthouse --ignore-scripts --no-audit --no-fund --loglevel=error && node tools/lighthouse/run.mjs"
+
+# The checks that CI runs against the live site after a deploy: every language,
+# the security policy, the sitemap, the 404 page, the redirects. By default it
+# tests the address in site.json; `mise run smoke -- http://127.0.0.1:8080`
+# tests a local preview, and `-- --built dist` also requires every file in
+# dist/ (CNAME and dotfiles aside) to be live, byte for byte. The script always
+# ends: see SMOKE_TIMEOUT and SMOKE_GRACE in its header.
+[tasks.smoke]
+description = "Smoke test a deployed site (default: the address in site.json)"
+run = "bash scripts/ci/smoke.sh"
+raw = true

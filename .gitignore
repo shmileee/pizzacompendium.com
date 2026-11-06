@@ -1,0 +1,31 @@
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Temporary
+*~
+*.log
+.DS_Store
+
+# Node
+node_modules/
+e2e/node_modules/
+
+# Build output (dist.tmp/ and dist.old/ only exist while a build is running)
+dist/
+dist.tmp/
+dist.old/
+
+# Test output
+/coverage*/
+e2e/test-results/
+e2e/playwright-report/
+
+# Agent scratch state. `.codegraph` is a symlink into the owner's home
+# directory that the agent tooling drops here: committing it would publish an
+# absolute home path.
+.omo/
+.codegraph

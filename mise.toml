@@ -1,0 +1,5 @@
+[settings]
+legacy_version_file = false
+
+[tools]
+node = "26.13.0"
