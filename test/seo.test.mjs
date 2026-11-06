@@ -99,7 +99,7 @@ describe('renderManifest', () => {
     assert.equal(manifest.description, 'Description pl');
     assert.equal(manifest.lang, 'pl');
     assert.equal(manifest.dir, 'ltr');
-    assert.equal(manifest.start_url, './');
+    assert.equal(manifest.start_url, '../');
     assert.equal(manifest.scope, '../');
     assert.equal(manifest.display, 'standalone');
     assert.deepEqual(

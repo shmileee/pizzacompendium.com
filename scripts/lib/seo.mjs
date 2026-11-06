@@ -36,9 +36,11 @@ export const renderRobots = (site) =>
 
 /**
  * The web app manifest of one language (`<code>/manifest.webmanifest`): the
- * name and description in that language, the language's page as the start
- * page, the whole site as the scope (so that the language picker stays inside
- * the app), the home screen icons. Every address is relative to the manifest,
+ * name and description in that language, the root page as the start page (it
+ * sends the reader to the language they chose: a fixed language page would
+ * ignore the picker on every launch), the whole site as the scope (so that the
+ * language picker stays inside the app), the home screen icons. Every address
+ * is relative to the manifest,
  * so the site works under a sub-path. The colours are the paper of the light
  * theme, the first `themeColor` of `site.json`; a site without one has none.
  *
@@ -54,7 +56,7 @@ export function renderManifest(site, lang) {
     description: lang.description,
     lang: lang.htmlLang,
     dir: lang.dir,
-    start_url: './',
+    start_url: '../',
     scope: '../',
     display: 'standalone',
     ...(colour && { background_color: colour, theme_color: colour }),

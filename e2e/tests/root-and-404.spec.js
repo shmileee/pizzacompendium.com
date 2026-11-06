@@ -189,7 +189,8 @@ test.describe('manifests and icons', () => {
       expect(manifest.lang).toBe(code);
       expect(manifest.name).toBeTruthy();
       expect(manifest.display).toBe('standalone');
-      expect(new URL(manifest.start_url, url).pathname).toBe(`/${code}/`);
+      // The root page, which opens the language the reader chose.
+      expect(new URL(manifest.start_url, url).pathname).toBe('/');
       expect(manifest.icons.length).toBeGreaterThanOrEqual(3);
       for (const icon of manifest.icons) {
         const served = await request.get(new URL(icon.src, url).href);
