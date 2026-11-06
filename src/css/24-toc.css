@@ -1,0 +1,272 @@
+/* The contents (nav.toc). From 800px a sticky sidebar that scrolls
+   on its own; below that a drawer from the inline start that the header button
+   opens (html.toc-open), and without scripts a short list in the flow. With
+   scripts only the chapter that is being read is open (li.is-open), the link
+   of the place is a.active. */
+.toc {
+  font-size: var(--step--1);
+  line-height: 1.35;
+}
+
+.toc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toc-title {
+  margin: 0;
+  color: var(--ink-2);
+  font: 700 var(--step--2) / 1.2 var(--font-body);
+  letter-spacing: 0.1em;
+}
+
+.toc-close {
+  display: none;
+}
+
+.toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc a {
+  display: block;
+  padding: var(--space-1) var(--space-2);
+  color: var(--ink-2);
+  border-radius: var(--radius-s);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-1),
+    color var(--dur-1);
+}
+
+/* a chapter: its number (data-number) is the one in front of its heading in the
+   text. It is drawn where it can be kept out of the name of the link
+   (content: ... / ""); elsewhere the list is a plain list. */
+.toc-chapter > a {
+  padding-block: 0.375rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* its sections hang on a rail under the text of the chapter */
+.toc-chapter > ul {
+  margin: 0 0 var(--space-2) var(--space-3);
+  border-inline-start: 1px solid var(--line);
+}
+
+@supports (content: "" / "") {
+  .toc-chapter > a {
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+  }
+
+  .toc-chapter > a::before {
+    content: attr(data-number) / "";
+    padding-block-start: 0.2em;
+    color: var(--accent);
+    font-size: 0.78em;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .toc-chapter > ul {
+    margin-inline-start: calc(1.75rem - 1px);
+  }
+}
+
+.toc-chapter > ul a {
+  padding-block: 0.3125rem;
+  font-size: 0.93em;
+}
+
+.toc a:active {
+  background: var(--surface-2);
+}
+
+@media (hover: hover) {
+  .toc a:hover {
+    color: var(--ink);
+    background: var(--surface-2);
+  }
+}
+
+.toc-chapter.is-current > a {
+  color: var(--ink);
+}
+
+.toc a.active,
+.toc a.active:active {
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+@media (hover: hover) {
+  .toc a.active:hover {
+    color: var(--accent-hover);
+    background: var(--accent-soft);
+  }
+}
+
+@media (forced-colors: active) {
+  .toc a.active {
+    text-decoration: underline;
+  }
+}
+
+/* with scripts, only the chapter that is being read shows its sections */
+.js .toc-chapter:not(.is-open) > ul {
+  display: none;
+}
+
+@media (width >= 800px) {
+  .toc {
+    position: sticky;
+    inset-block-start: var(--header-h);
+    align-self: start;
+    max-height: calc(100dvh - var(--header-h));
+    padding: var(--space-5) var(--space-2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: var(--line-strong) transparent;
+    scrollbar-width: thin;
+    /* a clipped end fades out; the padding keeps the fade off the text at
+       either end of the list */
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 var(--space-5),
+      #000 calc(100% - var(--space-5)),
+      transparent
+    );
+  }
+
+  .toc-head {
+    margin-block-end: var(--space-2);
+    padding-inline: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toc {
+    scroll-behavior: smooth;
+  }
+}
+
+/* narrow screens, no scripts: a short list above the text, the chapters only */
+@media (width < 800px) {
+  html:not(.js) .toc {
+    padding: var(--space-4) var(--gutter) var(--space-2);
+    border-block-end: 1px solid var(--line);
+  }
+
+  html:not(.js) .toc-chapter > ul {
+    display: none;
+  }
+}
+
+/* narrow screens, scripts: the drawer */
+.toc-backdrop {
+  display: none;
+}
+
+@media (width < 800px) {
+  .js .toc {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: var(--z-drawer);
+    width: min(88vw, 22rem);
+    padding: 0 var(--space-3) var(--space-6);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--surface);
+    border-inline-end: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-3);
+    font-size: var(--step-0);
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition:
+      transform var(--dur-3) var(--ease),
+      visibility 0s linear var(--dur-3);
+  }
+
+  [dir="rtl"] .js .toc {
+    transform: translateX(100%);
+  }
+
+  .js.toc-open .toc {
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .js .toc-head {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    min-height: 3.5rem;
+    padding-inline-start: var(--space-2);
+    background: var(--surface);
+  }
+
+  .js .toc-close {
+    display: inline-flex;
+  }
+
+  .js .toc a {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .js .toc-chapter > a {
+    display: grid;
+    align-items: center;
+  }
+
+  .js .toc-chapter > a::before {
+    padding-block-start: 0;
+  }
+
+  .js .toc-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-drawer) - 1);
+    background: var(--scrim);
+    opacity: 0;
+    visibility: hidden;
+    touch-action: none;
+    transition:
+      opacity var(--dur-3),
+      visibility 0s linear var(--dur-3);
+  }
+
+  .js.toc-open .toc-backdrop {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .js.toc-open {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+}
+
+/* With reduced motion the drawer does not slide. 95-motion.css shortens every
+   transition to 0.01ms rather than removing it, and a drawer (or a link in it)
+   whose visibility is still changing cannot take focus: the script focuses the
+   link in the task that opens the drawer. */
+@media (width < 800px) and (prefers-reduced-motion: reduce) {
+  .js .toc,
+  .js .toc *,
+  .js .toc-backdrop {
+    transition: none !important;
+  }
+}

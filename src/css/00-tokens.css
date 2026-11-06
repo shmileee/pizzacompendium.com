@@ -1,0 +1,171 @@
+/* Design tokens. Colours are roles, each written once as
+   light-dark(light, dark): the page follows the system, and
+   :root[data-theme="light"|"dark"] (set by the theme toggle) overrides it. */
+:root {
+  color-scheme: light dark;
+
+  /* paper and surfaces */
+  --paper: light-dark(#f8f2e7, #1b1612);
+  --surface: light-dark(#fffdf8, #241e18);
+  --surface-2: light-dark(#f0e8d9, #2e271f);
+  --line: light-dark(#e2d7c2, #3d3429);
+  --line-strong: light-dark(#cbbda3, #54483b);
+  --control-line: light-dark(#8f8168, #8a7b69);
+
+  /* ink */
+  --ink: light-dark(#2b2118, #f0e7d8);
+  --ink-2: light-dark(#64574a, #b9ab98);
+  --ink-3: light-dark(#8b7d6b, #8d806f);
+
+  /* brand: one tomato accent */
+  --accent: light-dark(#b3261e, #ff8470);
+  --accent-hover: light-dark(#8f1d17, #ffa392);
+  --accent-soft: light-dark(#f5e1da, #3b2320);
+  --accent-ink: light-dark(#fffaf5, #2a0e0a);
+  --focus: var(--accent);
+  --selection: light-dark(#f2c7bd, #6b2f27);
+
+  /* callout families: background, edge, ink (title and icon) */
+  --tip-bg: light-dark(#edf3e3, #1e2a1b);
+  --tip-edge: light-dark(#6d8f45, #6fa052);
+  --tip-ink: light-dark(#3a5420, #bfe0ae);
+  --warn-bg: light-dark(#fff1d6, #35270f);
+  --warn-edge: light-dark(#bd6f00, #e3a42c);
+  --warn-ink: light-dark(#6f3f00, #ffd99a);
+  --note-bg: light-dark(#f0eadd, #2a241d);
+  --note-edge: light-dark(#8f8062, #86775f);
+  --note-ink: light-dark(#52463a, #d8cab6);
+  --local-bg: light-dark(#e6eff2, #1a2a30);
+  --local-edge: light-dark(#3f7d93, #5aa0b8);
+  --local-ink: light-dark(#1f4f62, #b4dcea);
+
+  /* plate: the paper tile product shots sit on (never pure white in dark) */
+  --plate: light-dark(#fffefb, #cfc4b1);
+  --plate-line: light-dark(#e8dfcd, #b8ac97);
+  --ring: light-dark(rgb(60 40 20 / 0.14), rgb(255 255 255 / 0.12));
+  --edge-shadow: light-dark(rgb(60 40 20 / 0.2), rgb(0 0 0 / 0.6));
+  /* the veil behind the drawer and the search dialog */
+  --scrim: light-dark(rgb(43 33 24 / 0.5), rgb(0 0 0 / 0.65));
+
+  /* type */
+  --font-body:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+  --font-head:
+    "Vollkorn", "Vollkorn Fallback", "Vollkorn Fallback Noto", Georgia,
+    "Times New Roman", serif;
+  --step--2: clamp(0.7813rem, 0.7704rem + 0.0543vw, 0.8125rem);
+  --step--1: clamp(0.9063rem, 0.8954rem + 0.0543vw, 0.9375rem);
+  --step-0: clamp(1.0625rem, 1.0408rem + 0.1087vw, 1.125rem);
+  --step-1: clamp(1.1875rem, 1.144rem + 0.2174vw, 1.3125rem);
+  --step-2: clamp(1.375rem, 1.288rem + 0.4348vw, 1.625rem);
+  --step-3: clamp(1.6875rem, 1.5353rem + 0.7609vw, 2.125rem);
+  --step-4: clamp(2.0625rem, 1.7799rem + 1.413vw, 2.875rem);
+  --step-5: clamp(2.4375rem, 1.981rem + 2.2826vw, 3.75rem);
+  --leading: 1.65;
+  --leading-tight: 1.15;
+
+  /* space, radii, shadows */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);
+  --radius-s: 0.375rem;
+  --radius: 0.625rem;
+  --radius-l: 1rem;
+  --radius-pill: 999px;
+  --shadow-1: 0 1px 2px light-dark(rgb(60 40 20 / 0.1), rgb(0 0 0 / 0.45));
+  --shadow-2:
+    0 6px 18px -6px light-dark(rgb(60 40 20 / 0.22), rgb(0 0 0 / 0.55)),
+    0 1px 2px light-dark(rgb(60 40 20 / 0.08), rgb(0 0 0 / 0.4));
+  --shadow-3: 0 24px 48px -16px
+    light-dark(rgb(50 30 10 / 0.35), rgb(0 0 0 / 0.7));
+
+  /* layout: the text column, the wider column for tables and pictures */
+  --header-h: 3.5rem;
+  --sidebar-w: 15rem;
+  --page-max: 72rem;
+  --measure: 40rem;
+  --wide: 50rem;
+
+  /* stacking */
+  --z-header: 30;
+  --z-dropdown: 35;
+  --z-drawer: 40;
+  --z-toast: 60;
+  --z-skip: 70;
+
+  /* motion: short and calm */
+  --dur-1: 120ms;
+  --dur-2: 160ms;
+  --dur-3: 200ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* what a colour scheme changes besides colours */
+  --img-filter: none;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --img-filter: brightness(0.9);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --img-filter: brightness(0.9);
+  }
+}
+
+/* A browser without light-dark() (older than 2024) still gets a whole light
+   page: every colour token again with its light value. Keep in step with the
+   light value of each token above. */
+@supports not (color: light-dark(#000, #fff)) {
+  :root {
+    color-scheme: light;
+    --paper: #f8f2e7;
+    --surface: #fffdf8;
+    --surface-2: #f0e8d9;
+    --line: #e2d7c2;
+    --line-strong: #cbbda3;
+    --control-line: #8f8168;
+    --ink: #2b2118;
+    --ink-2: #64574a;
+    --ink-3: #8b7d6b;
+    --accent: #b3261e;
+    --accent-hover: #8f1d17;
+    --accent-soft: #f5e1da;
+    --accent-ink: #fffaf5;
+    --selection: #f2c7bd;
+    --tip-bg: #edf3e3;
+    --tip-edge: #6d8f45;
+    --tip-ink: #3a5420;
+    --warn-bg: #fff1d6;
+    --warn-edge: #bd6f00;
+    --warn-ink: #6f3f00;
+    --note-bg: #f0eadd;
+    --note-edge: #8f8062;
+    --note-ink: #52463a;
+    --local-bg: #e6eff2;
+    --local-edge: #3f7d93;
+    --local-ink: #1f4f62;
+    --plate: #fffefb;
+    --plate-line: #e8dfcd;
+    --ring: rgb(60 40 20 / 0.14);
+    --edge-shadow: rgb(60 40 20 / 0.2);
+    --scrim: rgb(43 33 24 / 0.5);
+    --shadow-1: 0 1px 2px rgb(60 40 20 / 0.1);
+    --shadow-2:
+      0 6px 18px -6px rgb(60 40 20 / 0.22), 0 1px 2px rgb(60 40 20 / 0.08);
+    --shadow-3: 0 24px 48px -16px rgb(50 30 10 / 0.35);
+  }
+}

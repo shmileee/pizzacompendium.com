@@ -1,0 +1,74 @@
+/* The frame of the page. <main> holds the hero band and the text
+   column; the contents (nav.toc) sit beside <main> in .layout and share its
+   columns through a subgrid, so that the band can be as wide as the page while
+   the sidebar stays under it. Narrow screens stack everything (the contents
+   become a drawer, see 24-toc.css). */
+.layout {
+  --gap: var(--space-6);
+}
+
+.article {
+  min-width: 0;
+  padding: var(--space-6) var(--gutter) calc(var(--space-9) * 0.6);
+}
+
+@media screen and (width >= 800px) {
+  .layout {
+    --sidebar-w: 13rem;
+    display: grid;
+    grid-template-columns:
+      [full-start] minmax(var(--gutter), 1fr)
+      [side-start] var(--sidebar-w) [side-end]
+      var(--gap)
+      [text-start] minmax(0, var(--wide)) [text-end]
+      minmax(var(--gutter), 1fr) [full-end];
+    grid-template-rows: auto 1fr;
+  }
+
+  .layout > main {
+    display: grid;
+    grid-column: full;
+    grid-row: 1 / -1;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+  }
+
+  .hero-slot {
+    grid-column: full;
+    grid-row: 1;
+  }
+
+  .article {
+    grid-column: text;
+    grid-row: 2;
+    padding-inline: 0;
+  }
+
+  .toc {
+    grid-column: side;
+    grid-row: 2;
+  }
+}
+
+@media screen and (width >= 1100px) {
+  .layout {
+    --sidebar-w: 15rem;
+    --gap: var(--space-7);
+  }
+}
+
+/* wide screens: the text keeps its measure, but the text area reaches the
+   right edge of the page, so that the cards and the galleries can use the
+   space the prose leaves empty */
+@media screen and (width >= 1200px) {
+  .article {
+    grid-column: text-start / full-end;
+    padding-inline-end: var(--gutter);
+  }
+}
+
+@media print {
+  .article {
+    padding: 0;
+  }
+}

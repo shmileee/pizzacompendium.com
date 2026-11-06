@@ -1,0 +1,103 @@
+/* Galleries (:::: gallery) and what single figures need on top
+   of 30-prose.css: a cut-out (a picture with an alpha channel, class
+   photo-cutout) sits on a plate, and a figure from a small source
+   (photo-small) is kept to 25 rem. The build writes the classes. */
+
+/* a cut-out is set on the paper tile of the product cards: on the page it
+   would be a shape floating in an empty frame (and in dark mode its see-through
+   parts would show the page), the tile is the picture's own box, so a cut that
+   was made by the edge of the photograph stays an edge */
+figure.photo-cutout img {
+  background: var(--plate);
+  box-shadow: 0 0 0 1px var(--plate-line);
+  filter: none;
+}
+
+/* the tile keeps its colour in forced colours, or the picture would sit on a
+   black Canvas */
+@media (forced-colors: active) {
+  figure.photo-cutout img {
+    forced-color-adjust: none;
+  }
+}
+
+figure.photo-small img {
+  max-width: min(100%, 25rem);
+}
+
+figure.photo figcaption {
+  text-wrap: balance;
+}
+
+/* a gallery is a grid of equal columns, two across (three for three) and one
+   on a phone. Every figure takes two rows of it, one for the picture and one
+   for the caption (a subgrid), so that the pictures of a row are exactly as
+   tall as the tallest, and the captions line up below them. The images were
+   cropped each gallery to one ratio, so nothing is cropped here, but a picture
+   that is a little off fills its place (a photograph by cover, a cut-out is
+   centred on its plate) and the rows stay flush. */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-3);
+  max-width: var(--wide);
+  margin-block: var(--space-5);
+}
+
+.gallery[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gallery figure.photo {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+
+.gallery figure.photo img {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery figure.photo-cutout img {
+  object-fit: contain;
+}
+
+.gallery figcaption {
+  font-size: var(--step--2);
+  line-height: 1.4;
+}
+
+/* a phone: the pictures stack, but three upright tiles (the peels) stay a row,
+   which is a third of the scroll */
+@media (width <= 560px) {
+  .gallery[data-count] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gallery figure.photo img {
+    max-height: 75svh;
+  }
+
+  .gallery[data-count="3"]:has(.photo-portrait) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3) var(--space-2);
+  }
+
+  .gallery[data-count="3"]:has(.photo-portrait) figcaption {
+    hyphens: manual;
+  }
+}
+
+@media print {
+  figure.photo-cutout img {
+    background: none;
+    box-shadow: none;
+  }
+}

@@ -1,0 +1,206 @@
+/* Product cards (:::: flours): a grid of compact cards, each a
+   packshot on a paper plate beside a name, a badge for the flours that suit a
+   beginner, the facts as chips and the notes as lines; and the filter above
+   the grid. Markup: scripts/lib/blocks/flour.mjs and flours.mjs. */
+.cards-wrap {
+  max-width: var(--wide);
+  margin-block: var(--space-5);
+}
+
+/* the cards take the whole width of the text area (see 20-layout.css) */
+@media screen and (width >= 1200px) {
+  .cards-wrap {
+    max-width: none;
+  }
+}
+
+/* the filter: buttons for scripts only (cards.js shows the group) */
+.cards-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-block-end: var(--space-4);
+}
+
+.cards-status {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--step--1);
+}
+
+/* one column of wide cards, two only from the width at which a card keeps
+   about 18 rem of text beside its plate (chips side by side, titles in two
+   lines at most) */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 28rem), 1fr));
+  gap: var(--space-3);
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  --plate-w: 6rem;
+  --card-gap: var(--space-4);
+  display: grid;
+  grid-template-columns: var(--plate-w) minmax(0, 1fr);
+  gap: var(--card-gap);
+  align-items: start;
+  margin: 0;
+  padding: var(--card-gap);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+/* a flour for beginners: the green edge of a tip, so that the eye finds them
+   among twenty */
+.card[data-level="beginner"] {
+  border-color: color-mix(in srgb, var(--tip-edge) 55%, var(--line));
+  box-shadow: inset 0.25rem 0 0 var(--tip-edge);
+}
+
+[dir="rtl"] .card[data-level="beginner"] {
+  box-shadow: inset -0.25rem 0 0 var(--tip-edge);
+}
+
+/* the plate: transparent packshots on warm paper, never a white block; the
+   plate keeps its colour in forced colours, or a dark pack would sit on black */
+.card-img {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  width: var(--plate-w);
+  aspect-ratio: 4 / 5;
+  background: var(--plate);
+  border: 1px solid var(--plate-line);
+  border-radius: var(--radius-s);
+}
+
+.card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+}
+
+@media (forced-colors: active) {
+  .card-img {
+    forced-color-adjust: none;
+  }
+}
+
+.card-body {
+  min-width: 0;
+}
+
+.card-title {
+  margin: 0 0 var(--space-2);
+  font: 700 var(--step-1) / 1.2 var(--font-head);
+  hyphens: manual;
+  text-wrap: balance;
+}
+
+.card-badge {
+  margin: 0 0 var(--space-2);
+}
+
+.card-badge .badge {
+  font-size: var(--step--1);
+  padding-inline: var(--space-2) var(--space-3);
+}
+
+/* the bullets of a card: facts (the first short ones with a number) are chips
+   on one wrapping row, the rest are notes, one to a line */
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--step--1);
+  line-height: 1.45;
+}
+
+.card-list > li {
+  position: relative;
+  flex: 1 0 100%;
+  margin: 0;
+  padding-inline-start: 0.95rem;
+}
+
+.card-list > li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.6em;
+  inset-inline-start: 0.15rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.card-list > .card-fact {
+  flex: 0 1 auto;
+  padding: 0.0625rem var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  font-weight: 600;
+  hyphens: manual;
+}
+
+.card-list > .card-fact::before {
+  content: none;
+}
+
+.card-fact + li:not(.card-fact) {
+  margin-block-start: var(--space-1);
+}
+
+/* smaller plates inside an answer (the dusting flours) and on the narrowest
+   phones, where a plate of 6 rem would leave the text 9 rem */
+.faq-body .cards-wrap {
+  margin-block: var(--space-3);
+}
+
+.faq-body .card {
+  --plate-w: 4.5rem;
+  --card-gap: var(--space-3);
+}
+
+/* a phone: the answer's padding, the card's and a plate would leave a name
+   about 100 px */
+@media (width <= 25rem) {
+  .faq-body .card {
+    --plate-w: 3.5rem;
+    --card-gap: var(--space-2);
+  }
+}
+
+@media (width <= 23.75rem) {
+  .card {
+    --plate-w: 4.5rem;
+    --card-gap: var(--space-3);
+  }
+}
+
+/* a name with nothing below it sits in the middle of its plate */
+.card:not(:has(.card-list)) {
+  align-items: center;
+}
+
+.card:not(:has(.card-list)) .card-title {
+  margin-block-end: 0;
+}
+
+@media print {
+  .cards-filter {
+    display: none;
+  }
+}

@@ -1,0 +1,113 @@
+/* The pages that are not the guide: the language chooser at /
+   and the 404 page. A mark, a heading and large links, centred on the screen. */
+body.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100dvh;
+  background:
+    radial-gradient(
+      48rem 22rem at 50% -6rem,
+      color-mix(in srgb, var(--accent) 13%, transparent),
+      transparent
+    ),
+    var(--paper);
+}
+
+.root-main {
+  width: min(100% - 2 * var(--gutter), 30rem);
+  margin-inline: auto;
+  padding-block: var(--space-7);
+  text-align: center;
+}
+
+.root-mark {
+  width: 6rem;
+  height: 6rem;
+  margin: 0 auto var(--space-5);
+  border-radius: 50%;
+  box-shadow: var(--shadow-2);
+}
+
+.root-main h1 {
+  font-size: var(--step-4);
+}
+
+.root-main .root-code {
+  color: var(--accent);
+  font-size: var(--step-5);
+  line-height: 1;
+}
+
+.root-lead {
+  max-width: 26rem;
+  margin: var(--space-3) auto 0;
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  text-wrap: balance;
+}
+
+.root-langs {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: start;
+}
+
+.root-langs a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 4rem;
+  padding: var(--space-3) var(--space-5);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-1);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-2),
+    border-color var(--dur-2);
+}
+
+.root-langs a:active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+@media (hover: hover) {
+  .root-langs a:hover {
+    color: var(--ink);
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+}
+
+.root-lang-text {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.root-lang-name {
+  font: 700 var(--step-1) / 1.2 var(--font-head);
+}
+
+.root-lang-detail {
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.root-langs .icon {
+  color: var(--accent);
+}
+
+.root-langs a[dir="rtl"] .icon {
+  transform: scaleX(-1);
+}

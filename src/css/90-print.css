@@ -1,0 +1,180 @@
+/* Print: white paper, black ink, every FAQ answer, nothing that
+   only works on a screen. Other files may add their own @media print rules
+   to their files. */
+@page {
+  size: A4;
+  margin: 16mm 15mm 18mm;
+}
+
+@media print {
+  :root,
+  :root[data-theme] {
+    color-scheme: light;
+    --paper: #fff;
+    --surface: #fff;
+    --img-filter: none;
+  }
+
+  body {
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  .skip,
+  .site-header,
+  .toc,
+  .faq-tools,
+  .hanchor,
+  .site-footer a[href="#top"],
+  main button,
+  #pc-search,
+  #pc-backdrop,
+  #pc-top,
+  #pc-progress,
+  #pc-theme,
+  #pc-chapter,
+  #pc-hero picture,
+  #pc-hero img,
+  #pc-hero .btn,
+  dialog {
+    display: none !important;
+  }
+
+  .layout {
+    display: block;
+    padding-inline: 0;
+  }
+
+  main {
+    padding: 0;
+  }
+
+  main
+    :where(
+      p,
+      ul,
+      ol,
+      blockquote,
+      h2,
+      h3,
+      h4,
+      hr,
+      .callout,
+      .faq,
+      figure.photo
+    ) {
+    max-width: none;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  main h1 {
+    font-size: 24pt;
+  }
+
+  main h2 {
+    margin-block-start: 1.6em;
+    font-size: 16pt;
+  }
+
+  main h3 {
+    margin-block-start: 1.3em;
+    font-size: 13pt;
+  }
+
+  main h4 {
+    font-size: 11.5pt;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .faq > summary {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  .callout,
+  figure,
+  .card,
+  .table-wrap tr {
+    break-inside: avoid;
+  }
+
+  /* a paragraph that introduces a table or a list stays with its first row or
+     item (not with a figure: one that does not fit would pull a single last
+     line of the paragraph after it) */
+  p:has(+ :is(.table-wrap, ul, ol)) {
+    break-after: avoid;
+  }
+
+  /* a grid of cards leaves a gap at the foot of every page (a row waits for
+     its tallest card): two columns fill the page */
+  .cards {
+    display: block;
+    columns: 2;
+    column-gap: 4mm;
+  }
+
+  .card {
+    margin-block-end: 3mm;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* every answer open, whether the script ran or not */
+  details::details-content {
+    content-visibility: visible;
+  }
+
+  .faq,
+  .faq[open] {
+    break-inside: auto;
+    border-color: #999;
+  }
+
+  .faq > summary::after {
+    display: none;
+  }
+
+  figure.photo img {
+    width: auto;
+    max-width: 100%;
+    max-height: 9cm;
+    box-shadow: none;
+  }
+
+  .gallery figure.photo img {
+    max-height: 6cm;
+    object-fit: contain;
+  }
+
+  .callout {
+    background: none;
+    border: 1px solid #888;
+    border-inline-start: 4px solid #444;
+  }
+
+  .callout > .icon,
+  .callout-title {
+    color: #000;
+    background: none;
+  }
+
+  .table-wrap {
+    overflow: visible;
+    background: none;
+  }
+
+  .site-footer {
+    border-block-start-color: #999;
+    color: #333;
+  }
+}

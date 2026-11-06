@@ -1,0 +1,231 @@
+/* The top of the page: the hero (a photograph, the title, a lead
+   and two buttons; markup in scripts/lib/html/hero.mjs) and the quick start
+   (#quick-start, the chapter every beginner needs: its schedule is a timeline). */
+/* the band is as wide as the page (the page puts it at the top of <main>),
+   tinted so that it reads as a cover; its content lines up with the header.
+   A phone gets the photograph edge to edge with the text below it; from 960 px
+   the text and the photograph stand side by side. The widths are in
+   scripts/lib/html/hero.mjs too (which photograph a screen gets). */
+.hero {
+  --hero-bg: color-mix(in srgb, var(--surface-2) 60%, var(--paper));
+  background: var(--hero-bg);
+  border-block-end: 1px solid var(--line);
+}
+
+.hero-inner {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: 0 var(--gutter) var(--space-6);
+}
+
+/* edge to edge: the negative margin takes back the padding of .hero-inner.
+   A cream placeholder keeps the photograph from arriving out of white; every
+   part of the picture has its size, so that nothing moves. */
+.hero-media {
+  display: block;
+  margin-inline: calc(-1 * var(--gutter));
+}
+
+.hero-media img {
+  width: 100%;
+  height: auto;
+  background: var(--surface-2);
+  filter: var(--img-filter);
+}
+
+.hero-text {
+  padding-block-start: var(--space-5);
+}
+
+.hero h1 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--step-5);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+
+.hero-lead {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--step-1);
+  line-height: 1.55;
+  hyphens: manual;
+}
+
+/* two buttons: one under the other on a phone (each as wide as the column),
+   side by side from the width where both fit */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block-start: var(--space-5);
+}
+
+.hero-actions .btn {
+  flex: 1 1 14rem;
+  min-height: 3rem;
+  padding-inline: var(--space-5);
+  font-size: var(--step-0);
+}
+
+@media (width > 640px) {
+  .hero-actions .btn {
+    flex: 0 0 auto;
+  }
+}
+
+@media (width >= 960px) {
+  .hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: "text media";
+    gap: var(--space-7);
+    align-items: center;
+    padding-block: var(--space-7);
+  }
+
+  .hero-media {
+    grid-area: media;
+    margin-inline: 0;
+  }
+
+  .hero-media img {
+    border-radius: var(--radius-l);
+    box-shadow:
+      0 0 0 1px var(--ring),
+      var(--shadow-3);
+  }
+
+  .hero-text {
+    grid-area: text;
+    padding: 0;
+  }
+}
+
+@media print {
+  .hero {
+    background: none;
+    border: 0;
+  }
+
+  .hero-inner {
+    padding-block-end: var(--space-4);
+  }
+
+  .hero-actions {
+    display: none;
+  }
+}
+
+/* the quick start: a heavier rule, in the colour of the brand, above its
+   heading */
+#quick-start {
+  border-block-start: 3px solid var(--accent);
+}
+
+/* a table of two columns (when, and what to do) is a timeline: a rail with a
+   dot for each step, the time on its own and the text beside it (below it on
+   a phone); the last step, the baking, has a filled dot. Both cells have the
+   line height of the body, so that the dot is level with the first line. */
+.table-wrap:not(:has(th:nth-child(3))) {
+  --dot: 0.875rem;
+  --tl-lh: calc(var(--step-0) * var(--leading));
+  --dot-y: calc((var(--tl-lh) - var(--dot)) / 2);
+  overflow: visible;
+  background: none;
+  border: 0;
+  border-radius: 0;
+
+  table,
+  tbody {
+    display: block;
+  }
+
+  thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  tr {
+    --dot-x: 0.5rem;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    margin: 0;
+    padding: 0 0 var(--space-5);
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  /* the rail between this dot and the next */
+  tr::before {
+    content: "";
+    position: absolute;
+    inset-block: calc(var(--dot-y) + var(--dot)) calc(-1 * var(--dot-y));
+    inset-inline-start: calc(var(--dot-x) - 1px);
+    border-inline-start: 2px solid var(--line-strong);
+  }
+
+  tr::after {
+    content: "";
+    position: absolute;
+    inset-block-start: var(--dot-y);
+    inset-inline-start: calc(var(--dot-x) - var(--dot) / 2);
+    width: var(--dot);
+    height: var(--dot);
+    background: var(--paper);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+  }
+
+  tr:last-child {
+    padding-block-end: 0;
+  }
+
+  tr:last-child::before {
+    content: none;
+  }
+
+  tr:last-child::after {
+    background: var(--accent);
+  }
+
+  td {
+    grid-column: 2;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: var(--step-0);
+    line-height: var(--tl-lh);
+  }
+
+  td:first-child {
+    color: var(--ink);
+    font-family: var(--font-head);
+    font-size: var(--step-1);
+    font-weight: 700;
+    font-variant-numeric: lining-nums;
+  }
+}
+
+@media (width >= 35rem) {
+  .table-wrap:not(:has(th:nth-child(3))) tr {
+    --dot-x: 9.25rem;
+    grid-template-columns: 8rem 2.5rem minmax(0, 1fr);
+  }
+
+  .table-wrap:not(:has(th:nth-child(3))) td:first-child {
+    grid-column: 1;
+    text-align: end;
+  }
+
+  .table-wrap:not(:has(th:nth-child(3))) td:last-child {
+    grid-column: 3;
+  }
+}

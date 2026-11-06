@@ -1,0 +1,391 @@
+/* The chrome of every guide page: the sticky header (contents
+   button, brand, the search slot, theme button, language picker) and the
+   footer. The header is --header-h tall, border included, and never wraps.
+   Controls are 44px boxes in px, so a larger text size does not grow them;
+   the breakpoints that hide a name or a label are in em, so that they move
+   out with the text size (the one in px, 800, is where the sidebar takes over
+   from the contents button). */
+.site-header {
+  --hit: 44px;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-header);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
+  border-block-end: 1px solid var(--line);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .site-header {
+    background: var(--paper);
+  }
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: calc(var(--header-h) - 1px);
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* the brand: the mark always, the name from 35em except where the contents
+   button shows its label (the name stays for screen readers) */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: var(--hit);
+  min-height: var(--hit);
+  padding-inline: 4px;
+  color: var(--ink);
+  font: 700 var(--step-0) / 1 var(--font-head);
+  text-decoration: none;
+}
+
+@media (width >= 800px) {
+  .brand {
+    font-size: var(--step-1);
+  }
+}
+
+@media (hover: hover) {
+  .brand:hover {
+    color: var(--accent);
+  }
+}
+
+.brand-mark {
+  flex: none;
+  width: 32px;
+  max-width: none;
+  height: 32px;
+}
+
+.brand-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (width < 35em), (width >= 43.75em) and (width < 800px) {
+  .brand-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    clip-path: inset(50%);
+  }
+}
+
+.menu-btn,
+.theme-btn,
+.brand,
+.lang {
+  flex: none;
+}
+
+/* a text size of 200 % or more (a phone is then 15em wide or less): the pill is the code
+   alone, the brand mark goes (the name is out of sight there already) */
+@media (width <= 15em) {
+  .brand {
+    display: none;
+  }
+
+  .lang > summary {
+    gap: 4px;
+    padding-inline: 8px;
+  }
+
+  .lang-chevron,
+  .lang > summary > .icon:first-child {
+    display: none;
+  }
+}
+
+.header-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  margin-inline-start: auto;
+}
+
+/* quiet round buttons: the contents button (below 800px, with JavaScript) and
+   the theme button (with JavaScript) */
+.menu-btn,
+.theme-btn {
+  width: var(--hit);
+  min-height: var(--hit);
+  padding: 0;
+  font-size: 17px;
+}
+
+.menu-btn {
+  display: none;
+  margin-inline-start: -8px;
+}
+
+.theme-btn {
+  display: none;
+}
+
+.js .theme-btn {
+  display: inline-flex;
+}
+
+@media (width < 800px) {
+  .js .menu-btn {
+    display: inline-flex;
+  }
+}
+
+@media (hover: hover) {
+  .site-header .btn-quiet:hover {
+    --btn-line: transparent;
+  }
+}
+
+.menu-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (width >= 43.75em) {
+  .menu-btn {
+    width: auto;
+    padding-inline: var(--space-3) var(--space-4);
+    font-size: var(--step--1);
+  }
+
+  .menu-label {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+  }
+}
+
+/* the theme button shows the icon of the mode the page is in; the label of
+   that mode is its name (the markup holds all three, html[data-theme] picks) */
+.theme-btn :is(.theme-auto, .theme-light, .theme-dark) {
+  display: none;
+}
+
+:root:not([data-theme]) .theme-btn .theme-auto,
+:root[data-theme="light"] .theme-btn .theme-light,
+:root[data-theme="dark"] .theme-btn .theme-dark {
+  display: revert;
+}
+
+/* the language picker: a pill that opens a list of languages by their own names */
+.lang {
+  position: relative;
+}
+
+.lang > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--hit);
+  padding-inline: 12px;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font: 600 var(--step--1) / 1 var(--font-body);
+  list-style: none;
+  user-select: none;
+  transition:
+    background-color var(--dur-2),
+    border-color var(--dur-2);
+}
+
+.lang > summary::-webkit-details-marker {
+  display: none;
+}
+
+.lang[open] > summary,
+.lang > summary:active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+@media (hover: hover) {
+  .lang > summary:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+}
+
+.lang-chevron {
+  width: 1em;
+  height: 1em;
+  opacity: 0.7;
+  transition: transform var(--dur-2) var(--ease);
+}
+
+.lang[open] .lang-chevron {
+  transform: rotate(180deg);
+}
+
+/* the code below 26.25em, the name from there (both stay for screen readers) */
+.lang-code {
+  letter-spacing: 0.04em;
+}
+
+.lang-name {
+  max-width: 10em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (width < 26.25em) {
+  .lang-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    clip-path: inset(50%);
+  }
+}
+
+@media (width >= 26.25em) {
+  .lang-code {
+    display: none;
+  }
+}
+
+.lang ul {
+  position: absolute;
+  inset-block-start: calc(100% + var(--space-2));
+  inset-inline-end: 0;
+  z-index: var(--z-dropdown);
+  min-width: 11.5rem;
+  margin: 0;
+  padding: var(--space-1);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-3);
+  list-style: none;
+  animation: pc-drop var(--dur-2) var(--ease);
+}
+
+@keyframes pc-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+}
+
+.lang li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--hit);
+  padding-inline: var(--space-3);
+  color: var(--ink);
+  border-radius: var(--radius-s);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.lang li a:active {
+  background: var(--accent-soft);
+}
+
+@media (hover: hover) {
+  .lang li a:hover {
+    color: var(--ink);
+    background: var(--accent-soft);
+  }
+}
+
+.lang li a[aria-current] {
+  font-weight: 700;
+}
+
+.lang li a .icon {
+  color: var(--accent);
+}
+
+/* the footer: the credit and the way back up, under a hairline as wide as the page */
+.site-footer {
+  width: auto;
+  margin-inline: 0;
+  padding: 0 var(--gutter) var(--space-8);
+  border: 0;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
+  max-width: calc(var(--page-max) - 2 * var(--gutter));
+  margin-inline: auto;
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: var(--step--1);
+}
+
+.footer-mark {
+  flex: none;
+  width: 40px;
+  max-width: none;
+  height: 40px;
+}
+
+.site-footer .footer-credit {
+  flex: 1 1 16rem;
+  max-width: 46rem;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.footer-top {
+  flex: none;
+  margin-inline-start: auto;
+}
+
+/* the languages, a row of plain links under the credit */
+.footer-langs {
+  flex: 1 1 100%;
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--line);
+}
+
+.footer-langs ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-langs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--hit);
+  color: var(--ink-2);
+}
+
+.footer-langs a[aria-current] {
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .footer-langs a:hover {
+    color: var(--accent);
+  }
+}

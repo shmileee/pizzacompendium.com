@@ -1,0 +1,502 @@
+/* The reading experience: headings, text, lists, steps, tables,
+   figures, callouts, notes. Text blocks keep the reading measure; tables,
+   galleries and cards may use the wider column (see 20-layout.css). */
+main {
+  counter-reset: chapter;
+  min-width: 0;
+}
+
+/* the skip link lands here (tabindex="-1"): a place, not a control */
+main:focus {
+  outline: none;
+}
+
+main
+  :where(p, ul, ol, blockquote, h2, h3, h4, hr, .callout, .faq, figure.photo) {
+  max-width: var(--measure);
+}
+
+/* headings: the h2 of a chapter carries its number */
+main h1 {
+  margin-block-end: var(--space-4);
+  font-size: var(--step-4);
+}
+
+/* the intro is the first paragraph, after the translation note if there is one */
+main h1 + p:not(.translation-note),
+main h1 + .translation-note + p {
+  font-size: var(--step-1);
+  line-height: 1.55;
+}
+
+main h2 {
+  counter-increment: chapter;
+  margin: var(--space-8) 0 var(--space-4);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--line-strong);
+  font-size: var(--step-3);
+}
+
+main h2::before {
+  content: counter(chapter, decimal-leading-zero);
+  display: block;
+  margin-block-end: var(--space-2);
+  color: var(--accent);
+  font: 700 var(--step--1) / 1 var(--font-body);
+  letter-spacing: 0.14em;
+}
+
+main h3 {
+  margin: var(--space-7) 0 var(--space-3);
+  font-size: var(--step-2);
+}
+
+main h4 {
+  margin: var(--space-6) 0 var(--space-2);
+  font-size: var(--step-1);
+}
+
+main :is(h2, h3, h4) + :is(h3, h4) {
+  margin-block-start: var(--space-5);
+}
+
+/* the permalink: a real link, named by its heading (aria-labelledby), shown
+   on hover and on focus; padding gives it a 24 px target and the negative
+   margins keep the glyph and the line length where they were */
+.hanchor {
+  margin-inline: -0.45em -0.8em;
+  padding: 0.7em 0.8em;
+  color: var(--ink-3);
+  font: 400 0.6em var(--font-body);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--dur-2);
+}
+
+:is(h2, h3, h4):hover .hanchor,
+.hanchor:focus-visible {
+  opacity: 1;
+}
+
+/* no hover on a touchscreen: always there (a graphical object, held to the 3:1
+   of --ink-3) */
+@media (hover: none) {
+  .hanchor {
+    opacity: 1;
+  }
+}
+
+/* running text: on a phone (about 40 characters a line) long words may be
+   hyphenated, but not often (the no-break space makes "w zwykłym" one word of
+   9 characters, so the limit counts those too); from the width of the reading
+   column a ragged line needs no help. The -webkit- lines say the same to
+   Safari, which has no hyphenate-limit-chars (not tested here). */
+main p,
+main li,
+main dd,
+main figcaption {
+  hyphens: auto;
+  hyphenate-limit-chars: 11 4 4;
+  -webkit-hyphenate-limit-before: 4;
+  -webkit-hyphenate-limit-after: 4;
+  -webkit-hyphenate-limit-lines: 2;
+  text-wrap: pretty;
+}
+
+@media (width >= 40rem) {
+  main p,
+  main li,
+  main dd,
+  main figcaption {
+    hyphens: manual;
+  }
+}
+
+main a,
+main strong,
+main code {
+  hyphens: manual;
+}
+
+main p,
+main ul,
+main ol,
+main blockquote {
+  margin: 0 0 var(--space-4);
+}
+
+main strong {
+  font-weight: 650;
+}
+
+main ul,
+main ol {
+  padding-inline-start: 1.4em;
+}
+
+main li {
+  margin-block: 0.35em;
+}
+
+main li > :is(ul, ol) {
+  margin-block: 0.35em 0.5em;
+}
+
+main ul > li::marker {
+  color: var(--accent);
+}
+
+/* an ordered list is a recipe: numbered steps */
+main ol {
+  padding-inline-start: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+main ol > li {
+  position: relative;
+  min-height: 2.25rem;
+  margin-block: 0 var(--space-3);
+  padding-inline-start: 3rem;
+  counter-increment: step;
+}
+
+main ol > li::before {
+  content: counter(step);
+  position: absolute;
+  inset-block-start: 0.05em;
+  inset-inline-start: 0;
+  display: grid;
+  place-items: center;
+  width: 2.125rem;
+  height: 2.125rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
+  font: 700 var(--step--1) / 1 var(--font-body);
+}
+
+main hr {
+  margin-block: var(--space-7);
+  border: 0;
+  border-block-start: 1px solid var(--line-strong);
+}
+
+main blockquote {
+  padding-inline-start: var(--space-4);
+  border-inline-start: 3px solid var(--accent);
+  color: var(--ink-2);
+  font: 500 var(--step-1) / 1.5 var(--font-head);
+}
+
+main code {
+  padding: 0.1em 0.35em;
+  background: var(--surface-2);
+  border-radius: 0.25em;
+  font:
+    0.9em ui-monospace,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+abbr[title] {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+.translation-note {
+  display: inline-block;
+  margin: 0 0 var(--space-5);
+  padding: var(--space-2) var(--space-3);
+  color: var(--ink-2);
+  background: var(--note-bg);
+  border: 1px solid var(--note-edge);
+  border-radius: var(--radius);
+  font-size: var(--step--1);
+}
+
+/* tables: a scroll container with edge shadows; on phones one card per row,
+   each cell labelled by its column (data-label comes from the build) */
+.table-wrap {
+  max-width: var(--wide);
+  margin-block: var(--space-5);
+  overflow-x: auto;
+  background:
+    linear-gradient(to right, var(--surface) 30%, transparent) left center /
+    2.5rem 100% no-repeat local,
+    linear-gradient(to left, var(--surface) 30%, transparent) right center /
+    2.5rem 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, var(--edge-shadow), transparent)
+    left center / 0.875rem 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, var(--edge-shadow), transparent)
+    right center / 0.875rem 100% no-repeat scroll,
+    var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  padding: var(--space-3) var(--space-4);
+  border-block-end: 1px solid var(--line);
+  text-align: start;
+  text-wrap: pretty;
+  vertical-align: top;
+}
+
+th[align="right"],
+td[align="right"] {
+  text-align: end;
+}
+
+th[align="center"],
+td[align="center"] {
+  text-align: center;
+}
+
+thead th {
+  color: var(--ink-2);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+tbody tr:last-child > * {
+  border-block-end: 0;
+}
+
+tbody tr:nth-child(even) > td {
+  background: color-mix(in srgb, var(--ink) 2.5%, transparent);
+}
+
+@media (width <= 560px) {
+  .table-wrap {
+    overflow: visible;
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .table-wrap :is(table, tbody, tr, td) {
+    display: block;
+  }
+
+  .table-wrap thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .table-wrap tr {
+    margin-block-end: var(--space-3);
+    padding: var(--space-2) var(--space-4) var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+
+  .table-wrap td {
+    padding: var(--space-1) 0;
+    border: 0;
+  }
+
+  .table-wrap tbody tr:nth-child(even) > td {
+    background: none;
+  }
+
+  .table-wrap td:first-child {
+    margin-block-end: var(--space-1);
+    padding-block: var(--space-2);
+    border-block-end: 1px solid var(--line);
+    font-size: var(--step-0);
+    font-weight: 700;
+  }
+
+  /* three columns or more: the column name beside each value, in a column of
+     its own (the cell is a grid of the label and its .cell, so a label of two
+     lines does not make the first line of the value taller) */
+  .table-wrap:has(th:nth-child(3)) td:not(:first-child) {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    column-gap: var(--space-2);
+  }
+
+  .table-wrap:has(th:nth-child(3)) td:not(:first-child)::before {
+    content: attr(data-label);
+    color: var(--ink-2);
+    font-size: var(--step--2);
+    font-weight: 600;
+    hyphens: auto;
+    line-height: 1.6;
+  }
+}
+
+/* two columns (a key and what it says, such as the schedule): the key does
+   not wrap, whatever the auto layout would give it */
+@media (width > 560px) {
+  .table-wrap:not(:has(th:nth-child(3))) td:first-child {
+    white-space: nowrap;
+  }
+}
+
+/* three columns or more, on a wide screen: the name in the first column gets
+   room before the auto layout hands it to the longest last cell */
+@media (width >= 1024px) {
+  .table-wrap:has(th:nth-child(3)) :is(th, td):first-child {
+    min-width: 9rem;
+  }
+}
+
+/* figures: one picture, centred in the text column, a hairline ring. The
+   build adds photo-portrait, -square, -landscape or -wide; the vh term keeps
+   a picture within 70% of the screen height at its own aspect ratio. */
+figure {
+  margin: 0;
+}
+
+figure.photo {
+  margin-block: var(--space-5);
+}
+
+figure.photo img {
+  max-width: min(100%, 35rem, 105vh);
+  margin-inline: auto;
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 1px var(--ring);
+  filter: var(--img-filter);
+}
+
+figure.photo-portrait img {
+  max-width: min(100%, 22rem, 56vh);
+}
+
+figure.photo-square img {
+  max-width: min(100%, 28rem, 70vh);
+}
+
+figure.photo-wide img {
+  max-width: min(100%, 35rem);
+}
+
+figcaption {
+  margin-block-start: var(--space-2);
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  line-height: 1.45;
+  text-align: center;
+}
+
+/* callouts: div.callout.callout-<tip|warning|note|local>[role=note] holding
+   an icon and .callout-main (.callout-title, .callout-body) */
+.callout {
+  --c-bg: var(--note-bg);
+  --c-edge: var(--note-edge);
+  --c-ink: var(--note-ink);
+  --bar: 0.3125rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0 var(--space-3);
+  margin-block: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  background: var(--c-bg);
+  border: 1px solid color-mix(in srgb, var(--c-edge) 40%, transparent);
+  border-radius: var(--radius);
+  box-shadow: inset var(--bar) 0 0 var(--c-edge);
+}
+
+[dir="rtl"] .callout {
+  box-shadow: inset calc(-1 * var(--bar)) 0 0 var(--c-edge);
+}
+
+.callout-tip {
+  --c-bg: var(--tip-bg);
+  --c-edge: var(--tip-edge);
+  --c-ink: var(--tip-ink);
+}
+
+.callout-warning {
+  --c-bg: var(--warn-bg);
+  --c-edge: var(--warn-edge);
+  --c-ink: var(--warn-ink);
+}
+
+.callout-local {
+  --c-bg: var(--local-bg);
+  --c-edge: var(--local-edge);
+  --c-ink: var(--local-ink);
+}
+
+.callout > .icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-block-start: 0.125rem;
+  color: var(--c-ink);
+}
+
+.callout-main {
+  min-width: 0;
+}
+
+.callout-title {
+  margin: 0 0 var(--space-1);
+  color: var(--c-ink);
+  font: 700 var(--step-0) / 1.35 var(--font-body);
+}
+
+.callout-body > :first-child {
+  margin-block-start: 0;
+}
+
+.callout-body > :last-child,
+.callout-main > :last-child {
+  margin-block-end: 0;
+}
+
+@media (width <= 520px) {
+  .callout {
+    gap: 0 var(--space-2);
+    padding: var(--space-4);
+    padding-inline-start: var(--space-5);
+  }
+
+  .callout > .icon {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  /* with a title: the icon shares the title row and the text gets the whole
+     width (beside the icon it would be a quarter narrower than a paragraph) */
+  .callout:has(.callout-title) .callout-main {
+    display: contents;
+  }
+
+  .callout-title {
+    align-self: center;
+  }
+
+  .callout:has(.callout-title) .callout-body {
+    grid-column: 1 / -1;
+    margin-block-start: var(--space-2);
+  }
+}
+
+@media (forced-colors: active) {
+  .callout {
+    border-inline-start-width: 0.3125rem;
+  }
+}

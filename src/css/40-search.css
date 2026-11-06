@@ -1,0 +1,308 @@
+/* The search button of the header and the search dialog (a
+   modal <dialog id="pc-search">; the markup is scripts/lib/html/search.mjs,
+   the list is filled by src/js/search.js). */
+
+/* The button: JavaScript only. A phone shows the icon, 600px and more the
+   name as well, a desktop with a keyboard a field-like button with the
+   shortcut. */
+.search-btn {
+  display: none;
+  inline-size: 2.75rem;
+  padding: 0;
+}
+
+.js .search-btn {
+  display: inline-flex;
+}
+
+.search-btn-label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.search-kbd {
+  display: none;
+}
+
+@media (width >= 37.5em) {
+  .search-btn {
+    inline-size: auto;
+    padding-inline: var(--space-4);
+  }
+
+  .search-btn-label {
+    position: static;
+    inline-size: auto;
+    block-size: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+}
+
+@media (width >= 50em) and (hover: hover) and (pointer: fine) {
+  .search-btn {
+    --btn-ink: var(--ink-2);
+    --btn-bg: var(--surface);
+    --btn-line: var(--line-strong);
+    justify-content: flex-start;
+    min-inline-size: 12rem;
+  }
+
+  .search-kbd {
+    display: inline-block;
+    min-inline-size: 3.25rem;
+    margin-inline-start: auto;
+    text-align: center;
+  }
+
+  .search-kbd:empty {
+    visibility: hidden;
+  }
+}
+
+/* The page behind a modal dialog does not scroll. */
+html.search-open {
+  overflow: hidden;
+}
+
+/* A choice that lands in an answer opens it at once: the page is scrolled to
+   the place in the same moment, and an answer that is still growing would
+   carry the page along (scroll anchoring) and leave the place above the top. */
+html.search-jump .faq::details-content {
+  transition: none;
+}
+
+/* The dialog: a panel under the top edge, the list scrolls inside it. */
+.search {
+  inline-size: 40rem;
+  max-inline-size: calc(100% - var(--space-4));
+  max-block-size: min(36rem, calc(100dvh - 12vh - var(--space-4)));
+  margin: 12vh auto auto;
+  padding: 0;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-3);
+  overflow: hidden;
+}
+
+.search[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.search::backdrop {
+  background: var(--scrim);
+}
+
+@media (width < 600px) {
+  .search {
+    margin-block-start: var(--space-2);
+    max-block-size: calc(100dvh - var(--space-4));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .search[open] {
+    animation: search-in var(--dur-3) var(--ease);
+  }
+
+  .search[open]::backdrop {
+    animation: search-fade var(--dur-3) ease-out;
+  }
+}
+
+@keyframes search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes search-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-block-end: 1px solid var(--line);
+}
+
+.search-field {
+  position: relative;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.search-field > .icon {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--space-3);
+  translate: 0 -50%;
+  color: var(--ink-2);
+  pointer-events: none;
+}
+
+/* 16px: a smaller text makes iOS zoom into the field */
+.search-input {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding-block: 0;
+  padding-inline: 2.5rem var(--space-3);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-pill);
+  font: 400 1rem / 1.4 var(--font-body);
+}
+
+.search-input:focus-visible {
+  background: var(--paper);
+  border-color: transparent;
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+.search-input::placeholder {
+  color: var(--ink-2);
+  opacity: 1;
+}
+
+.search-caption {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-1);
+  color: var(--ink-2);
+  font: 600 var(--step--1) / 1.4 var(--font-body);
+}
+
+.search-caption[data-state="none"] {
+  padding: var(--space-7) var(--space-5);
+  font-weight: 400;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.search-results {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  margin: 0;
+  padding: var(--space-2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+/* one result: the kind as an icon, the hit, and below it where it is */
+.search-result {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.search-result::before {
+  content: "";
+  position: absolute;
+  inset-block: var(--space-2);
+  inset-inline-start: 0;
+  inline-size: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+  opacity: 0;
+}
+
+.search-result[aria-selected="true"] {
+  background: var(--accent-soft);
+}
+
+.search-result[aria-selected="true"]::before {
+  opacity: 1;
+}
+
+.search-result .icon {
+  margin-block-start: 0.2em;
+  color: var(--ink-2);
+}
+
+.search-result[aria-selected="true"] .icon {
+  color: var(--accent);
+}
+
+.search-main {
+  display: grid;
+  gap: 0.125rem;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.search-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.search-result[data-type="text"] .search-title {
+  font-weight: 400;
+}
+
+.search-where {
+  display: block;
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* where a choice lands: marked for a moment (the mark stays still, without
+   motion, for the same time) */
+.search-hit {
+  animation: search-hit 1.8s ease-out;
+  border-radius: var(--radius-s);
+}
+
+@keyframes search-hit {
+  from {
+    background-color: var(--accent-soft);
+    box-shadow: 0 0 0 0.25rem var(--accent-soft);
+  }
+
+  to {
+    background-color: transparent;
+    box-shadow: 0 0 0 0.25rem transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-hit {
+    animation: none;
+    background-color: var(--accent-soft);
+    box-shadow: 0 0 0 0.25rem var(--accent-soft);
+  }
+}
+
+@media (forced-colors: active) {
+  .search-result[aria-selected="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
