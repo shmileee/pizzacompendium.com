@@ -27,7 +27,10 @@ export function createStatic() {
  * @param {{ code?: string }} [options]
  * @returns {{ render: (text: string) => string, reporter: any, toc: any[] }}
  */
-export function createRenderer({ staticDir }, { code = 'pl' } = {}) {
+export function createRenderer(
+  { staticDir },
+  { code = 'pl', textLang = code } = {},
+) {
   const reporter = capture();
   const md = createMarkdown({
     lang: { code },
@@ -39,7 +42,7 @@ export function createRenderer({ staticDir }, { code = 'pl' } = {}) {
   return {
     reporter,
     toc: md.toc,
-    render: (text) => md.render(text, 'case.md'),
+    render: (text) => md.render(text, 'case.md', textLang),
   };
 }
 

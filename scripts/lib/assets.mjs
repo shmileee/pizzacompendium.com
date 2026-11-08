@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import nodeFs from 'node:fs';
 import path from 'node:path';
-import { readDir } from './files.mjs';
+import { readDir, readText } from './files.mjs';
 
 const CSS_PATH = 'assets/style.css';
 const JS_PATH = 'assets/app.js';
@@ -183,24 +183,17 @@ const fingerprintImports = (source, version) =>
 export function buildAssets({ fs = nodeFs, root, fingerprint, reporter }) {
   const files = new Map();
   const sources = walk({ fs, root, rel: 'src', reporter });
-  const read = (file, encoding) => {
-    try {
-      return fs.readFileSync(path.join(root, 'src', file), encoding);
-    } catch (error) {
-      reporter.error('E_READ', `cannot read src/${file}: ${error.code}`, {
-        file: `src/${file}`,
-      });
-      return '';
-    }
-  };
+  // Every source is text (the favicon is SVG), read as every text file is.
+  const read = (file) =>
+    readText({ fs, root, rel: `src/${file}`, reporter }) ?? '';
   const version = (content) => (fingerprint ? sha256(content) : null);
 
   const stylesheets = sources.filter((file) => file.endsWith('.css'));
-  const css = stylesheets.map((file) => read(file, 'utf8')).join('\n');
+  const css = stylesheets.map(read).join('\n');
   files.set(CSS_PATH, css);
 
   const scripts = sources.filter((file) => file.endsWith('.js'));
-  const originals = scripts.map((file) => read(file, 'utf8'));
+  const originals = scripts.map(read);
   const jsVersion = version(originals.join(''));
   scripts.forEach((file, index) => {
     files.set(

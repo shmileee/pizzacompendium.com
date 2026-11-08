@@ -243,15 +243,20 @@ record() { # <ok|FAIL> <title> [detail]
 }
 
 # run <title> <check> [args]: retries the check until it passes or the
-# deadline has passed. Too late to start at all, it fails as "not run".
+# deadline has passed. No attempt starts after last_start, the first one
+# included (it fails as "not run") and no retry either (it fails with what the
+# last attempt said), however short SMOKE_GRACE is next to SMOKE_INTERVAL.
 run() {
-  local title="$1" out
+  local title="$1" out="" tried=""
   shift
-  if [ "$SECONDS" -ge "$last_start" ]; then
-    record FAIL "$title" "not run: the smoke test ran out of time"
-    return 0
-  fi
   while :; do
+    if [ "$SECONDS" -ge "$last_start" ]; then
+      if [ -z "$tried" ]; then
+        out="not run: the smoke test ran out of time"
+      fi
+      break
+    fi
+    tried=yes
     if out="$("$@" 2>&1 < /dev/null)"; then
       record ok "$title"
       return 0

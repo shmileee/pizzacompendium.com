@@ -58,6 +58,8 @@ structure-parity checks, must carry `lang=` equal to its folder (written before
 the title) and a title, and may contain plain paragraphs and lists only (no
 headings, FAQ items, blocks, tables, quotes or ids, wherever Markdown would put
 them: the build checks the rendered structure, the commit hook the plain forms).
+A `lang=` that is not the file's own language is an error in the build as
+well, wherever the note is.
 Country-specific wording anywhere else is a build error, and the same rule runs
 in the `content-lint` commit hook and in CI.
 
@@ -138,10 +140,10 @@ file and line:
 
 A block is closed by a bare `:::` of the same length as its opener; a block
 that is never closed, a stray `:::` and an unknown block name are errors, a
-closing fence of a different length is a warning. Blocks nest. Fenced code
-(```` ``` ````) is code and an HTML comment is a note, whatever they contain: a
-`:::` inside either opens and closes nothing. Leave a blank line before a block
-that follows a list, otherwise Markdown treats it as part of the last item.
+closing fence of a different length is a warning. Blocks nest. An HTML comment
+is a note, whatever it contains: a `:::` inside it opens and closes nothing.
+Leave a blank line before a block that follows a list, otherwise Markdown
+treats it as part of the last item.
 
 Attributes (`#id`, `img=<file>`, `lang=<code>`) come first,
 **before the title**: `::: flour img=caputo.webp Caputo Cuoco`. An attribute
@@ -161,7 +163,8 @@ Rules for the Markdown itself:
 *   **Links** are `[text](#id)` and point at an id on the same page; every other
     target (an address, `mailto:`, `tel:`, `javascript:`, a file) is an error.
     If the id does not exist in that language the link is an error
-    (`E_BROKEN_ANCHOR`).
+    (`E_BROKEN_ANCHOR`). Reference links (`[text][r]` with `[r]: #id`) are not
+    used.
 *   **Images** are `img/<file>`, written exactly as the file is spelled in
     `static/img/` (letters, digits, `-`, `_` and dots only). An image alone in
     its paragraph becomes a figure with its caption; an image inside a sentence
@@ -174,6 +177,17 @@ Rules for the Markdown itself:
     Translator notes can be written as `<!-- … -->` (one comment, nothing else
     on its lines): they are dropped from the page. Task lists (`- [ ]`) are not
     supported and are an error as well.
+*   **One way to write each thing.** The commit hook reads the structure line
+    by line, without a Markdown parser, so the forms it cannot read are errors
+    even where Markdown would accept them: fenced code (`E_CODE_BLOCK`; the
+    guide has none), and, as `E_MARKDOWN_FORM` with the form named, a heading
+    underlined with `===` or `---` (write `## Title {#id}`, and leave a blank
+    line before a `---` rule), `## Title {#id} ##`, quotes (`>`), a heading, a
+    `:::` fence or a table that does not start at the beginning of its line
+    (in a list item, indented), `+` bullets, `1)` numbers, two list markers on
+    one line (`- 1. x`), a rule with spaces (`- - -`), a table row that does
+    not start with `|` (a blank line ends a table), and link definitions
+    (`[r]: #id`).
 *   Files are named `NN-name.md` (two digits, lower-case words joined by `-`),
     in UTF-8, at most 1 MB, and no line is longer than 10,000 characters (the
     longest paragraph of the guide has under a thousand: a longer line is a
@@ -190,8 +204,11 @@ Rules for the Markdown itself:
 The rules that every text must obey are data, not code, so they can be extended
 without touching the generator. `mise run content:lint` (and the `content-lint`
 hook, CI and the build) apply them line by line to every file of every language,
-leaving out fenced code. The rule with `"localExempt": true` is not applied
-inside `::: local` blocks.
+comments included, and a rule with `"acrossLines": true` also to the lines of a
+paragraph joined by spaces, so that a line break inside "where to buy" hides
+nothing (the finding is on the line where the phrase starts). The text is read
+in composed form (NFC), so a decomposed `ń` is still `ń`. A rule with
+`"localExempt": true` is not applied inside `::: local` blocks.
 
 ```json
 {
@@ -222,6 +239,7 @@ inside `::: local` blocks.
 | `view` | optional: the line is cut down first by a named view, for rules that must not see ids, image names or links |
 | `languages` | optional: language codes the rule applies to (default: all) |
 | `localExempt` | optional: skip lines inside `::: local` blocks |
+| `acrossLines` | optional: also match over the lines of a paragraph joined by spaces, for phrases a line break could split |
 | `skip` | optional regular expression: lines that match are left alone |
 | `allow` | optional list of exact matches that are fine (the acronyms the ALL-CAPS rule lets through) |
 
@@ -240,10 +258,14 @@ prices in any currency but US dollars and written the one way (`$250`: the
 symbol first, no space, no `dollars`), mentions of the club (it is credited in
 the footer), social-media or document links, the abbreviations TO and TK
 (Polish), the jargon "hydro", hyphens in numeric ranges (use an en dash), the
-ASCII apostrophe in Ukrainian words, and country-specific remarks in shared
-text. Warnings: American spelling in English, straight double quotes, ALL-CAPS
-words, double spaces and exclamation marks. The rules read the text of the
-sections; the strings of `lang.json` are reviewed by hand.
+ASCII apostrophe in Ukrainian words, country-specific remarks in shared text (in
+any case: "poland" too; the lower-case English words "polish" and "poles" are
+allowed), words that mix Latin and Cyrillic letters (a look-alike letter), and
+"a" before a common word that starts with a vowel sound in English ("an
+ordinary"). Warnings: American spelling in English, straight double quotes,
+ALL-CAPS words (Latin or Cyrillic), double spaces and exclamation marks. The
+rules read the text of the sections; the strings of `lang.json` are reviewed by
+hand.
 
 ## Languages
 
@@ -291,17 +313,20 @@ mise run i18n:sync en                  # every translated file of `en`
 
 which records a hash of the Polish text in `content/en/.sync.json`. From then on
 the build warns (`W_STALE`) when the Polish file changes, until you translate
-and confirm again. Polish `::: local` notes are not part of the hash: they have
-no counterpart in a translation, and neither are spaces at the end of a line or
-blank lines at the end of the file (the commit hook trims those).
-`mise run i18n:status` prints every file of every translation as `ok`, `stale`,
-`untranslated` (identical to the source), `missing` or `extra`. Files that were
-never confirmed are never stale.
+and confirm again. A translated file of a published language that was never
+confirmed is a warning too (`W_UNCONFIRMED`): without a record nothing tells
+whether the Polish text has changed under it. A draft is not warned about.
+Polish `::: local` notes are not part of the hash: they have no counterpart in a
+translation, and neither are spaces at the end of a line or blank lines at the
+end of the file (the commit hook trims those). `mise run i18n:status` prints
+every file of every translation as `ok`, `stale`, `unconfirmed` (translated,
+never confirmed), `untranslated` (identical to the source), `missing` or
+`extra`.
 
 **Strict builds.** `mise run build:strict` makes every warning an error. Run it
-before publishing (and let CI run it): a stale or untranslated file in a
-published language then blocks the release. While you work, `mise run build`
-lets you finish one language at a time.
+before publishing (and let CI run it): a stale, unconfirmed or untranslated file
+in a published language then blocks the release. While you work,
+`mise run build` lets you finish one language at a time.
 
 ## Glossary
 

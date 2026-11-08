@@ -15,7 +15,11 @@ import {
   warningCodes,
 } from './helpers/capture.mjs';
 import { failing } from './helpers/fake-fs.mjs';
-import { hashTree, readTree, withRepo } from './helpers/repo.mjs';
+import { hashTree, introText, readTree, withRepo } from './helpers/repo.mjs';
+
+/** The working folders of builds left beside `dist/` (none, normally). */
+const leftovers = (repo) =>
+  nodeFs.readdirSync(repo.root).filter((name) => name.startsWith('.dist.'));
 
 const pageOf = (repo, rel) => repo.read(`dist/${rel}`);
 const inlineScripts = (html) =>
@@ -661,6 +665,33 @@ describe('build: what breaks it, and that nothing is half done', () => {
     );
   });
 
+  it('reports a link that points at nothing once, however it is written', async () => {
+    const both = (body) => ({
+      'content/pl/01-intro.md': `${introText('pl')}\n${body}\n`,
+      'content/en/01-intro.md': `${introText('en')}\n${body}\n`,
+    });
+    await withRepo(both('See [x](#nowhere).'), (repo) => {
+      const { ok, reporter } = repo.build();
+      assert.equal(ok, false);
+      assert.deepEqual(
+        view(reporter).map(({ code, file, line }) => `${code} ${file}:${line}`),
+        [
+          'E_BROKEN_ANCHOR content/pl/01-intro.md:13',
+          'E_BROKEN_ANCHOR content/en/01-intro.md:13',
+        ],
+      );
+    });
+    await withRepo(both('See [x][r].\n\n[r]: #nowhere'), (repo) => {
+      const { reporter } = repo.build();
+      assert.deepEqual(codes(reporter), [
+        'E_MARKDOWN_FORM',
+        'E_MARKDOWN_FORM',
+        'E_BROKEN_ANCHOR',
+        'E_BROKEN_ANCHOR',
+      ]);
+    });
+  });
+
   it('a failed build leaves the previous output untouched', async () => {
     await withRepo((repo) => {
       assert.equal(repo.build().ok, true);
@@ -674,8 +705,7 @@ describe('build: what breaks it, and that nothing is half done', () => {
       repo.write('static/bad.html', 'x');
       assert.equal(repo.build().ok, false);
       assert.deepEqual(hashTree(repo.dist), before);
-      assert.equal(repo.exists('dist.tmp'), false);
-      assert.equal(repo.exists('dist.old'), false);
+      assert.deepEqual(leftovers(repo), []);
     });
   });
 
@@ -690,7 +720,7 @@ describe('build: what breaks it, and that nothing is half done', () => {
       for (const rule of [
         { op: 'writeFileSync', match: 'sitemap.xml' },
         { op: 'copyFileSync' },
-        { op: 'renameSync', match: (from) => from.endsWith('dist.tmp') },
+        { op: 'renameSync', match: (from) => from.endsWith(`${path.sep}new`) },
       ]) {
         const fs = failing(nodeFs, { ...rule, code: 'ENOSPC' });
         const { ok, files, reporter } = repo.build({ fs });
@@ -698,27 +728,27 @@ describe('build: what breaks it, and that nothing is half done', () => {
         assert.deepEqual(files, []);
         assert.deepEqual(codes(reporter), ['E_WRITE']);
         assert.deepEqual(hashTree(repo.dist), before);
-        assert.equal(repo.exists('dist.tmp'), false);
-        assert.equal(repo.exists('dist.old'), false);
+        assert.deepEqual(leftovers(repo), []);
       }
     });
   });
 
-  it('reports when the previous output cannot be put back, and keeps it in .old', async () => {
+  it('reports when the previous output cannot be put back, and keeps it in the working folder', async () => {
     await withRepo((repo) => {
       repo.build();
       const fs = failing(nodeFs, [
-        { op: 'renameSync', match: (from) => from.endsWith('dist.tmp') },
+        { op: 'renameSync', match: (from) => from.endsWith(`${path.sep}new`) },
         {
           op: 'renameSync',
-          match: (from) => from.endsWith('dist.old'),
+          match: (from) => from.endsWith(`${path.sep}old`),
           code: 'EBUSY',
         },
       ]);
       const { ok, reporter } = repo.build({ fs });
       assert.equal(ok, false);
       assert.deepEqual(codes(reporter), ['E_WRITE', 'E_WRITE']);
-      assert.ok(repo.exists('dist.old/index.html'));
+      const [work] = leftovers(repo);
+      assert.ok(repo.exists(`${work}/old/index.html`));
     });
   });
 });

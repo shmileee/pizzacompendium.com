@@ -3,7 +3,9 @@ import { describe, it } from 'node:test';
 import { runCli } from '../helpers/cli.mjs';
 import { withRepo } from '../helpers/repo.mjs';
 
+/** Two sections, one translated, one a copy; nothing confirmed yet. */
 const FILES = {
+  'content/en/.sync.json': null,
   'content/pl/01-intro.md': '## Wstep {#intro}\n\nTekst.\n',
   'content/pl/02-copy.md': '## Kopia {#copy}\n\nTekst.\n',
   'content/en/01-intro.md': '## Intro {#intro}\n\nText.\n',
@@ -17,8 +19,8 @@ describe('i18n.mjs status', () => {
       const run = i18n(repo, ['status']);
       assert.equal(run.status, 0);
       assert.deepEqual(run.stdout.trim().split('\n'), [
-        'en (published): 1 ok, 1 untranslated',
-        '  01-intro.md  ok',
+        'en (published): 1 unconfirmed, 1 untranslated',
+        '  01-intro.md  unconfirmed',
         '  02-copy.md   untranslated',
       ]);
     }));

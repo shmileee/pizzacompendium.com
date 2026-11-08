@@ -33,10 +33,10 @@ const STORAGE_KEYS = Object.fromEntries(
 );
 
 /**
- * Builds the site into `outDir`. The output is written to `<outDir>.tmp` and
- * moved into place only when the build had no errors, so a failed build
- * leaves the previous output untouched. Everything that goes wrong is a
- * diagnostic on the reporter; nothing is printed here.
+ * Builds the site into `outDir`. The output is written to a working folder
+ * beside it (`writeOutput`) and moved into place only when the build had no
+ * errors, so a failed build leaves the previous output untouched. Everything
+ * that goes wrong is a diagnostic on the reporter; nothing is printed here.
  *
  * @param {object} options
  * @param {string} options.root Repository root.
@@ -108,7 +108,8 @@ export function build({
       { file: 'src/css/32-hero.css' },
     );
 
-  lintContent({ rules, languages, content, reporter });
+  // The renderer checks the links (every one it writes), not the linter.
+  lintContent({ rules, languages, content, reporter, anchors: false });
   warnAboutTranslations({ fs, root, languages, content, reporter });
 
   const history = git

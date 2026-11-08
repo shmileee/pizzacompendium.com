@@ -1,5 +1,6 @@
 import { Marked, Renderer } from 'marked';
 import * as builtinBlocks from '../blocks/index.mjs';
+import { PAGE_IDS } from '../html/ids.mjs';
 import { containerExtension } from './containers.mjs';
 import { figureTag, imageTag } from './images.mjs';
 import { lineInBlock, stampLines } from './lines.mjs';
@@ -26,12 +27,14 @@ const COMMENT = /^<!--(?:(?!-->)[\s\S])*-->\s*$/;
  *   parent   the only block it may sit directly in
  *   render   (c) => html, where `c` has the block's `attrs`, `title`,
  *            `line`, `tokens`, `parent` and `body()` (its rendered content),
+ *            `textLang` (the code of the language the text is written in:
+ *            the page's own, or the source's in a section the page lacks),
  *            and the helpers `lang`, `ui`, `inline(text, line)`,
  *            `image(href, alt, line, kind)`, `figure(token, kind)`,
- *            `registerId(id, line)`, `once(key)`, `error(code, msg, line)`
- *            and `record(entry)`, which keeps what the block knows as data
- *            (a question and its answer, a recipe) for the structured data
- *            of the page
+ *            `registerId(id, line)`, `once(key)`,
+ *            `error(code, msg, line, field?)` and `record(entry)`, which
+ *            keeps what the block knows as data (a question and its answer,
+ *            a recipe) for the structured data of the page
  *   markdown (c) => text, the block in the Markdown copy of the page (see
  *            `markdown/copy.mjs`)
  *
@@ -44,7 +47,8 @@ const COMMENT = /^<!--(?:(?!-->)[\s\S])*-->\s*$/;
  *   page template uses itself? Content may not define it.
  * @param {Record<string, any>} [options.blocks] Defaults to `blocks/`.
  * @returns {{
- *   render: (text: string, file: string) => string,
+ *   render: (text: string, file: string, textLang?: string) => string,
+ *   checkAnchors: () => void,
  *   toc: { level: number, id: string, html: string }[],
  *   records: { type: string }[],
  * }}
@@ -65,6 +69,7 @@ export function createMarkdown({
   );
   const state = {
     file: '',
+    textLang: lang.code,
     toc: [],
     records: [],
     ids: new Map(),
@@ -73,10 +78,12 @@ export function createMarkdown({
     parents: [],
     /** The link definitions (`[r]: #id`) of the text being rendered. */
     links: Object.create(null),
+    /** Every `#id` a link on the page points at, by `file:line:id`. */
+    anchors: new Map(),
   };
   const where = (line) => ({ file: state.file, line });
-  const error = (code, message, line) =>
-    reporter.error(code, message, where(line));
+  const error = (code, message, line, field) =>
+    reporter.error(code, message, { ...where(line), ...(field && { field }) });
   const warn = (code, message, line) =>
     reporter.warn(code, message, where(line));
 
@@ -239,6 +246,7 @@ export function createMarkdown({
       line: token.line,
       tokens: token.tokens,
       parent,
+      textLang: state.textLang,
       body: () => parser.parse(token.tokens),
     });
     state.parents.pop();
@@ -290,8 +298,17 @@ export function createMarkdown({
         return `<p>${this.parser.parseInline(token.tokens)}</p>\n`;
       },
       // Links point at ids on the same page; nothing else is published.
+      // Every one that is written down is checked by `checkAnchors`, however
+      // the Markdown spelled it (inline, by reference, in a title or a cell).
       link({ href, line }) {
-        if (LINK.test(href)) return false;
+        if (LINK.test(href)) {
+          const id = href.slice(1);
+          state.anchors.set(`${state.file}:${line}:${id}`, {
+            id,
+            where: where(line),
+          });
+          return false;
+        }
         error('E_LINK_TARGET', `links must point at #ids, not "${href}"`, line);
         return '';
       },
@@ -367,10 +384,14 @@ export function createMarkdown({
      *
      * @param {string} text Normalised Markdown.
      * @param {string} file Shown in diagnostics.
+     * @param {string} [textLang] The code of the language the text is
+     *   written in, when it is not the page's: a section the language lacks
+     *   shows the source's text.
      * @returns {string} HTML
      */
-    render(text, file) {
+    render(text, file, textLang = lang.code) {
       state.file = file;
+      state.textLang = textLang;
       state.parents.length = 0;
       try {
         const tokens = marked.lexer(text);
@@ -393,6 +414,21 @@ export function createMarkdown({
         error('E_RENDER', `cannot render this text: ${cause.name}`);
         return '';
       }
+    },
+    /**
+     * Reports every link rendered so far that points at an id the page does
+     * not have: no section defined it and the page template has no such
+     * element (`PAGE_IDS`). Call it after the last section of a page, since
+     * a link may point forward.
+     */
+    checkAnchors() {
+      for (const { id, where: at } of state.anchors.values())
+        if (!state.ids.has(id) && !PAGE_IDS.includes(id))
+          reporter.error(
+            'E_BROKEN_ANCHOR',
+            `the link #${id} points at nothing on the page`,
+            at,
+          );
     },
     /** `{ level, id, html }` of every h2 and h3 so far. */
     toc: state.toc,

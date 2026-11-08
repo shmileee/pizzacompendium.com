@@ -24,13 +24,15 @@ export const byName = (a, b) => (a.name > b.name) - (a.name < b.name);
 
 /**
  * Text as the rest of the generator sees it: no byte-order mark (Windows
- * editors add one) and `\n` line endings.
+ * editors add one), `\n` line endings, and composed letters (NFC: `ń` is one
+ * character, never `n` and a combining accent), so that a content rule that
+ * names a word finds it however the editor stored it.
  *
  * @param {string} text
  * @returns {string}
  */
 export const normalise = (text) =>
-  text.replace(/^﻿/, '').replace(/\r\n?/g, '\n');
+  text.replace(/^﻿/, '').replace(/\r\n?/g, '\n').normalize('NFC');
 
 const UTF8 = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true });
 

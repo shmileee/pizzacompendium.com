@@ -226,9 +226,12 @@ describe('blocks', () => {
   it('renders a local block only in its language', () => {
     const text = '::: local lang=pl Uwaga\nTylko u nas.\n:::\n';
     assert.match(run(text, { code: 'pl' }).html, /Tylko u nas\./);
-    const other = run(text, { code: 'en' });
+    const other = run(text, { code: 'en', textLang: 'pl' });
     assert.deepEqual(other.codes, []);
     assert.doesNotMatch(other.html, /Tylko/);
+    const misplaced = run(text, { code: 'en' });
+    assert.deepEqual(misplaced.codes, ['E_BLOCK_ATTR']);
+    assert.doesNotMatch(misplaced.html, /Tylko/);
   });
 
   it('treats an indented fence as text and reports it as a leak', () => {

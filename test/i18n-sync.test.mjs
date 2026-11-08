@@ -19,8 +19,12 @@ import { createRepo, langJson, withRepo } from './helpers/repo.mjs';
 const SRC = '## Wprowadzenie {#intro}\n\nTekst.\n';
 const HASH = /^[0-9a-f]{64}$/;
 
-/** pl with 3 sections; en: 01 translated, 02 a copy, 03 missing, 09 extra. */
+/**
+ * pl with 3 sections; en: 01 translated, 02 a copy, 03 missing, 09 extra, and
+ * nothing confirmed yet (no .sync.json).
+ */
 const files = (over = {}) => ({
+  'content/en/.sync.json': null,
   'content/pl/01-intro.md': SRC,
   'content/pl/02-copy.md': '## Kopia {#copy}\n\nTekst kopii.\n',
   'content/pl/03-gone.md': '## Brak {#gone}\n\nBrak.\n',
@@ -105,7 +109,7 @@ describe('loadSync', () => {
   };
 
   it('is empty when there is no .sync.json', () =>
-    withRepo((repo) => {
+    withRepo({ 'content/en/.sync.json': null }, (repo) => {
       const { map, reporter } = read(repo);
       assert.equal(map.size, 0);
       assert.deepEqual(reporter.entries, []);
@@ -152,7 +156,7 @@ describe('sectionStates', () => {
   it('tells every state, in source order, with the extra files last', () =>
     withRepo(files(), (repo) => {
       assert.deepEqual(stateOf(repo), [
-        { file: '01-intro.md', state: 'ok' },
+        { file: '01-intro.md', state: 'unconfirmed' },
         { file: '02-copy.md', state: 'untranslated' },
         { file: '03-gone.md', state: 'missing' },
         { file: '09-extra.md', state: 'extra' },
@@ -163,6 +167,16 @@ describe('sectionStates', () => {
     withRepo(files(), (repo) => {
       const sync = new Map([['01-intro.md', hashText('old source')]]);
       assert.equal(stateOf(repo, sync)[0].state, 'stale');
+    }));
+
+  it('is unconfirmed when a translated file has no confirmation, in a draft too', () =>
+    withRepo(files(), (repo) => {
+      const sync = new Map([['02-copy.md', hashText('x')]]);
+      assert.equal(stateOf(repo, sync)[0].state, 'unconfirmed');
+      repo.editJson('content/en/lang.json', (l) => {
+        l.status = 'draft';
+      });
+      assert.equal(stateOf(repo)[0].state, 'unconfirmed');
     }));
 
   it('is ok when the confirmation is of the current source', () =>
@@ -242,6 +256,28 @@ describe('warnAboutTranslations', () => {
       ]);
     }));
 
+  it('warns about a translated file that was never confirmed, naming the command', () =>
+    withRepo(files(), (repo) => {
+      const reporter = warn(repo);
+      assert.deepEqual(view(reporter), [
+        {
+          level: 'warning',
+          code: 'W_UNCONFIRMED',
+          file: 'content/en/01-intro.md',
+        },
+        {
+          level: 'warning',
+          code: 'W_UNTRANSLATED_COPY',
+          file: 'content/en/02-copy.md',
+        },
+      ]);
+      assert.ok(
+        reporter.entries[0].message.includes(
+          'mise run i18n:sync en 01-intro.md',
+        ),
+      );
+    }));
+
   it('says in the stale warning which command confirms the file', () =>
     withRepo(files(), (repo) => {
       repo.write('content/en/.sync.json', { '01-intro.md': hashText('x') });
@@ -265,6 +301,11 @@ describe('warnAboutTranslations', () => {
       assert.deepEqual(view(reporter), [
         {
           level: 'error',
+          code: 'W_UNCONFIRMED',
+          file: 'content/en/01-intro.md',
+        },
+        {
+          level: 'error',
           code: 'W_UNTRANSLATED_COPY',
           file: 'content/en/02-copy.md',
         },
@@ -274,7 +315,11 @@ describe('warnAboutTranslations', () => {
   it('reports a broken .sync.json (E_SYNC) and goes on', () =>
     withRepo(files(), (repo) => {
       repo.write('content/en/.sync.json', '[]');
-      assert.deepEqual(codes(warn(repo)), ['E_SYNC', 'W_UNTRANSLATED_COPY']);
+      assert.deepEqual(codes(warn(repo)), [
+        'E_SYNC',
+        'W_UNCONFIRMED',
+        'W_UNTRANSLATED_COPY',
+      ]);
     }));
 });
 
@@ -444,8 +489,9 @@ describe('status', () => {
       const lines = status({ root: repo.root, reporter });
       assert.equal(
         lines[0],
-        'en (published): 1 ok, 1 untranslated, 1 missing, 1 extra',
+        'en (published): 1 unconfirmed, 1 untranslated, 1 missing, 1 extra',
       );
+      assert.ok(lines.includes('  01-intro.md  unconfirmed'));
       assert.ok(lines.includes('  09-extra.md  extra'));
       assert.ok(lines.some((l) => l.startsWith('de (draft): 3 missing')));
       assert.ok(!lines.some((l) => l.startsWith('pl ')));

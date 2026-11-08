@@ -4,6 +4,7 @@ import {
   compareOutlines,
   outline,
   scan,
+  unsupportedForms,
   withoutLocalBlocks,
 } from '../scripts/lib/parity.mjs';
 
@@ -12,10 +13,13 @@ const diff = (a, b) =>
   compareOutlines(outlineOf(a), outlineOf(b)).map((p) => p.rule);
 
 describe('scan', () => {
-  it('blanks fenced code in lines and in structure', () => {
-    const { lines, structure } = scan('a\n```\n::: x\n```\nb');
-    assert.deepEqual(lines, ['a', '', '', '', 'b']);
-    assert.deepEqual(structure, ['a', '', '', '', 'b']);
+  it('blanks fenced code in structure, keeps it in lines and notes where it opens', () => {
+    const { lines, structure, codeStarts } = scan(
+      'a\n```\n::: x\n```\nb\n~~~\nc',
+    );
+    assert.deepEqual(lines, ['a', '```', '::: x', '```', 'b', '~~~', 'c']);
+    assert.deepEqual(structure, ['a', '', '', '', 'b', '', '']);
+    assert.deepEqual(codeStarts, [1, 5]);
   });
 
   it('blanks an HTML comment in structure but keeps it in lines', () => {
@@ -60,6 +64,84 @@ describe('scan', () => {
 
   it('does not see a local marker inside fenced code', () => {
     assert.deepEqual(scan('```\n::: local lang=en T\n:::\n```').locals, []);
+  });
+});
+
+describe('unsupportedForms', () => {
+  const formsOf = (text) =>
+    unsupportedForms(scan(text)).map(({ index, form }) => `${index}:${form}`);
+
+  it('finds nothing in the Markdown the guide is written in', () => {
+    assert.deepEqual(
+      formsOf(
+        [
+          '## Title {#t}',
+          '',
+          'Text with **bold**, [a link](#t) and ![x](img/a.webp).',
+          '',
+          '- one',
+          '  - nested',
+          '* two',
+          '1. three',
+          '   continued',
+          '',
+          '| a | b |',
+          '|---|:-:|',
+          '| 1 | 2 |',
+          '',
+          '---',
+          '',
+          '::: tip Title',
+          'Body.',
+          ':::',
+          '<!--',
+          '> a translator note, not a quote',
+          '-->',
+          'A + B, 5 + 3 and 1) inside a line, a [bracket]: here',
+        ].join('\n'),
+      ),
+      [],
+    );
+  });
+
+  for (const [form, text, index] of [
+    ['setext-heading', 'Title {#t}\n===', 1],
+    ['setext-heading', 'Title {#t}\n---', 1],
+    ['closing-hashes', '## Title {#t} ##', 0],
+    ['blockquote', 'a\n\n> quoted', 2],
+    ['blockquote', 'a\n\n- > quoted in a list', 2],
+    ['nested-structure', 'a\n\n- ## Heading {#h}', 2],
+    ['nested-structure', 'a\n\n- item\n\n    ## Heading {#h}', 4],
+    ['nested-structure', 'a\n\n  ## Indented {#h}', 2],
+    ['nested-structure', 'a\n\n- item\n\n  ::: tip', 4],
+    ['nested-structure', 'a\n\n- | a |\n  |---|', 3],
+    ['plus-bullet', 'a\n\n+ item', 2],
+    ['paren-list', 'a\n\n1) item', 2],
+    ['stacked-list-marker', 'a\n\n- 1. item', 2],
+    ['spaced-rule', 'a\n\n- - -', 2],
+    ['spaced-rule', 'a\n\n* * *', 2],
+    ['table-without-leading-pipe', 'a | b\n|---|---|', 1],
+    ['table-without-leading-pipe', 'a\n\n| a | b |\n---|---', 3],
+    ['table-without-leading-pipe', '| a |\n|---|\n| 1 |\n2 |', 3],
+    ['table-without-leading-pipe', '| a |\n|---|\nnot a row?', 2],
+    ['link-definition', 'a\n\n[r]: #t', 2],
+    ['link-definition', 'a\n\n- [r]: #t', 2],
+  ])
+    it(`finds ${form} in ${JSON.stringify(text)}`, () => {
+      assert.deepEqual(formsOf(text), [`${index}:${form}`]);
+    });
+
+  it('finds code in a list or a quote, and an indented code fence', () => {
+    assert.deepEqual(formsOf('- ```\n  code\n  ```'), ['0:code-block']);
+    assert.deepEqual(formsOf('a\n\n    ```'), ['2:code-block']);
+  });
+
+  it('ends a table at a blank line', () => {
+    assert.deepEqual(formsOf('| a |\n|---|\n| 1 |\n\ntext'), []);
+  });
+
+  it('does not look into comments', () => {
+    assert.deepEqual(formsOf('<!--\n+ x\n[r]: #t\n-->'), []);
   });
 });
 

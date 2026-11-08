@@ -14,10 +14,10 @@
 node_modules/
 e2e/node_modules/
 
-# Build output (dist.tmp/ and dist.old/ only exist while a build is running)
+# Build output (.dist.build-*/ only exists while a build is running, or after
+# a build that was killed half-way)
 dist/
-dist.tmp/
-dist.old/
+.dist.build-*/
 
 # Test output
 /coverage*/

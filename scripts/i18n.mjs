@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Translation bookkeeping:
-//   mise run i18n:status                       what is ok, stale, untranslated, missing, extra
+//   mise run i18n:status                       what is ok, stale, unconfirmed, untranslated, missing, extra
 //   mise run i18n:sync <code> [files...]       record that translated files match the current source
 import { projectRoot } from './lib/cli.mjs';
 import { createReporter, formatText } from './lib/diagnostics.mjs';

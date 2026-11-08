@@ -30,6 +30,7 @@ describe('compileRules', () => {
           view: 'w',
           languages: ['en'],
           localExempt: true,
+          acrossLines: true,
           skip: '^s',
           allow: ['ok'],
         }),
@@ -43,12 +44,14 @@ describe('compileRules', () => {
     assert.equal(one.view, 'w');
     assert.deepEqual([...one.languages], ['en']);
     assert.equal(one.localExempt, true);
+    assert.equal(one.acrossLines, true);
     assert.equal(one.skip.flags, 'i');
     assert.deepEqual([...one.allow], ['ok']);
     assert.equal(two.level, 'warning');
     assert.equal(two.view, null);
     assert.equal(two.languages, null);
     assert.equal(two.localExempt, false);
+    assert.equal(two.acrossLines, false);
     assert.equal(two.skip, null);
     assert.equal(two.regexps[0].flags, 'g');
     assert.equal(two.allow.size, 0);
@@ -123,6 +126,7 @@ describe('compileRules', () => {
     ['languages', [1]],
     ['languages', ['en', 1]],
     ['localExempt', 'yes'],
+    ['acrossLines', 1],
     ['skip', 1],
     ['allow', 'a'],
     ['allow', [1]],

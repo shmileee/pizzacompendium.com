@@ -62,12 +62,17 @@ export function renderLanguagePage({
   const copy = createMarkdownCopy({ lang, ui, url, siteUrl: site.siteUrl });
   const body = content.sections
     .map((section) => {
-      const html = md.render(section.text, section.path);
+      const html = md.render(
+        section.text,
+        section.path,
+        section.fallback ? source.code : lang.code,
+      );
       return section.fallback
         ? `<div lang="${source.htmlLang}">${html}</div>`
         : html;
     })
     .join('\n');
+  md.checkAnchors();
   const markdown =
     lang.status === 'draft'
       ? null

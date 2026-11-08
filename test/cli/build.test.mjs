@@ -60,30 +60,34 @@ describe('scripts/build.mjs', () => {
     });
   });
 
-  it('--out resolves a relative folder against the working directory', async () => {
+  it('--out resolves a relative folder against the repository, wherever it runs from', async () => {
     await withRepo((repo) => {
       repo.write('cwd/.keep', '');
       const result = run(repo, ['--out', 'o', '--quiet'], {
         cwd: repo.path('cwd'),
       });
       assert.equal(result.status, 0);
-      assert.ok(repo.exists('cwd/o/index.html'));
+      assert.ok(repo.exists('o/index.html'));
+      assert.equal(repo.exists('cwd/o'), false);
     });
   });
 
   it('--out equal to the working directory is named "."', async () => {
     await withRepo((repo) => {
       repo.write('site-out/.nojekyll', '');
-      const result = run(repo, ['--out', '.'], { cwd: repo.path('site-out') });
+      const result = run(repo, ['--out', 'site-out'], {
+        cwd: repo.path('site-out'),
+      });
       assert.equal(result.status, 0);
       assert.match(result.stderr, /^Built pl, en → \.\/\n$/);
       assert.ok(repo.exists('site-out/index.html'));
     });
   });
 
-  it('--out "" is the working directory, not the default folder', async () => {
+  it('--out "" is the repository, not the default folder', async () => {
     await withRepo((repo) => {
-      const result = run(repo, ['--out', ''], { cwd: repo.root });
+      repo.write('cwd/.keep', '');
+      const result = run(repo, ['--out', ''], { cwd: repo.path('cwd') });
       assert.equal(result.status, 1);
       assert.match(result.stderr, /\[E_OUT_DIR\]/);
       assert.equal(repo.exists('dist'), false);

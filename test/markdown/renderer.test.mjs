@@ -283,6 +283,48 @@ describe('paragraphs, figures and images', () => {
   });
 });
 
+describe('anchors: every link must hit an id of the page', () => {
+  it('reports, after the last section, a link to an id that nothing defines, however it was written', () => {
+    const r = renderer();
+    r.render(
+      'See [later](#later), [top](#top) and [dead](#nowhere).\n\nAnd [ref][r].\n\n[r]: #gone\n',
+      'one.md',
+    );
+    r.render('## Later {#later}\n\n::: q #faq-a Question\nA.\n:::\n', 'two.md');
+    r.render('Back to [the question](#faq-a).\n', 'three.md');
+    assert.deepEqual(r.reporter.entries, []);
+    r.checkAnchors();
+    assert.deepEqual(view(r.reporter), [
+      { level: 'error', code: 'E_BROKEN_ANCHOR', file: 'one.md', line: 1 },
+      { level: 'error', code: 'E_BROKEN_ANCHOR', file: 'one.md', line: 3 },
+    ]);
+  });
+
+  it('checks a link in a block title, a table and a list as well', () => {
+    const r = renderer();
+    r.render(
+      '::: note [a](#a)\nBody\n:::\n\n| [b](#b) |\n|-|\n| [c](#c) |\n\n- [d](#d)\n',
+    );
+    r.checkAnchors();
+    assert.deepEqual(
+      findAll(r.reporter, 'E_BROKEN_ANCHOR').map((e) => e.line),
+      [1, 5, 7, 9],
+    );
+  });
+
+  it('does not check a link it refused, nor one in a note it does not show', () => {
+    const r = renderer();
+    r.render(
+      '[x](https://example.test)\n\n::: local lang=pl T\n[y](#nowhere)\n:::\n',
+      'case.md',
+      'pl',
+    );
+    r.render('Text.\n');
+    r.checkAnchors();
+    assert.deepEqual(codes(r.reporter), ['E_LINK_TARGET']);
+  });
+});
+
 describe('links', () => {
   it('keeps a link to an id of the page', () => {
     const { html, reporter } = renderOnce(

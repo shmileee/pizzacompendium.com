@@ -15,6 +15,7 @@ const RULE_KEYS = new Set([
   'view',
   'languages',
   'localExempt',
+  'acrossLines',
   'skip',
   'allow',
 ]);
@@ -35,6 +36,7 @@ const isStrings = (value) =>
  * @property {string | null} view
  * @property {Set<string> | null} languages
  * @property {boolean} localExempt
+ * @property {boolean} acrossLines
  * @property {RegExp | null} skip
  * @property {Set<string>} allow
  *
@@ -50,8 +52,10 @@ const isStrings = (value) =>
  *   rules  [{ id, level ("error" | "warning"), message, patterns (regex
  *          sources, any may match), flags ("i", "u", ...), view, languages
  *          (codes the rule applies to), localExempt (not applied inside
- *          `::: local` blocks), skip (regex: lines to leave alone), allow
- *          (matches that are fine) }]
+ *          `::: local` blocks), acrossLines (also matched over the lines of
+ *          a paragraph joined by spaces, for a phrase a line break splits),
+ *          skip (regex: lines to leave alone), allow (matches that are
+ *          fine) }]
  *
  * A typo in this file would silently switch a rule off, so every key,
  * regex and view name is checked.
@@ -173,8 +177,9 @@ function compileRule(raw, index, views, problems) {
     bad('view', `unknown view "${raw.view}"`);
   if (raw.languages !== undefined && !isStrings(raw.languages))
     bad('languages', '"languages" must be a list of codes');
-  if (raw.localExempt !== undefined && typeof raw.localExempt !== 'boolean')
-    bad('localExempt', '"localExempt" must be true or false');
+  for (const key of ['localExempt', 'acrossLines'])
+    if (raw[key] !== undefined && typeof raw[key] !== 'boolean')
+      bad(key, `"${key}" must be true or false`);
   if (raw.skip !== undefined && typeof raw.skip !== 'string')
     bad('skip', '"skip" must be a regex source');
   if (raw.allow !== undefined && !isStrings(raw.allow))
@@ -199,6 +204,7 @@ function compileRule(raw, index, views, problems) {
     view: raw.view ?? null,
     languages: raw.languages ? new Set(raw.languages) : null,
     localExempt: raw.localExempt === true,
+    acrossLines: raw.acrossLines === true,
     skip,
     allow: new Set(raw.allow ?? []),
   };
