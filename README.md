@@ -332,6 +332,6 @@ into one.
 *   **Anywhere else** (Cloudflare Pages, S3 + CDN, nginx, …): run
     `mise run build` and publish `dist/`.
 
-> Never put personal or customer data on a public site. The content is adapted
-> from a Google document by Klub Miłośników Pizzy (credited in the footer); make
-> sure you have the club's permission before publishing.
+> Never put personal or customer data on a public site. The content is partly
+> based on a Google document by Klub Miłośników Pizzy (credited in the
+> footer); make sure you have the club's permission before publishing.

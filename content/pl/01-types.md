@@ -5,7 +5,7 @@
 **Napoletana** – inaczej pizza neapolitańska. Ma wyrośnięte, ale niezbyt wysokie brzegi z charakterystyczną panterką (ciemnymi plamkami) i cienki, naleśnikowy spód.
 
 - [Hydratacja](#terms) ciasta wynosi zwykle 55–60% (część piekarzy sięga 70% i więcej – styl „Canotto”).
-- Wypieka się ją w piecach o temperaturze powyżej 400°C, a wypiek trwa 60–90 sekund.
+- Piecze się ją w piecach rozgrzanych do ponad 400°C, a wypiek trwa 60–90 sekund.
 - [Dojrzewanie i wyrastanie](#rising-vs-maturation) w temperaturze pokojowej trwa zwykle ok. 8–12 h (zależnie od siły mąki), a według aktualnych wytycznych stowarzyszenia AVPN (Associazione Verace Pizza Napoletana) całość ma trwać 12–24 h.
 
 :::: gallery
@@ -33,9 +33,9 @@
 
 - Do tej pizzy nadają się mąki o [sile](#flour-strength) W320 i wyższej.
 - Hydratacja ciasta wynosi 75–80%.
-- Zalecany czas dojrzewania i wyrastania ciasta to 24–48 h z użyciem lodówki.
-- Wypiek jest często dwuetapowy: najpierw podpiekasz sam spód (bazę), a potem całość z pozostałymi składnikami.
-- Temperatura wypieku to ok. 300°C w piecu do pizzy; w zwykłym piekarniku ustaw maksimum (zwykle 250–270°C) i piecz nieco dłużej, ok. 12–15 min.
+- Ciasto potrzebuje 24–48 h na dojrzewanie i wyrastanie, częściowo w lodówce.
+- Wypiek jest często dwuetapowy: najpierw podpiekasz sam spód (bazę), potem dokładasz dodatki i pieczesz całość.
+- W piecu do pizzy piecz ją w ok. 300°C; w zwykłym piekarniku ustaw maksimum (zwykle 250–270°C) i piecz nieco dłużej, ok. 12–15 min.
 
 Najlepiej piec ją w blaszce z niebieskiej stali, która szybko się nagrzewa, dzięki czemu spód ładnie się rumieni i robi się chrupiący; na początek wystarczy też zwykła metalowa blacha bez powłoki nieprzywierającej. Wiele osób uważa, że ta pizza smakuje jeszcze lepiej po ponownym podgrzaniu, bo spód i brzegi stają się bardziej chrupiące. Kawałki możesz odgrzać w zwykłym piekarniku (ok. 200°C, kilka minut) lub na patelni.
 

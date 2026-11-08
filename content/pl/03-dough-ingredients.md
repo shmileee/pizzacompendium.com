@@ -1,6 +1,6 @@
 ## Składniki ciasta {#dough-ingredients}
 
-**Mąka** – najważniejszy składnik ciasta. Do pizzy stosuje się zwykle mąkę typu „00” (najbardziej oczyszczoną z otrębów, często też bardzo drobno zmieloną). Według wytycznych („disciplinare”) stowarzyszenia AVPN (Associazione Verace Pizza Napoletana) do Napoletany dopuszcza się też mąkę typu „0” (nieco mniej oczyszczoną, z odrobiną otrębów) oraz typu „1” (jako domieszkę w zakresie 5–20%). Dla lepszego smaku niektórzy mieszają mąki 00/0 z mąkami Tipo 1, Tipo 2 lub razową (integrale).
+**Mąka** – najważniejszy składnik ciasta. Do pizzy stosuje się zwykle mąkę typu „00” (najbardziej oczyszczoną z otrębów, często też bardzo drobno zmieloną). Według wytycznych („disciplinare”) stowarzyszenia AVPN (Associazione Verace Pizza Napoletana) do Napoletany dopuszcza się też mąkę typu „0” (nieco mniej oczyszczoną, z odrobiną otrębów) oraz typu „1” (jako domieszkę w zakresie 5–20%). Dla lepszego smaku niektórzy dodają do mąki 00 lub 0 mąkę Tipo 1, Tipo 2 albo razową (integrale).
 
 Dobra pizza wychodzi też ze zwykłych mąk pszennych, które nie są przeznaczone do pizzy, jeśli mają ok. 12% białka (sprawdź na opakowaniu), ale wynik jest mniej przewidywalny: zostań przy hydratacji 55% i oceniaj ciasto po wyglądzie, a nie tylko po zegarku. Możesz też wypróbować prostsze włoskie mąki do pizzy o niższej sile, np. **Divella**. Najlepiej jednak sięgać po mąki profesjonalne, bo zwykle są bardziej przewidywalne (mają podane parametry, np. siłę W). Opis poszczególnych mąk znajdziesz w [zestawieniu mąk](#popular-flours).
 
@@ -15,7 +15,7 @@ Dobra pizza wychodzi też ze zwykłych mąk pszennych, które nie są przeznaczo
 Awaryjnie możesz użyć drożdży suchych – przelicznik, różnice oraz sposób rozpuszczania aktywnych drożdży suchych (w letniej wodzie) znajdziesz [w odpowiedzi na pytanie o rodzaje drożdży](#faq-yeast-types). Ich zaletą jest długi termin ważności, ale po otwarciu opakowania trzeba je przechowywać szczelnie zamknięte w lodówce i zużyć w terminie podanym przez producenta.
 
 ::: tip Wskazówka
-**Jak przechowywać drożdże świeże?** Najlepiej w lodówce, w małym szczelnym pojemniku. Drożdże nie wysychają wtedy i zachowują świeżość dłużej – zwykle 1–4 tygodnie (z czasem tracą siłę, więc trzymaj się daty z opakowania).
+**Jak przechowywać drożdże świeże?** W lodówce, zamknięte w małym, szczelnym pojemniku: tak nie wysychają i dłużej pozostają świeże – zwykle 1–4 tygodnie (z czasem tracą siłę, więc trzymaj się daty z opakowania).
 :::
 
 **Sól** – użyj takiej, jaką masz pod ręką: morskiej, kamiennej lub himalajskiej – każda się nadaje. Sól jest niezbędna, bo nadaje ciastu siłę i sprężystość podczas wyrastania, a bez niej wypiek się nie uda. Zwykle dodaje się jej ok. 40–60 g na litr wody (np. 50 g na litr wody to ok. 2,7% masy mąki przy hydratacji 55%).

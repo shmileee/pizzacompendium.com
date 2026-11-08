@@ -1,11 +1,11 @@
 ### Sprzęt, akcesoria i metody wypieku {#faq-equipment}
 
 ::: q #faq-stone Kamień do piekarnika lub pieca: który wybrać i jak go używać?
-**Okrągły czy prostokątny?** Lepiej kupić kamień prostokątny, bo łatwiej się z nim pracuje (mniejsze ryzyko, że przenoszona na niego pizza zsunie się nierówno). Typowy rozmiar takich kamieni to ok. 35×40 cm. Przy zakupie sprawdź, czy kamień jest przeznaczony do kontaktu z żywnością.
+**Okrągły czy prostokątny?** Wybierz prostokątny, bo łatwiej się na nim pracuje: pizza zsuwana z łopaty rzadziej ląduje krzywo. Typowy rozmiar takich kamieni to ok. 35×40 cm. Upewnij się też, że producent dopuszcza go do kontaktu z żywnością.
 
-**Jakiej grubości kamień?** Najlepiej od 1,5 do 3 cm. W piekarniku lepiej sprawdzi się grubość 1,5–2 cm, ponieważ kamień szybciej się nagrzewa. Kamienie o grubości 3 cm lepiej pasują do mocniejszych pieców – w zwykłych piekarnikach czas nagrzewania będzie zbyt długi. Kamieni o grubości ok. 1 cm lepiej unikać: zbyt szybko oddają ciepło, więc trzeba je często dogrzewać i robić dłuższe przerwy między kolejnymi pizzami, żeby kamień ponownie się nagrzał.
+**Jakiej grubości kamień?** Rozsądny zakres to 1,5–3 cm. Do piekarnika wybierz 1,5–2 cm: taki kamień nagrzewa się szybciej. Trzycentymetrowy zostaw na mocniejsze piece, bo w zwykłym piekarniku nagrzewałby się za długo. Cienkich kamieni, ok. 1 cm, lepiej unikać: oddają ciepło za szybko, więc między pizzami trzeba dłużej czekać, aż znów się nagrzeją.
 
-**Jak długo nagrzewać kamień w piekarniku?** Zależy to od maksymalnej temperatury piekarnika, ustawienia kamienia i jego grubości. Przykładowo (wartości orientacyjne, zależą od piekarnika):
+**Jak długo nagrzewać kamień w piekarniku?** Decydują o tym trzy rzeczy: maksymalna temperatura piekarnika, wysokość, na której stoi kamień, i jego grubość. Dwa przykłady (orientacyjne, każdy piekarnik jest trochę inny):
 
 - kamień o grubości 2 cm, umieszczony w standardowym piekarniku ok. 8 cm pod grzałką, nagrzewa się do 300–330°C (lub więcej) w ok. 30–35 min (w trybie grill ustawionym na maksymalną temperaturę, zwykle 250–270°C).
 - kamień o grubości 3 cm w tym samym piekarniku potrzebuje na to ok. godziny.
@@ -22,7 +22,7 @@ Na nagrzewanie kamienia zaplanuj 45–60 min (z zapasem względem czasów z przy
 :::
 
 ::: q #faq-granite-slab Czy mogę użyć do wypieku zwykłej płyty granitowej (np. budowlanej)?
-Granit stosowany w budownictwie, do wykończeń i do użytku domowego bywa polerowany lub impregnowany chemicznie, żeby chronić go przed wilgocią i mrozem. Zapytaj sprzedawcę lub producenta, czy i jak granit był obrabiany, ponieważ kontakt żywności z takim kamieniem może być niebezpieczny dla zdrowia. Granit może też pęknąć przy gwałtownych zmianach temperatury, dlatego nagrzewaj go powoli, razem z piekarnikiem.
+Granit stosowany w budownictwie, do wykończeń i do użytku domowego bywa polerowany lub impregnowany chemicznie, żeby chronić go przed wilgocią i mrozem. Zapytaj sprzedawcę lub producenta, czy i jak granit był obrabiany, bo żywność nie powinna stykać się z kamieniem po takiej obróbce. Granit może też pęknąć przy gwałtownych zmianach temperatury, dlatego nagrzewaj go powoli, razem z piekarnikiem.
 
 Opinie są podzielone: jedni używają taniej płyty granitowej za ok. $4–5 i twierdzą, że sprawdza się bardzo dobrze, inni uważają, że lepiej dopłacić do kamienia przeznaczonego do kontaktu z żywnością (ok. $15–25). Bezpieczniej kupić szamot (ok. $15–25): zazwyczaj jest lepszym kamieniem do pizzy i posłuży długo; ewentualnie granit przeznaczony do kontaktu z żywnością.
 :::
@@ -38,8 +38,8 @@ Metoda combo pozwala upiec pizzę w piekarniku bez kamienia. Nazwa pochodzi od p
 2. Uformuj placek i od razu połóż go na rozgrzanej patelni.
 3. Gdy placek leży na patelni, nałóż dodatki i obserwuj, jak placek dopieka się od dołu. Zmiennych jest tu dużo, ale podpiekanie placka na patelni powinno trwać co najmniej 2 min. Na spodzie powinny pojawić się plamki i przyrumienienie, które oznaczają, że placek jest dopieczony od dołu. Możesz stopniowo zwiększać temperaturę, obserwując spód placka.
 4. Masz tu dwie możliwości (w obu pieczenie powinno zająć 1,5–3 min, zależnie od temperatury, odległości od grzałki i ilości dodatków):
-   - Włóż patelnię do rozgrzanego piekarnika w trybie grill, pod samą grzałkę (patelnia nie może mieć plastikowej ani drewnianej rączki).
-   - Przełóż placek z patelni na blachę i włóż go do rozgrzanego piekarnika w trybie grill, pod samą grzałkę.
+   - Wstaw patelnię do piekarnika nagrzanego w trybie grill, tuż pod grzałkę (patelnia nie może mieć plastikowej ani drewnianej rączki).
+   - Przełóż placek z patelni na blachę i wstaw ją tuż pod grzałkę piekarnika nagrzanego w trybie grill.
 5. Wyjmij gotową pizzę.
 :::
 
@@ -50,7 +50,7 @@ Jeśli nie możesz przeprowadzić pirolizy, umyj kamień samą wodą, a zapieczo
 :::
 
 ::: q #faq-pyrometer Do czego służy pirometr w procesie wypieku pizzy?
-Pirometr służy przede wszystkim do przybliżonego pomiaru temperatury kamienia w piecu. Czasem można go też użyć do bardzo ogólnego pomiaru temperatury ciasta podczas wyrabiania, ale wynik będzie tylko orientacyjny.
+Głównie do szybkiego, przybliżonego sprawdzenia, jak gorący jest kamień w piecu. Można nim też z grubsza zmierzyć temperaturę ciasta podczas wyrabiania, ale wynik będzie tylko orientacyjny.
 
 ![Dwa ujęcia pirometru (termometru na podczerwień)](img/pyrometer.webp)
 :::
@@ -69,15 +69,15 @@ Przyczyn może być kilka:
 ::: q #faq-biscotto-f1 Jakie biscotto kupić do F1 (Effeuno P134H)?
 Do pieca F1 stosuje się dwa rodzaje kamienia biscotto (poniższe opisy opierają się na doświadczeniach użytkowników, a czasy nagrzewania są orientacyjne):
 
-1. **Saputo Biscotto** – najpopularniejszy kamień o grubości 3 cm, stosowany w profesjonalnych piecach do Napoletany. Jego dużą zaletą jest lepsza akumulacja ciepła i jego wolniejsze oddawanie, dlatego jest najlepszym rozwiązaniem do tego typu pizzy, zwłaszcza gdy pieczesz wiele pizz po sobie. Z powodu grubości trudno jednak uzyskać na nim dobre efekty przy innych pizzach, które wymagają niższych temperatur i dłuższych czasów wypieku (Classica, Teglia alla Romana, Pala alla Romana, Pinsa Romana). Kamień nie jest w stanie utrzymać odpowiedniej temperatury na powierzchni przez cały czas wypieku, bo ma dużą bezwładność termiczną (dolna grzałka ma o połowę niższą moc niż górna), co objawia się słabo dopieczonym spodem. Takie pizze lepiej piec na oryginalnym szamocie z zestawu F1. Nagrzanie Saputo Biscotto do wypieku Napoletany wymaga pracy pieca przez ok. 45–55 min.
-2. **Fiesoli Arte Biscotto** – alternatywna wersja biscotto z innych mieszanek glin, o efektach zbliżonych do Saputo. Dla F1 ma grubość ok. 1,5 cm, dzięki czemu jest bardziej uniwersalny i można na nim piec wszystkie rodzaje pizzy: dolna grzałka z łatwością utrzymuje żądaną temperaturę na powierzchni kamienia podczas wypieku. Przy Napoletanie uważaj jednak: ustawienie obu gałek pieca na maksimum najprawdopodobniej spowoduje przypalenie pizzy, bo kamień ma mniejszą masę i trudniej mu akumulować wysokie temperatury. Aby ograniczyć lub wyeliminować ten problem, użytkownicy obniżają ustawioną temperaturę dolnej grzałki do 300–350°C (F1) lub 350–400°C (wersja F1 HA). Niektórzy piekarze pieką dobrą Napoletanę, używając samej górnej grzałki. Nagrzanie Fiesoli Arte Biscotto do wypieku Napoletany wymaga pracy pieca przez ok. 30–40 min.
+1. **Saputo Biscotto** – najczęściej wybierany kamień, gruby na 3 cm, taki jak w profesjonalnych piecach do Napoletany. Magazynuje dużo ciepła i oddaje je powoli, więc do Napoletany sprawdza się najlepiej, szczególnie gdy pieczesz kilka pizz z rzędu. Ta sama grubość przeszkadza przy pizzach pieczonych dłużej i w niższej temperaturze (Classica, Teglia alla Romana, Pala alla Romana, Pinsa Romana): dolna grzałka ma o połowę mniejszą moc niż górna i nie nadąża z dogrzewaniem tak masywnego kamienia, więc jego powierzchnia stygnie w trakcie wypieku, a spód wychodzi niedopieczony. Takie pizze lepiej piec na szamocie, który był w zestawie z F1. Przed wypiekiem Napoletany piec musi grzać Saputo ok. 45–55 min.
+2. **Fiesoli Arte Biscotto** – alternatywna wersja biscotto z innych mieszanek glin, o efektach zbliżonych do Saputo. Dla F1 ma grubość ok. 1,5 cm, dzięki czemu jest bardziej uniwersalny i można na nim piec wszystkie rodzaje pizzy: dolna grzałka z łatwością utrzymuje żądaną temperaturę na powierzchni kamienia podczas wypieku. Przy Napoletanie uważaj jednak: ustawienie obu gałek pieca na maksimum najprawdopodobniej spowoduje przypalenie pizzy, bo kamień ma mniejszą masę i trudniej mu akumulować wysokie temperatury. Aby ograniczyć lub wyeliminować ten problem, użytkownicy obniżają ustawioną temperaturę dolnej grzałki do 300–350°C (F1) lub 350–400°C (wersja F1 HA). Niektórym udaje się dobra Napoletana nawet przy samej górnej grzałce. Przed wypiekiem Napoletany Fiesoli nagrzewa się ok. 30–40 min.
 :::
 
 ::: q #faq-rotate-f1 Czy trzeba obracać pizzę podczas wypieku w F1?
 To zależy od co najmniej dwóch czynników:
 
 1. Głębokość wsunięcia placka do pieca. Jeśli placek leży zbyt głęboko, górna grzałka z tyłu pieca nie ogrzeje równomiernie jego boków. Wtedy obróć go i przesuń do centralnej części kamienia.
-2. Różnice między piecami F1. Wersje klasyczne z oryginalnymi termostatami nagrzewają się do ok. 450°C, a wersje z termostatem 500°C – do ok. 500°C i więcej. Przez takie różnice ciepło rozkłada się na placku nieco inaczej i wtedy warto go obrócić. W piecach z termostatami 500°C ten problem jest prawdopodobnie mniejszy.
+2. Różnice między piecami F1. Wersje klasyczne z oryginalnymi termostatami nagrzewają się do ok. 450°C, a wersje z termostatem 500°C – do ok. 500°C i więcej. Ciepło rozkłada się w nich nieco inaczej, więc czasem obrót placka jest potrzebny. W wersjach z termostatem 500°C zdarza się to prawdopodobnie rzadziej.
 :::
 
 ::: q #faq-stone-setup Jak ustawić i nagrzewać kamień w piekarniku?
@@ -104,7 +104,7 @@ Modyfikowanie piekarnika (ingerencja w termostat, zabezpieczenia lub grzałki) j
 :::
 
 ::: q #faq-grill Dlaczego grill ogrodowy, nakładki na grill i piece z grzaniem tylko od dołu zwykle nie nadają się do wypieku pizzy?
-Choć na pierwszy rzut oka grill ogrodowy wydaje się świetnym narzędziem do wypieku (osiąga bardzo wysokie temperatury), do pizzy zwykle się nie nadaje. Przy wypieku pizzy ważne jest grzanie zarówno od góry, jak i od dołu, a przy pizzy neapolitańskiej temperatura od góry bywa nawet wyższa niż od dołu. Typowy grill ze względu na swoją budowę grzeje głównie od dołu, przez co pizze są w nim często twarde i mocno chrupiące od spodu, a blade i niedopieczone na górze. Temperatura z góry i z dołu musi być bardziej wyrównana, żeby placek ładnie się upiekł.
+Grill ogrodowy łatwo osiąga bardzo wysokie temperatury, więc wydaje się dobrym pomysłem, ale do pizzy zwykle się nie nadaje. Pizza potrzebuje ciepła z obu stron, a neapolitańska często nawet więcej z góry niż z dołu. Typowy grill grzeje głównie od spodu, więc placek wychodzi twardy i przesadnie chrupiący pod spodem, a na wierzchu blady i niedopieczony. Żeby pizza upiekła się równo, ciepło z góry i z dołu musi być bardziej zbalansowane.
 :::
 
 ::: q #faq-gas-oven-home Czy można piec pizzę w domowym piekarniku gazowym?
@@ -142,9 +142,9 @@ Jeśli jednak chcesz użyć takiego urządzenia, najlepiej wstępnie wyrobić ci
 :::
 
 ::: q #faq-stand-mixer Jaki robot planetarny do wyrabiania ciasta kupić na początek?
-Poniższe zestawienie opiera się na opiniach domowych piekarzy i na tym, które roboty się wyróżniają. Podane budżety są orientacyjne.
+Zestawienie powstało z opinii domowych piekarzy i pokazuje roboty, które się wyróżniają. Podane budżety są orientacyjne.
 
-- **Budżet ok. $125** – w tym budżecie znajdziesz dziesiątki robotów, które często mają ten sam mechanizm w innej obudowie. Najczęściej pojawiają się roboty marki Bosch z serii MUM. W praktyce roboty z tej półki nie radzą sobie z dużymi ilościami ciasta (powyżej ok. 1 kg), mimo że producenci deklarują więcej. Nie sugeruj się mocą ani wydajnością podawaną przez producentów.
+- **Budżet ok. $125** – w tym budżecie znajdziesz dziesiątki robotów, często z tym samym mechanizmem w innej obudowie. Najczęściej wymieniane są roboty Bosch z serii MUM. W praktyce roboty z tej półki nie radzą sobie z dużymi ilościami ciasta (powyżej ok. 1 kg), mimo że producenci deklarują więcej. Nie sugeruj się mocą ani wydajnością podawaną przez producentów.
 - **Budżet ok. $250** – wyróżnia się G3 Ferrari G20075. Jest wiele innych, prawdopodobnie równie dobrych.
 - **Budżet ok. $500** – wyróżniają się dwie marki: KitchenAid (seria Artisan) oraz Kenwood (seria Chef). Te roboty są przystosowane do wyrabiania ciasta; większe modele wyrabiają nawet 1,5–2 kg (i więcej) ciasta naraz, mniejsze – wyraźnie mniej. To także dobre wielofunkcyjne urządzenia domowe, ale tu liczy się przede wszystkim wyrabianie ciasta.
 - **Budżet powyżej $750** (dla profesjonalistów i doświadczonych amatorów) – to już grupa profesjonalnych mikserów, które można stosować w domu. Najlepsze z nich to miksery spiralne.
