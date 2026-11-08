@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { scriptHash } from '../../scripts/lib/csp.mjs';
 import { renderRoot } from '../../scripts/lib/html/root.mjs';
+import { themeScript } from '../../scripts/lib/inline-scripts.mjs';
 import { lang } from '../helpers/render.mjs';
 
 const site = {
@@ -9,22 +10,22 @@ const site = {
   themeColors: [{ content: '#fff' }],
 };
 const image = { href: 'img/og.jpg', width: 1200, height: 630 };
-const source = lang('pl', {
+const pl = lang('pl', {
   title: 'Tytuł <1>',
   description: 'Opis "x".',
   ogImageAlt: 'Obraz & co',
 });
-const languages = [source, lang('en')];
+const languages = [pl, lang('en')];
 const assets = { css: { path: 'assets/style.css', v: 'abc123' } };
 const script = 'redirect();';
 
 const render = (over = {}) =>
-  renderRoot({ site, source, languages, assets, script, image, ...over });
+  renderRoot({ site, lang: pl, languages, assets, script, image, ...over });
 
 describe('renderRoot', () => {
   const html = render();
 
-  it('is an HTML5 page in the language of the source', () => {
+  it('is an HTML5 page in the language it is given', () => {
     assert.ok(
       html.startsWith('<!doctype html>\n<html lang="pl-PL" dir="ltr">\n<head>'),
     );
@@ -38,11 +39,27 @@ describe('renderRoot', () => {
     assert.ok(html.indexOf('<noscript>') < html.indexOf('<script>redirect'));
   });
 
-  it('refreshes visitors without JavaScript to the source language', () => {
+  it('wears the stored theme, by the theme script allowed by its hash', () => {
+    assert.equal(html.split('<script>').length - 1, 2);
+    assert.ok(html.includes(`<script>${themeScript()}</script>`));
+    assert.ok(html.includes(scriptHash(themeScript())));
+  });
+
+  it('refreshes visitors without JavaScript to its language', () => {
     assert.match(
       html,
       /<noscript><meta http-equiv="refresh" content="0; url=pl\/"><\/noscript>/,
     );
+  });
+
+  it('is the page of whichever language it is given: English', () => {
+    const en = render({
+      lang: lang('en', { title: 'Title', description: 'Lead.' }),
+    });
+    assert.ok(en.startsWith('<!doctype html>\n<html lang="en-GB" dir="ltr">'));
+    assert.match(en, /<title>Title<\/title>/);
+    assert.match(en, /<meta name="description" content="Lead\.">/);
+    assert.match(en, /content="0; url=en\/"><\/noscript>/);
   });
 
   it('is its own canonical address and lists the language alternates', () => {
@@ -52,7 +69,7 @@ describe('renderRoot', () => {
     assert.match(html, /hreflang="x-default" href="https:\/\/x\.test\/"/);
   });
 
-  it('describes itself with the escaped title and description of the source', () => {
+  it('describes itself with the escaped title and description of its language', () => {
     assert.match(html, /<title>Tytuł &lt;1&gt;<\/title>/);
     assert.match(
       html,
@@ -70,19 +87,19 @@ describe('renderRoot', () => {
     assert.doesNotMatch(html, /og:type|og:locale/);
   });
 
-  it('shows the preview image with the alternative text of the source', () => {
+  it('shows the preview image with the alternative text of its language', () => {
     assert.match(html, /og:image" content="https:\/\/x\.test\/img\/og\.jpg"/);
     assert.match(html, /og:image:alt" content="Obraz &amp; co"/);
   });
 
   it('keeps an alternative text that the author left empty', () => {
-    const empty = render({ source: lang('pl', { ogImageAlt: '' }) });
+    const empty = render({ lang: lang('pl', { ogImageAlt: '' }) });
     assert.match(empty, /og:image:alt" content=""/);
   });
 
   it('falls back to the title for the alternative text', () => {
     const plain = render({
-      source: lang('pl', { title: 'T', ogImageAlt: undefined }),
+      lang: lang('pl', { title: 'T', ogImageAlt: undefined }),
     });
     assert.match(plain, /og:image:alt" content="T"/);
   });

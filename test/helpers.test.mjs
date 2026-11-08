@@ -1132,6 +1132,9 @@ describe('the browser fakes', () => {
     assert.equal(doc.documentElement.classList.contains('js'), false);
     runInline(inlineScript(markScripted, [], ['document']), { document: doc });
     assert.equal(doc.documentElement.classList.contains('js'), true);
-    assert.deepEqual(doc.documentElement.classList.names(), ['js']);
+    assert.deepEqual(doc.documentElement.classList.names(), [
+      'js',
+      'jump-instant',
+    ]);
   });
 });

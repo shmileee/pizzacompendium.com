@@ -1,3 +1,4 @@
+import { layoutShift, watchLayoutShift } from '../support/content.js';
 import { expect, test } from '../support/fixtures.js';
 import { press, visit } from '../support/pointer.js';
 
@@ -230,6 +231,23 @@ test.describe('smooth motion', () => {
       await html(page).evaluate((el) => getComputedStyle(el).scrollBehavior),
     ).toBe('smooth');
   });
+
+  // The address the page is opened at is scrolled to while the page loads,
+  // before the scripts have started: that jump must be instant from the first
+  // paint, and nothing that the scripts show above the place (the flour
+  // filter) may push it down.
+  for (const id of ['toppings', 'recipe', 'baking'])
+    test(`an address with #${id} opens at its place, and the contents agree`, async ({
+      page,
+    }) => {
+      await watchLayoutShift(page);
+      await visit(page, `/en/#${id}`);
+      expect(await layoutShift(page)).toBe(0);
+      await expect(html(page)).not.toHaveClass(/jump-instant/);
+      expect(await topOf(page, id)).toBeGreaterThanOrEqual(56);
+      expect(await topOf(page, id)).toBeLessThan(90);
+      await expect(active(page)).toHaveAttribute('href', `#${id}`);
+    });
 });
 
 test.describe('the drawer (narrow)', () => {
@@ -349,6 +367,29 @@ test.describe('the drawer (narrow)', () => {
     await expect(page).toHaveURL(/#equipment$/);
     await expect.poll(() => below(page, 'equipment')).toBe(true);
     await expect(page.locator('main')).not.toHaveJSProperty('inert', true);
+  });
+
+  test('a link chosen from the keyboard leaves focus on its heading, not on the page', async ({
+    page,
+  }) => {
+    await visit(page, '/en/');
+    await open(page);
+    await toc(page).locator('a[href="#equipment"]').focus();
+    await page.keyboard.press('Enter');
+    await expect(html(page)).not.toHaveClass(/toc-open/);
+    await expect(page.locator('#equipment')).toBeFocused();
+    await expect.poll(() => below(page, 'equipment')).toBe(true);
+    // The next Tab goes on from the heading, into the text.
+    await page.keyboard.press('Tab');
+    expect(
+      await page.evaluate(
+        () =>
+          document
+            .getElementById('equipment')
+            .compareDocumentPosition(document.activeElement) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ),
+    ).toBeTruthy();
   });
 
   test('widening the window to the sidebar closes it and removes the inert', async ({

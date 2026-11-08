@@ -64,9 +64,11 @@
   }
 }
 
-/* The page behind a modal dialog does not scroll. */
+/* The page behind a modal dialog does not scroll, and does not move sideways
+   where the scroll bar takes room of its own. */
 html.search-open {
   overflow: hidden;
+  scrollbar-gutter: stable;
 }
 
 /* A choice that lands in an answer opens it at once: the page is scrolled to

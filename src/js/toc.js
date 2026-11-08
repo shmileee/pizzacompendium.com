@@ -1,7 +1,7 @@
 // The contents: which place of the text is being read (marked in
 // the list, its chapter opened, the list scrolled to it) and, on narrow
 // screens, the drawer that the header button opens.
-import { query, queryAll } from './util.js';
+import { byFragment, query, queryAll } from './util.js';
 
 /** How close to the edge of the list a link may come before it is scrolled. */
 const EDGE = 48;
@@ -156,18 +156,25 @@ function wireDrawer(root, toc) {
 }
 
 /**
- * Wires the contents (`#toc`, which every language page has).
+ * Wires the contents (`#toc`, which every language page has). A link chosen
+ * in the drawer closes it and puts focus on its heading: the link that had it
+ * is gone with the drawer, and focus would fall back to the top of the page.
  *
  * @param {Document} [root]
  */
 export function init(root = document) {
   const toc = query('#toc', root);
+  const html = root.documentElement;
   const show = followReading(root, toc);
   const close = wireDrawer(root, toc);
   toc.addEventListener('click', (event) => {
     const link = event.target.closest('a');
     if (!link) return;
     show(link);
+    if (!html.classList.contains('toc-open')) return;
     close(false);
+    const heading = byFragment(root, link.hash);
+    heading.tabIndex = -1;
+    heading.focus({ preventScroll: true });
   });
 }

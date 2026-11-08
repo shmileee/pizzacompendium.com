@@ -54,7 +54,9 @@ When in doubt, do what they do.
     `mise run images` makes the `-480w`/`-800w` copies, `og.jpg` and the icons
     and never rewrites a master
 *   `site.json` — `siteUrl` (canonical URLs, `hreflang`, the sitemap, the
-    manifests), `ogImage` (required) and `themeColor` (equals `--paper`)
+    manifests), `ogImage` (required), `themeColor` (equals `--paper`) and
+    `defaultLanguage` (the root page's fallback and the language of the root
+    and 404 pages; the source language when absent)
 *   `mise.toml`, `mise/conf.d/` — Node pin, tool pins and tasks
 *   `.github/` — the workflows (`checks.yaml`, `codeql.yaml`,
     `dependency-review.yaml`), `renovate.json` and the tool configs;

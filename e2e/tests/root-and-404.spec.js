@@ -23,8 +23,10 @@ test.describe('the root page', () => {
     ['en-US', '/en/'],
     ['uk-UA', '/uk/'],
     ['uk', '/uk/'],
-    // No such language on the site: the source language.
-    ['de-DE', '/pl/'],
+    // No such language on the site: the default language of site.json.
+    ['de-DE', '/en/'],
+    ['fr-FR', '/en/'],
+    ['ru-RU', '/en/'],
   ];
   for (const [locale, expected] of byLocale)
     test(`sends a ${locale} browser to ${expected}`, async ({
@@ -101,19 +103,24 @@ test.describe('the root page', () => {
     ).toBe('/en/?a=1#recipe');
   });
 
-  test('without scripts it shows the three languages and the page refreshes to the source language', async ({
+  test('without scripts it shows the three languages and the page refreshes to the default language', async ({
     browser,
     baseURL,
   }) => {
     const context = await browser.newContext({
       baseURL,
       javaScriptEnabled: false,
-      locale: 'en-GB',
+      locale: 'pl-PL',
     });
     const page = await context.newPage();
     await page.goto('/');
-    await page.waitForURL(/\/pl\/$/);
+    await page.waitForURL(/\/en\/$/);
     await context.close();
+  });
+
+  test('is itself in the default language', async ({ request }) => {
+    const text = await (await request.get('/')).text();
+    expect(text).toMatch(/<html lang="en"/);
   });
 
   test('offers a link for every language in its own HTML, for a reader the script cannot help', async ({
@@ -139,6 +146,9 @@ test.describe('the 404 page', () => {
       'noindex',
     );
     await expect(page.locator('h1')).toHaveText('404');
+    // In the default language, which every visitor can be sent to.
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page).toHaveTitle(/^404 – /);
     await expect(page.locator('.root-langs a')).toHaveCount(3);
     expect(
       await page

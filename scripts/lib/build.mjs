@@ -23,7 +23,7 @@ import {
   renderRobots,
   renderSitemap,
 } from './seo.mjs';
-import { loadSite } from './site-config.mjs';
+import { loadSite, pickDefaultLanguage } from './site-config.mjs';
 
 const { inlineScript, LANG_KEY, redirect } = inlineScripts;
 
@@ -123,6 +123,12 @@ export function build({
     );
 
   const visible = published(languages);
+  const fallback = pickDefaultLanguage({
+    site,
+    source,
+    languages: visible,
+    reporter,
+  });
   const files = new Map(assets.files);
   const pages = new Map();
   const tocs = new Map();
@@ -148,12 +154,12 @@ export function build({
     'index.html',
     renderRoot({
       site,
-      source,
+      lang: fallback,
       languages: visible,
       assets,
       script: inlineScript(
         redirect,
-        [visible.map((lang) => lang.code), source.code, LANG_KEY],
+        [visible.map((lang) => lang.code), fallback.code, LANG_KEY],
         ['window'],
       ),
       image,
@@ -161,7 +167,7 @@ export function build({
   );
   pages.set(
     '404.html',
-    renderNotFound({ site, source, languages: visible, assets }),
+    renderNotFound({ site, lang: fallback, languages: visible, assets }),
   );
   checkPages(pages, reporter);
 

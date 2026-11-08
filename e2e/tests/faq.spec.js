@@ -1,9 +1,4 @@
-import {
-  ANCHOR_TOP,
-  layoutShift,
-  visit,
-  watchLayoutShift,
-} from '../support/content.js';
+import { ANCHOR_TOP, visit } from '../support/content.js';
 import { expect, test } from '../support/fixtures.js';
 
 // The questions and answers: expand all and collapse all, a link or an address
@@ -174,15 +169,78 @@ test.describe('the address', () => {
     await expect(target).toHaveJSProperty('open', true);
   });
 
-  test.describe('with no preference for motion', () => {
-    test.use({ reducedMotion: 'no-preference' });
+  // The page is opened at the question at once (with or without motion), in
+  // the frame in which the browser finds the question, and the answer is open
+  // in that same frame (the stylesheet shows the answer of the question the
+  // address names). Chrome counts the answer below the question as a layout
+  // shift of that frame, the page having moved there in it; what the reader
+  // sees is the question open from the first frame at it, and nothing moving
+  // after that.
+  for (const motion of ['reduce', 'no-preference'])
+    test.describe(`with motion ${motion}`, () => {
+      test.use({ reducedMotion: motion });
 
-    test('a page opened at a question shifts nothing', async ({ page }) => {
-      await watchLayoutShift(page);
-      await visit(page, '/en/#faq-stone');
-      expect(await layoutShift(page)).toBe(0);
+      test('a page opened at a question shows it open from the first frame there, and nothing moves after', async ({
+        page,
+      }) => {
+        // The scripts come late, as they may on a slow line: the page is at
+        // the question well before they open it.
+        await page.route('**/assets/js/cards.js', async (route) => {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          await route.continue();
+        });
+        // Each frame once the page is at the question: is the answer open,
+        // where is the page scrolled to, and where has the layout put every
+        // element of the text that is in the window (`offsetTop`: what the
+        // layout does, not where an animation of the question's arrival
+        // draws it; the text alone: the button back to the top slides in over
+        // it)?
+        await page.addInitScript(() => {
+          window.__pcFrames = [];
+          // Each element by a number of its own, kept across frames.
+          const ids = new WeakMap();
+          let next = 0;
+          const frame = () => {
+            const question = document.getElementById('faq-stone');
+            if (question && scrollY > 0) {
+              const seen = {};
+              for (const el of document.querySelectorAll('main .article *')) {
+                const box = el.getBoundingClientRect();
+                if (box.bottom <= 0 || box.top >= innerHeight) continue;
+                if (!(el instanceof HTMLElement)) continue;
+                if (!ids.has(el)) ids.set(el, next++);
+                seen[ids.get(el)] = el.offsetTop;
+              }
+              window.__pcFrames.push({
+                open: question.getBoundingClientRect().height > 200,
+                y: scrollY,
+                seen,
+              });
+            }
+            if (window.__pcFrames.length < 30) requestAnimationFrame(frame);
+          };
+          requestAnimationFrame(frame);
+        });
+        await visit(page, '/en/#faq-stone');
+        await expect
+          .poll(() => page.evaluate(() => window.__pcFrames.length))
+          .toBe(30);
+        const frames = await page.evaluate(() => window.__pcFrames);
+        expect(frames.every((f) => f.open)).toBe(true);
+        expect(new Set(frames.map((f) => f.y)).size).toBe(1);
+        const moved = [];
+        for (let i = 1; i < frames.length; i++)
+          // A pixel of slack: offsetTop rounds a sub-pixel layout.
+          for (const [id, top] of Object.entries(frames[i].seen))
+            if (
+              id in frames[i - 1].seen &&
+              Math.abs(frames[i - 1].seen[id] - top) > 1
+            )
+              moved.push(`frame ${i}: ${frames[i - 1].seen[id]} -> ${top}`);
+        expect(moved).toEqual([]);
+        await expect(page.locator('#faq-stone')).toHaveJSProperty('open', true);
+      });
     });
-  });
 });
 
 test.describe('copy link', () => {

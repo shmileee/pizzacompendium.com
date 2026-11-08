@@ -9,21 +9,32 @@ const site = {
   basePath: '/',
   themeColors: [{ content: '#000', media: '(prefers-color-scheme: dark)' }],
 };
-const source = lang('pl', { title: 'Tytuł <1>' });
+const pl = lang('pl', { title: 'Tytuł <1>' });
 const languages = [
   lang('pl', { ui: { notFound: 'Nie ma tej strony.' } }),
   lang('en', { ui: { notFound: 'Not found & gone.' } }),
 ];
 const assets = { css: { path: 'assets/style.css', v: null } };
-const html = renderNotFound({ site, source, languages, assets });
+const html = renderNotFound({ site, lang: pl, languages, assets });
 
 describe('renderNotFound', () => {
-  it('is a page in the language of the source, with a 404 title', () => {
+  it('is a page in the language it is given, with a 404 title', () => {
     assert.ok(
       html.startsWith('<!doctype html>\n<html lang="pl-PL" dir="ltr">'),
     );
     assert.match(html, /<title>404 – Tytuł &lt;1&gt;<\/title>/);
     assert.match(html, /<h1 class="root-code">404<\/h1>/);
+  });
+
+  it('is in English when it is given English', () => {
+    const en = renderNotFound({
+      site,
+      lang: lang('en', { title: 'Pizza' }),
+      languages,
+      assets,
+    });
+    assert.ok(en.startsWith('<!doctype html>\n<html lang="en-GB" dir="ltr">'));
+    assert.match(en, /<title>404 – Pizza<\/title>/);
   });
 
   it('is kept out of search engines', () => {
@@ -48,7 +59,7 @@ describe('renderNotFound', () => {
   it('honours a base path of the site', () => {
     const under = renderNotFound({
       site: { ...site, basePath: '/pizza/' },
-      source,
+      lang: pl,
       languages,
       assets: { css: { path: 'assets/style.css', v: 'z' } },
     });

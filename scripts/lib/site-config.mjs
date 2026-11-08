@@ -1,7 +1,7 @@
 import { reportProblems } from './diagnostics.mjs';
 import { isObject, readJson } from './files.mjs';
 
-const KEYS = new Set(['siteUrl', 'ogImage', 'themeColor']);
+const KEYS = new Set(['siteUrl', 'ogImage', 'themeColor', 'defaultLanguage']);
 const COLOR = /^#[0-9a-fA-F]{6}$/;
 
 /**
@@ -11,6 +11,8 @@ const COLOR = /^#[0-9a-fA-F]{6}$/;
  * @property {string} ogImage `img/<file>`, checked later by the image
  *   resolver.
  * @property {{ content: string, media?: string }[]} themeColors
+ * @property {string | null} defaultLanguage The code of the language for
+ *   visitors whom no language of the site suits; null: the source language.
  */
 
 /**
@@ -19,6 +21,10 @@ const COLOR = /^#[0-9a-fA-F]{6}$/;
  *   siteUrl     required, absolute https URL without a trailing slash
  *   ogImage     required, `img/<file>`: the image link previews show
  *   themeColor  optional, "#rrggbb" or { "light": "#rrggbb", "dark": "#rrggbb" }
+ *   defaultLanguage  optional, the code of a published language: where the
+ *               root page sends a visitor whose browser asks for no language
+ *               of the site, and the language of the root and 404 pages
+ *               (`pickDefaultLanguage`); the source language when absent
  *
  * @param {Omit<Parameters<typeof readJson>[0], 'rel'>} options
  * @returns {Site | null} Null after reporting.
@@ -52,6 +58,12 @@ export function checkSite(data) {
     bad('ogImage', '"ogImage" is required: an image such as "img/photo.webp"');
   const url = checkUrl(data.siteUrl, bad);
   const themeColors = checkColors(data.themeColor, bad);
+  const { defaultLanguage = null } = data;
+  if (defaultLanguage !== null && typeof defaultLanguage !== 'string')
+    bad(
+      'defaultLanguage',
+      '"defaultLanguage" must be a language code, e.g. "en"',
+    );
   if (problems.length > 0) return { site: null, problems };
   return {
     problems,
@@ -60,8 +72,35 @@ export function checkSite(data) {
       basePath: url.pathname.endsWith('/') ? url.pathname : `${url.pathname}/`,
       ogImage: data.ogImage,
       themeColors,
+      defaultLanguage,
     },
   };
+}
+
+/**
+ * The language for visitors whom no language of the site suits:
+ * `defaultLanguage` of `site.json`, else the source language. It has to be
+ * published, or it is an `E_SITE` error (field `defaultLanguage`) and the
+ * source language stands in, so that the build goes on to report the rest
+ * (an error keeps its output from being written).
+ *
+ * @param {object} options
+ * @param {Site} options.site
+ * @param {import('./languages.mjs').Language} options.source
+ * @param {import('./languages.mjs').Language[]} options.languages Published.
+ * @param {import('./diagnostics.mjs').Reporter} options.reporter
+ * @returns {import('./languages.mjs').Language}
+ */
+export function pickDefaultLanguage({ site, source, languages, reporter }) {
+  const code = site.defaultLanguage ?? source.code;
+  const lang = languages.find((language) => language.code === code);
+  if (lang) return lang;
+  reporter.error(
+    'E_SITE',
+    `"defaultLanguage" must be a published language: "${code}" is none`,
+    { file: 'site.json', field: 'defaultLanguage' },
+  );
+  return source;
 }
 
 /** @returns {URL | null} */

@@ -17,21 +17,23 @@ import { renderLanguageList } from './language-list.mjs';
  * which language the reader wants, so each language is a link that says, in
  * its own words, that the page was not found and where the guide is. The
  * page follows the theme the reader chose on the guide (the one inline
- * script) but loads nothing else.
+ * script) but loads nothing else. Its own language is the default one
+ * (`pickDefaultLanguage`).
  *
  * @param {object} model
  * @param {{ basePath: string, themeColors: any[] }} model.site
- * @param {import('../languages.mjs').Language} model.source
+ * @param {import('../languages.mjs').Language} model.lang The default
+ *   language.
  * @param {import('../languages.mjs').Language[]} model.languages Published.
  * @param {{ css: any }} model.assets
  * @returns {string}
  */
-export function renderNotFound({ site, source, languages, assets }) {
+export function renderNotFound({ site, lang, languages, assets }) {
   const head = renderHead({
     scripts: [themeScript()],
     lines: [
       NOINDEX,
-      `<title>404 – ${escapeHtml(source.title)}</title>`,
+      `<title>404 – ${escapeHtml(lang.title)}</title>`,
       COLOR_SCHEME,
       ...themeColor(site),
       ...iconLinks(site.basePath),
@@ -40,10 +42,10 @@ export function renderNotFound({ site, source, languages, assets }) {
   });
   const list = renderLanguageList(languages, {
     prefix: site.basePath,
-    detail: (lang) => lang.ui.notFound,
+    detail: (language) => language.ui.notFound,
   });
   return `<!doctype html>
-<html lang="${source.htmlLang}" dir="${source.dir}">
+<html lang="${lang.htmlLang}" dir="${lang.dir}">
 ${head}
 <body class="root">
 ${sprite()}

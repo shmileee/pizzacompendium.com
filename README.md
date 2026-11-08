@@ -78,7 +78,7 @@ content/rules.json  the hard content rules: what the text must never contain
 static/img/         images (copied to dist/img); the -480w/-800w copies are derived (see tools/images)
 static/fonts/       the self-hosted Vollkorn woff2 files and their licence (OFL.txt)
 static/             also the app icons (favicon-32.png, favicon.ico, apple-touch-icon.png, icon-*.png)
-site.json           siteUrl, ogImage and themeColor: SEO tags, the manifest and the sitemap
+site.json           siteUrl, ogImage, themeColor and defaultLanguage: SEO tags, the manifest, the sitemap, the root page
 src/css/            the stylesheet in pieces, concatenated in file-name order (00 tokens, 05 fonts, 10 base, 20-26 layout, header, contents, wayfinding, 30-38 prose, hero, cards, FAQ, gallery, 40 search, 45 root and 404, 90 print, 95 motion)
 src/js/             the browser code, one ES module per job (util, theme, lang, toc, progress, search, faq, cards), each with a pure part and `init()`
 src/app.js          the entry: imports the modules and runs their `init()`; src/favicon.svg is the mark
@@ -101,7 +101,10 @@ slash (and without a user name), and `ogImage`, the preview image as
 `img/<file>` (required: link previews and the manifest need one); `themeColor`
 is optional, `"#rrggbb"` or `{ "light": "#rrggbb", "dark": "#rrggbb" }`, and
 adds `theme-color` tags. It should equal `--paper` of `src/css/00-tokens.css`
-in both schemes, so that the browser bar matches the page.
+in both schemes, so that the browser bar matches the page. `defaultLanguage`
+(optional, the code of a published language; the source language when absent)
+is where the root page sends a visitor whose browser asks for no language of
+the site, and the language of the root and 404 pages.
 
 ## The page
 
