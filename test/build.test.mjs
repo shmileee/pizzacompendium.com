@@ -822,3 +822,83 @@ describe('build: --out refuses folders that are not build output', () => {
     });
   });
 });
+
+describe('build: what it writes for programs that read the guide', () => {
+  /** A git whose history gives every language the same two commits. */
+  const git = (args) =>
+    args[0] === 'rev-parse'
+      ? 'false\n'
+      : '2026-11-06T22:18:37+01:00\n2026-01-02T03:04:05Z\n';
+
+  it('writes a Markdown copy of every published page and llms.txt', async () => {
+    await withRepo((repo) => {
+      const { ok, files } = repo.build({ strict: true });
+      assert.equal(ok, true);
+      for (const file of ['pl/index.md', 'en/index.md', 'llms.txt'])
+        assert.ok(files.includes(file), file);
+      assert.match(pageOf(repo, 'en/index.md'), /^# Pizza Compendium\n/);
+      assert.match(pageOf(repo, 'en/index.md'), /\n## Quick start\n/);
+      const llms = pageOf(repo, 'llms.txt');
+      assert.match(llms, /^# Kompendium pizzy\n/);
+      assert.match(llms, /\(https:\/\/[^)]+\/en\/index\.md\)/);
+      assert.match(
+        llms,
+        /\[Quick start\]\(https:\/\/[^)]+\/en\/#quick-start\)/,
+      );
+      assert.match(
+        pageOf(repo, 'en/index.html'),
+        /<script type="application\/ld\+json">/,
+      );
+    });
+  });
+
+  it('writes no Markdown copy of a draft and leaves it out of llms.txt', async () => {
+    await withRepo((repo) => {
+      repo.addLanguage('de', { status: 'draft', name: 'Deutsch' });
+      const { ok } = repo.build({ strict: true });
+      assert.equal(ok, true);
+      assert.ok(!repo.exists('dist/de/index.md'));
+      assert.doesNotMatch(pageOf(repo, 'llms.txt'), /Deutsch|\/de\//);
+    });
+  });
+
+  it('dates the pages, the copies and the sitemap from the history git gives', async () => {
+    await withRepo((repo) => {
+      const { ok, reporter } = repo.build({ strict: true, git });
+      assert.deepEqual(codes(reporter), []);
+      assert.equal(ok, true);
+      const html = pageOf(repo, 'en/index.html');
+      assert.match(html, /<time datetime="2026-11-06">/);
+      assert.match(html, /"dateModified":"2026-11-06T22:18:37\+01:00"/);
+      assert.match(
+        pageOf(repo, 'en/index.md'),
+        /\nupdated November 6, 2026 \(en\)\n/,
+      );
+      const lastmods = pageOf(repo, 'sitemap.xml').match(
+        /<lastmod>2026-11-06T22:18:37\+01:00<\/lastmod>/g,
+      );
+      assert.equal(lastmods.length, 2);
+    });
+  });
+
+  it('carries no dates without git', async () => {
+    await withRepo((repo) => {
+      repo.build();
+      assert.doesNotMatch(pageOf(repo, 'en/index.html'), /<time |dateModified/);
+      assert.doesNotMatch(pageOf(repo, 'sitemap.xml'), /lastmod/);
+    });
+  });
+
+  it('warns about a shallow history and carries no dates from it', async () => {
+    await withRepo((repo) => {
+      const shallow = (args) =>
+        args[0] === 'rev-parse' ? 'true\n' : git(args);
+      const { reporter } = repo.build({ git: shallow });
+      assert.deepEqual(view(reporter), [
+        { level: 'warning', code: 'W_HISTORY_SHALLOW', file: 'content' },
+      ]);
+      assert.doesNotMatch(pageOf(repo, 'en/index.html'), /dateModified/);
+      assert.equal(repo.build({ git: shallow, strict: true }).ok, false);
+    });
+  });
+});

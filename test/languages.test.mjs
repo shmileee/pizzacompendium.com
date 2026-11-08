@@ -151,6 +151,22 @@ describe('checkLanguage', () => {
     assert.deepEqual(fieldsOf('pl', lj('pl', { status: 'draft' })), ['status']);
   });
 
+  it('takes the page title from the file, else the title', () => {
+    assert.equal(
+      check('de', { pageTitle: 'Pizza: a guide' }).language.pageTitle,
+      'Pizza: a guide',
+    );
+    assert.equal(
+      check('de', { pageTitle: undefined }).language.pageTitle,
+      check('de', { pageTitle: undefined }).language.title,
+    );
+  });
+
+  it('validates pageTitle: a non-empty string when present', () => {
+    for (const pageTitle of [3, '', '  ', null])
+      assert.deepEqual(fieldsOf('de', lj('de', { pageTitle })), ['pageTitle']);
+  });
+
   it('validates ogImageAlt', () => {
     assert.deepEqual(fieldsOf('de', lj('de', { ogImageAlt: 3 })), [
       'ogImageAlt',
@@ -241,6 +257,13 @@ describe('checkLanguage', () => {
         'ui.filterStatus',
         'ui.filterStatus',
       ]);
+    });
+
+    it('wants the date line to hold the date', () => {
+      const fields = (text) =>
+        fieldsOf('de', lj('de', { ui: { updated: text } }));
+      assert.deepEqual(fields('Updated {date}'), []);
+      assert.deepEqual(fields('Updated'), ['ui.updated']);
     });
 
     it('does not ask for the placeholders of an empty text as well', () => {

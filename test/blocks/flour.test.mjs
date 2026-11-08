@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import flour, { BEGINNER, factCount } from '../../scripts/lib/blocks/flour.mjs';
 import { codes, view } from '../helpers/capture.mjs';
-import { renderOnce } from '../helpers/render.mjs';
+import { copyOnce, renderOnce } from '../helpers/render.mjs';
 
 /** One card inside its grid. */
 const card = (info, body = '- strength W330\n- A plain note') =>
@@ -222,5 +222,21 @@ describe('the flour block', () => {
       assert.deepEqual(codes(reporter), []);
       assert.equal((html.match(/<li>/g) ?? []).length, 2 + 0);
     });
+  });
+});
+
+describe('the flour block in the Markdown copy', () => {
+  it('is the name in bold and the bullets, without the picture', () => {
+    assert.equal(
+      copyOnce(card('img=pack.webp Caputo Pizzeria')),
+      '**Caputo Pizzeria**\n\n- strength W330\n- A plain note',
+    );
+  });
+
+  it('says "for beginners" in brackets for a card marked so', () => {
+    assert.equal(
+      copyOnce(card('level=beginner Caputo'), { ui: { beginner: 'Easy' } }),
+      '**Caputo** (Easy)\n\n- strength W330\n- A plain note',
+    );
   });
 });

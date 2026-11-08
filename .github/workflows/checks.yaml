@@ -181,10 +181,14 @@ jobs:
       MISE_TASK_RUN_AUTO_INSTALL: "false"
 
     steps:
+      # The whole history: the pages carry the dates their text first appeared
+      # and last changed (scripts/lib/history.mjs), and a shallow clone has
+      # wrong ones, which the strict build refuses (W_HISTORY_SHALLOW).
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: set up mise
         uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6

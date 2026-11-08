@@ -16,6 +16,8 @@ Oba procesy przebiegają równocześnie, ale w różnym tempie. W cieple drożd�
 Na początek wybierz hydratację **55–58%** – to dolna część zakresu stosowanego w oryginalnych włoskich pizzeriach (wytyczne AVPN dopuszczają ok. 55–62%). Wyższą hydratację próbuj dopiero, gdy nabierzesz doświadczenia w pracy z ciastem.
 :::
 
+:::: recipe time=PT24H
+
 ### Przepis podstawowy {#recipe}
 
 Przepis podany jest w **procentach piekarskich**: masa mąki to zawsze 100%, a pozostałe składniki liczy się jako jej procent. Dzięki temu łatwo przeliczysz go na dowolną liczbę pizz. Przykładem jest pizza **Classica** (średnica 30–33 cm) z 4 kulek po 240 g – każda kulka to jedna pizza, którą możesz upiec nawet w zwykłym piekarniku na kamieniu.
@@ -65,6 +67,8 @@ Krok po kroku:
 ::: warning Nie próbuj surowego ciasta
 Mąka jest produktem surowym i może zawierać bakterie, które zabija dopiero wypiek. Nie jedz i nie próbuj surowej mąki ani surowego ciasta, a po pracy umyj ręce, miski, narzędzia i blat ciepłą wodą z mydłem.
 :::
+
+::::
 
 ### Kilka ważnych zasad {#dough-tips}
 

@@ -96,4 +96,8 @@ export default {
       : '';
     return `<li class="card"${marked ? ` data-level="${BEGINNER}"` : ''}>${img ? `<div class="card-img">${img}</div>` : ''}<div class="card-body"><p class="card-title">${inline(title, line).replaceAll(' / ', ' / ')}</p>${badge}${list}</div></li>\n`;
   },
+  // The name in bold, the badge in brackets, the bullets as they are; the
+  // photograph of the bag is left out (it shows nothing the text does not say).
+  markdown: ({ attrs, title, ui, body }) =>
+    `**${title}**${attrs.level === BEGINNER ? ` (${ui.beginner})` : ''}\n\n${body}`,
 };

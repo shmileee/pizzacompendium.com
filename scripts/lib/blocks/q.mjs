@@ -1,5 +1,6 @@
 import { escapeHtml, uiText } from '../html/escape.mjs';
 import { icon } from '../html/icons.mjs';
+import { plainText } from '../markdown/text.mjs';
 
 /**
  * What the first question of a page brings along, for the script to use:
@@ -24,15 +25,29 @@ const faqTools = (ui) => {
 /**
  * A collapsible FAQ item; its id is the anchor other text links to. The
  * question is one flex item of the summary next to the chevron (a question
- * with markup in it must not become several).
+ * with markup in it must not become several). The question and its answer,
+ * as text, are recorded for the `FAQPage` of the page's structured data.
  */
 export default {
   name: 'q',
   attrs: { id: 'required' },
   title: 'required',
-  render({ attrs, title, line, ui, inline, body, registerId, once }) {
+  render({ attrs, title, line, ui, inline, body, registerId, once, record }) {
     registerId(attrs.id, line);
     const tools = once('faq-toggle') ? faqTools(ui) : '';
-    return `${tools}<details class="faq" id="${escapeHtml(attrs.id)}"><summary><span class="faq-q">${inline(title, line)}</span>${icon('chevron-down', 'faq-chevron')}</summary><div class="faq-body">${body()}</div></details>\n`;
+    const question = inline(title, line);
+    const answer = body();
+    record({
+      type: 'faq',
+      id: attrs.id,
+      question: plainText(question),
+      answer: plainText(answer),
+    });
+    return `${tools}<details class="faq" id="${escapeHtml(attrs.id)}"><summary><span class="faq-q">${question}</span>${icon('chevron-down', 'faq-chevron')}</summary><div class="faq-body">${answer}</div></details>\n`;
   },
+  // In the Markdown copy a question is a heading one level below the section
+  // it is in, so that a reader (or a program) that splits the text at
+  // headings finds every question with its answer.
+  markdown: ({ title, body, depth }) =>
+    `${'#'.repeat(Math.min(depth + 1, 6))} ${title}\n\n${body}`,
 };

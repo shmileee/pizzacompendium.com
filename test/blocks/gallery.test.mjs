@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import gallery from '../../scripts/lib/blocks/gallery.mjs';
 import { codes, view } from '../helpers/capture.mjs';
-import { renderOnce } from '../helpers/render.mjs';
+import { copyOnce, renderOnce } from '../helpers/render.mjs';
 
 const IMAGES = {
   'img/a.webp': { width: 960, height: 640 },
@@ -137,5 +137,16 @@ describe('the gallery block', () => {
   it('takes a title as an error', () => {
     const { reporter } = run('::: gallery Peels\n![A](img/a.webp "t")\n:::\n');
     assert.deepEqual(codes(reporter), ['E_BLOCK_TITLE']);
+  });
+});
+
+describe('the gallery block in the Markdown copy', () => {
+  it('is its pictures, with their full addresses', () => {
+    assert.equal(
+      copyOnce(
+        ':::: gallery\n![A](img/a.webp "Cap A")\n\n![B](img/b.webp)\n::::\n',
+      ),
+      '![A](https://x.test/img/a.webp "Cap A")\n\n![B](https://x.test/img/b.webp)',
+    );
   });
 });

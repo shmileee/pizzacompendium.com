@@ -5,6 +5,7 @@
   "ogLocale": "en_GB",
   "order": 2,
   "title": "Pizza Compendium",
+  "pageTitle": "Pizza Compendium: a guide to making pizza at home",
   "description": "Everything about making pizza at home: pizza styles, flours, dough, ovens, stones, a step-by-step recipe and answers to frequently asked questions.",
   "ogImageAlt": "A Neapolitan pizza with salami and mozzarella",
   "typography": {
@@ -82,6 +83,7 @@
     "searchClose": "Close search",
     "tocClose": "Close table of contents",
     "langCode": "EN",
+    "updated": "Updated {date}",
     "credit": "Based largely on the Google document “Kompendium wiedzy KMP + FAQ” by Klub Miłośników Pizzy (the Pizza Lovers Club)."
   }
 }

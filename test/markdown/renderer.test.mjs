@@ -603,6 +603,25 @@ describe('blocks: the way a block is found, checked and given its content', () =
     assert.deepEqual(codes(own.reporter), ['E_BLOCK_UNKNOWN']);
   });
 
+  it('keeps what blocks record, across sections and in the order of the text', () => {
+    const tag = probe('tag', {
+      render: ({ attrs, record }) => {
+        record({ type: 'tag', id: attrs.id });
+        return '';
+      },
+      attrs: { id: 'required' },
+    });
+    const r = renderer({ blocks: blocks(tag) });
+    assert.deepEqual(r.records, []);
+    r.render('::: tag #a\n:::\n\n::: tag #b\n:::\n');
+    r.render('::: tag #c\n:::\n', 'two.md');
+    assert.deepEqual(codes(r.reporter), []);
+    assert.deepEqual(
+      r.records.map(({ id }) => id),
+      ['a', 'b', 'c'],
+    );
+  });
+
   it('reports an unknown block, at its line, and renders nothing for it', () => {
     const { html, reporter } = renderOnce('a\n\n::: nope\nBody\n:::\n\nb\n');
     assert.deepEqual(view(reporter), [

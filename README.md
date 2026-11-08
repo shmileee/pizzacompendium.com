@@ -48,10 +48,31 @@ links are relative, so it also works under a sub-path. Canonical URLs,
 `hreflang` alternates, `sitemap.xml` and `robots.txt` are generated from
 `site.json`.
 
+For search engines, language models and the agents that read the guide for
+someone, every published page also carries:
+
+*   **structured data** (JSON-LD, schema.org): the publisher, the site, the page
+    as an `Article` (title, description, image, language, the dates of its text,
+    the credit, the source page it translates), every FAQ question with its
+    answer as a `FAQPage`, and every `::: recipe` block as a `Recipe`. It is
+    made from the page's own text, so it cannot say what the page does not.
+*   **a Markdown copy**, `<code>/index.md`, linked from the page head: the same
+    text as plain Markdown (questions as headings, notes as quotations, full
+    addresses on every link and picture), with no markup to wade through.
+*   **the dates of its text**: when it first appeared and last changed, read
+    from the commits that touched `content/<code>/` (not from the clock: two
+    builds of one commit are identical). They go into the structured data,
+    `lastmod` in the sitemap and a line in the footer. Without a git history
+    there are none; a shallow clone gives none either and the build warns
+    (`W_HISTORY_SHALLOW`), which is why CI's build job clones the whole history.
+
+`llms.txt` at the root maps the guide for language models: per language, the
+Markdown copy and the address of every section.
+
 ## Layout
 
 ```text
-content/<code>/     one folder per language: lang.json (name, title, UI strings) + numbered *.md sections
+content/<code>/     one folder per language: lang.json (name, titles, UI strings) + numbered *.md sections
 content/pl/         source language ("source": true) – every other language mirrors its files and anchor ids
 content/rules.json  the hard content rules: what the text must never contain
 static/img/         images (copied to dist/img); the -480w/-800w copies are derived (see tools/images)
@@ -149,17 +170,19 @@ GitHub Actions shows them as annotations on the changed files).
 *   **A strict Content-Security-Policy ships with every page**, as a `<meta>`
     right after `<meta charset>`: everything from the site's own origin, the
     inline scripts (the `js` class, the stored theme and the root page's
-    language redirect) allowed by their SHA-256 hash. The build checks each
+    language redirect) allowed by their SHA-256 hash. The structured data is
+    inline too, but a browser never runs it: it needs no hash, and the build
+    holds it to plain JSON in the head with no `<` in it. The build checks each
     finished page against its own policy: it must be made of nothing but tags
     the generator writes, with no inline styles, no event-handler attributes, no
     `<iframe>`, `<object>`, `<base>` or `<meta>` in the body and no address in
     the body that leaves the site (the policy cannot stop a redirect or a link,
     this check can). It hashes the script text with `\n` line endings, as a
     browser does, so a Windows checkout builds the same page.
-*   **Two builds of the same text are identical** (the sitemap has no
-    `lastmod`), and `?v=<hash>` on the stylesheet and script URLs changes only
-    when they do (`--no-fingerprint` drops it and copies the assets byte for
-    byte).
+*   **Two builds of the same commit are identical** (the only dates are those of
+    the commits that changed the text), and `?v=<hash>` on the stylesheet and
+    script URLs changes only when they do (`--no-fingerprint` drops it and
+    copies the assets byte for byte).
 *   **Drafts.** A language with `"status": "draft"` is built to `dist/<code>/`
     with `noindex`, but is not in the picker, the `hreflang` tags, the sitemap
     or the root redirect. A draft is still **public** once deployed: anyone who

@@ -29,6 +29,11 @@ const COMMENT = /^<!--(?:(?!-->)[\s\S])*-->\s*$/;
  *            and the helpers `lang`, `ui`, `inline(text, line)`,
  *            `image(href, alt, line, kind)`, `figure(token, kind)`,
  *            `registerId(id, line)`, `once(key)`, `error(code, msg, line)`
+ *            and `record(entry)`, which keeps what the block knows as data
+ *            (a question and its answer, a recipe) for the structured data
+ *            of the page
+ *   markdown (c) => text, the block in the Markdown copy of the page (see
+ *            `markdown/copy.mjs`)
  *
  * @param {object} options
  * @param {{ code: string }} options.lang The language being rendered.
@@ -38,7 +43,11 @@ const COMMENT = /^<!--(?:(?!-->)[\s\S])*-->\s*$/;
  * @param {(id: string) => boolean} [options.isReserved] Is this id one the
  *   page template uses itself? Content may not define it.
  * @param {Record<string, any>} [options.blocks] Defaults to `blocks/`.
- * @returns {{ render: (text: string, file: string) => string, toc: { level: number, id: string, html: string }[] }}
+ * @returns {{
+ *   render: (text: string, file: string) => string,
+ *   toc: { level: number, id: string, html: string }[],
+ *   records: { type: string }[],
+ * }}
  */
 export function createMarkdown({
   lang,
@@ -57,6 +66,7 @@ export function createMarkdown({
   const state = {
     file: '',
     toc: [],
+    records: [],
     ids: new Map(),
     once: new Set(),
     level: 1,
@@ -139,6 +149,9 @@ export function createMarkdown({
     figure,
     registerId,
     error,
+    record(entry) {
+      state.records.push(entry);
+    },
     once(key) {
       if (state.once.has(key)) return false;
       state.once.add(key);
@@ -383,5 +396,7 @@ export function createMarkdown({
     },
     /** `{ level, id, html }` of every h2 and h3 so far. */
     toc: state.toc,
+    /** What the blocks recorded so far, in the order of the text. */
+    records: state.records,
   };
 }

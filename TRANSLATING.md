@@ -26,7 +26,7 @@ result with `mise run serve` at `/de/`. When it is done, publish it (see
 | Do | Don't |
 | --- | --- |
 | Translate all prose, headings, list items, link texts, image alt text and image captions. | Change anchor ids: `{#flour-strength}`, `#faq-stone`, … They are shared by all languages, which is how the language picker keeps you on the same section. |
-| Translate callout/FAQ titles (the text after `::: tip`, `::: q #id`, `::: flour img=… `). | Change URLs, file names (`img/…webp`), `img=` values or container keywords (`tip`, `warning`, `note`, `q`, `flour`, `flours`, `gallery`, `local`). |
+| Translate callout/FAQ titles (the text after `::: tip`, `::: q #id`, `::: flour img=… `). | Change URLs, file names (`img/…webp`), `img=` values or container keywords (`tip`, `warning`, `note`, `q`, `flour`, `flours`, `gallery`, `local`, `recipe`), or the `time=` of a recipe. |
 | Localise number formats (`11,5%` → `11.5%` in English). | Change numbers, temperatures, times, weights, hydration values. |
 | Keep brand and product names (Caputo, Polselli, Ooni Koda, …) and Italian pizza terms (Napoletana, Classica, Teglia alla Romana, Pinsa Romana, cornicione, biga, poolish, biscotto, semola) in their original form. | Add, remove or reorder sections, list items or FAQ entries. |
 
@@ -106,7 +106,22 @@ Plain paragraphs and lists only.          (see the hard rule above; lang must ma
 ![alt text](img/photo.webp)
 ![alt text](img/other.webp "Optional caption")
 ::::
+
+:::: recipe time=PT24H                    a recipe: the text inside is shown as it is,
+### Basic recipe {#recipe}                 and read as data for search engines (see below)
+…a paragraph, the table of ingredients, the numbered steps…
+::::
 ```
+
+A `recipe` block adds nothing to the page; it tells search engines and language
+models, in structured data, what the text inside it already says. It reads the
+first heading (the name of the recipe), the first paragraph (its description),
+the first table (one ingredient a row: the ingredient in the first column, the
+amount in the second; a row whose first cell is all bold, such as **Total**, is
+left out) and the first numbered list (the steps). `time=` is the total time as
+an ISO 8601 duration (`PT24H`, `P2DT3H`). A recipe without a heading with an id,
+a table of two columns or a numbered list is an error. Translate the text inside
+as usual; keep the block, the order of the columns and `time=` as they are.
 
 Every block is checked against its description; a mistake is an error with the
 file and line:
@@ -239,7 +254,8 @@ sections; the strings of `lang.json` are reviewed by hand.
 | `code` | equals the folder name: two or three lower-case letters, optionally `-` and a region, e.g. `de`, `pt-BR` |
 | `name` | the language's name in itself, shown in the picker |
 | `htmlLang` | value of `<html lang>` and of `hreflang`, e.g. `de`, `pt-BR` |
-| `title`, `description` | page title and description |
+| `title`, `description` | the name of the guide (the heading of the page, the site name, the installed app) and its description |
+| `pageTitle` | optional: the `<title>` of the page in search results and link previews: the name with the topic in it, such as "Pizza Compendium: a guide to making pizza at home" (default: `title`) |
 | `dir` | optional: `ltr` (default) or `rtl` |
 | `order` | optional: position in the picker (default last) |
 | `source` | `true` on exactly one language: the one the others copy |
@@ -247,7 +263,7 @@ sections; the strings of `lang.json` are reviewed by hand.
 | `ogLocale` | optional: `language_TERRITORY` for link previews (`en_GB`); by default the most likely territory of `htmlLang`. A published language whose tag has none (`xx`) must give it; a draft need not |
 | `ogImageAlt` | optional: description of the preview image (default: the title) |
 | `typography` | optional: `{ "nbspAfter": [...], "units": [...] }`. Words after which the build puts a no-break space (one-letter prepositions and conjunctions, and the words that belong to the number after them: `ok.`, `близько`, `about`) and units that stay with the number before them (`g`, `h`, `°C`). Numeric ranges (`5–6`, `$3–5`) never break, and a spaced dash never starts a line, in every language. The text of the files is not changed; a new language may leave it out |
-| `ui` | the interface strings. Every key of the source's `ui` is required in a published language (`E_LANG_UI_MISSING`; an extra key is `W_LANG_UI_EXTRA`). Keep `credit` the last key: new keys go directly above it. The source language must define every key the templates and scripts read (the list is `REQUIRED_UI` in `scripts/lib/languages.mjs`; a missing one is `E_LANG_META`): theme `themeAuto`, `themeLight`, `themeDark`; the page chrome `toc`, `tocClose`, `language`, `langCode` (the short label of the picker), `skip`, `top`, `tip`, `warning`, `credit`; 404 page `notFound`; manifest `shortName` (at most 12 characters, checked); FAQ `expandAll`, `collapseAll`, `copyLink`, `linkCopied`, `copyFailed`; hero `heroStart`, `heroFaq`, `heroAlt`; cards `beginner` (the badge and the filter button), `filterLabel`, `filterAll`, `filterStatus` (must hold `{shown}` and `{total}`, checked); search `search`, `searchLabel`, `searchBrowse`, `searchResults`, `searchCount`, `searchNone`, `searchSection`, `searchQuestion`, `searchText`, `searchClose`. One optional key, `translationNote`, is a line shown above the text (for a draft or a machine translation); any language may define it. Write strings that need no plural form |
+| `ui` | the interface strings. Every key of the source's `ui` is required in a published language (`E_LANG_UI_MISSING`; an extra key is `W_LANG_UI_EXTRA`). Keep `credit` the last key: new keys go directly above it. The source language must define every key the templates and scripts read (the list is `REQUIRED_UI` in `scripts/lib/languages.mjs`; a missing one is `E_LANG_META`): theme `themeAuto`, `themeLight`, `themeDark`; the page chrome `toc`, `tocClose`, `language`, `langCode` (the short label of the picker), `skip`, `top`, `tip`, `warning`, `credit`; 404 page `notFound`; manifest `shortName` (at most 12 characters, checked); FAQ `expandAll`, `collapseAll`, `copyLink`, `linkCopied`, `copyFailed`; hero `heroStart`, `heroFaq`, `heroAlt`; cards `beginner` (the badge and the filter button), `filterLabel`, `filterAll`, `filterStatus` (must hold `{shown}` and `{total}`, checked); the footer `updated` (must hold `{date}`, checked: the date the text of the language last changed, written the way the language writes dates); search `search`, `searchLabel`, `searchBrowse`, `searchResults`, `searchCount`, `searchNone`, `searchSection`, `searchQuestion`, `searchText`, `searchClose`. One optional key, `translationNote`, is a line shown above the text (for a draft or a machine translation); any language may define it. Write strings that need no plural form |
 
 Exactly one `lang.json` must say `"source": true` (`E_LANG_SOURCES` otherwise).
 Every published language also gets its own `manifest.webmanifest` (name from

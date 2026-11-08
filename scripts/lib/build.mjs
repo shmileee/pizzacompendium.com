@@ -4,7 +4,8 @@ import { buildAssets, collectStatic, storageKeyMismatches } from './assets.mjs';
 import { lintContent } from './content-rules.mjs';
 import { checkPages } from './csp.mjs';
 import { createReporter } from './diagnostics.mjs';
-import { MANIFEST_FILE, missingIcons } from './html/head.mjs';
+import { readHistory } from './history.mjs';
+import { MANIFEST_FILE, MARKDOWN_FILE, missingIcons } from './html/head.mjs';
 import { heroBreakpointMismatches } from './html/hero.mjs';
 import { renderNotFound } from './html/not-found.mjs';
 import { renderRoot } from './html/root.mjs';
@@ -16,7 +17,12 @@ import { published } from './languages.mjs';
 import { checkOutDir, writeOutput } from './output.mjs';
 import { loadProject } from './project.mjs';
 import { loadRules } from './rules.mjs';
-import { renderManifest, renderRobots, renderSitemap } from './seo.mjs';
+import {
+  renderLlmsTxt,
+  renderManifest,
+  renderRobots,
+  renderSitemap,
+} from './seo.mjs';
 import { loadSite } from './site-config.mjs';
 
 const { inlineScript, LANG_KEY, redirect } = inlineScripts;
@@ -41,6 +47,9 @@ const STORAGE_KEYS = Object.fromEntries(
  * @param {typeof nodeFs} [options.fs]
  * @param {(buffer: Uint8Array) => { width?: number, height?: number }} options.imageSize
  * @param {boolean} [options.fingerprint] Add `?v=<hash>` to asset URLs.
+ * @param {(args: string[]) => string} [options.git] Runs git in `root` (see
+ *   `readHistory`): the dates of the text come from its history. Without it
+ *   the pages carry no dates.
  * @returns {{
  *   ok: boolean,
  *   files: string[],
@@ -57,6 +66,7 @@ export function build({
   fs = nodeFs,
   imageSize,
   fingerprint = true,
+  git,
 }) {
   const failed = { ok: false, files: [], languages: [], reporter };
   const out = path.resolve(root, outDir);
@@ -101,24 +111,38 @@ export function build({
   lintContent({ rules, languages, content, reporter });
   warnAboutTranslations({ fs, root, languages, content, reporter });
 
+  const history = git
+    ? readHistory({ git, codes: languages.map((lang) => lang.code) })
+    : { dates: new Map(), shallow: false };
+  if (history.shallow)
+    reporter.warn(
+      'W_HISTORY_SHALLOW',
+      'the history of the repository is shallow, so the pages carry no dates: clone it whole (fetch-depth: 0)',
+      { file: 'content' },
+    );
+
   const visible = published(languages);
   const files = new Map(assets.files);
   const pages = new Map();
-  for (const lang of languages)
-    pages.set(
-      `${lang.code}/index.html`,
-      renderLanguagePage({
-        lang,
-        source,
-        visible,
-        content: content.get(lang.code),
-        site,
-        images,
-        image,
-        assets,
-        reporter,
-      }),
-    );
+  const tocs = new Map();
+  for (const lang of languages) {
+    const page = renderLanguagePage({
+      lang,
+      source,
+      visible,
+      content: content.get(lang.code),
+      site,
+      images,
+      image,
+      assets,
+      dates: history.dates.get(lang.code),
+      reporter,
+    });
+    pages.set(`${lang.code}/index.html`, page.html);
+    if (page.markdown !== null)
+      files.set(`${lang.code}/${MARKDOWN_FILE}`, page.markdown);
+    tocs.set(lang.code, page.toc);
+  }
   pages.set(
     'index.html',
     renderRoot({
@@ -140,8 +164,12 @@ export function build({
   );
   checkPages(pages, reporter);
 
-  files.set('sitemap.xml', renderSitemap(site, visible));
+  files.set('sitemap.xml', renderSitemap(site, visible, history.dates));
   files.set('robots.txt', renderRobots(site));
+  files.set(
+    'llms.txt',
+    renderLlmsTxt({ site, source, languages: visible, tocs }),
+  );
   for (const lang of languages)
     files.set(`${lang.code}/${MANIFEST_FILE}`, renderManifest(site, lang));
   files.set('.nojekyll', '');

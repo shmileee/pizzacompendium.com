@@ -49,6 +49,7 @@ describe('createHandler: content types', () => {
     'a.json': 'application/json; charset=utf-8',
     'a.xml': 'application/xml',
     'a.txt': 'text/plain; charset=utf-8',
+    'a.md': 'text/markdown; charset=utf-8',
     'a.webmanifest': 'application/manifest+json',
     'a.svg': 'image/svg+xml',
     'a.webp': 'image/webp',
@@ -248,6 +249,7 @@ describe('createHandler: compression', () => {
     'a.webmanifest': 'application/manifest+json',
     'a.svg': 'image/svg+xml',
     'a.txt': 'text/plain; charset=utf-8',
+    'a.md': 'text/markdown; charset=utf-8',
   };
   const binary = ['a.webp', 'a.png', 'a.woff2', 'a.bin', 'a.ico'];
   const files = Object.fromEntries(

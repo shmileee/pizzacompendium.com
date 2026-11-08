@@ -6,6 +6,7 @@ import {
   COLOR_SCHEME,
   iconLinks,
   manifestLink,
+  markdownLink,
   NOINDEX,
   renderHead,
   socialImage,
@@ -31,6 +32,10 @@ import { renderToc } from './toc.mjs';
  * @param {{ href: string, width: number, height: number }} model.image
  * @param {{ resolve: (href: string) => any }} model.images The picture files
  *   (the hero reads them).
+ * @param {string} model.structuredData The `<script>` of the JSON-LD.
+ * @param {boolean} model.markdownCopy Is there a Markdown copy to link to?
+ * @param {import('../history.mjs').TextDates} [model.dates] When the text
+ *   changed (the footer shows it).
  * @param {import('../diagnostics.mjs').Reporter} model.reporter
  * @returns {string}
  */
@@ -38,6 +43,7 @@ export function renderPage(model) {
   const { site, lang, languages, ui, body, assets, scripts, image } = model;
   const url = `${site.siteUrl}/${lang.code}/`;
   const title = escapeHtml(lang.title);
+  const pageTitle = escapeHtml(lang.pageTitle);
   const description = escapeHtml(lang.description);
   // The title and the headings are set in the heading face: preload the font
   // of every script they use (a Ukrainian page has Latin names in its headings).
@@ -49,11 +55,12 @@ export function renderPage(model) {
     lines: [
       // A draft is built but not offered to search engines.
       lang.status === 'draft' && NOINDEX,
-      `<title>${title}</title>`,
+      `<title>${pageTitle}</title>`,
       `<meta name="description" content="${description}">`,
       `<link rel="canonical" href="${url}">`,
       alternates(site, languages),
-      `<meta property="og:title" content="${title}">`,
+      model.markdownCopy && markdownLink(),
+      `<meta property="og:title" content="${pageTitle}">`,
       `<meta property="og:description" content="${description}">`,
       '<meta property="og:type" content="article">',
       `<meta property="og:url" content="${url}">`,
@@ -79,6 +86,7 @@ export function renderPage(model) {
           `<link rel="modulepreload" href="${assetUrl('../', module)}">`,
       ),
       `<link rel="stylesheet" href="${assetUrl('../', assets.css)}">`,
+      model.structuredData,
     ],
   });
   const note = ui.translationNote

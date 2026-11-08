@@ -29,7 +29,7 @@ const INTRO =
 
 function render(sections, over = {}) {
   const reporter = capture();
-  const html = renderLanguagePage({
+  const page = renderLanguagePage({
     lang: en,
     source,
     visible: [source, en],
@@ -41,8 +41,14 @@ function render(sections, over = {}) {
     reporter,
     ...over,
   });
-  return { html, reporter };
+  return { html: page.html, page, reporter };
 }
+
+/** The JSON-LD graph in the head of a page. */
+const graphOf = (html) =>
+  JSON.parse(
+    /<script type="application\/ld\+json">(.*?)<\/script>/.exec(html)[1],
+  )['@graph'];
 
 const own = (text, path = 'content/en/01.md') => ({
   text,
@@ -155,5 +161,96 @@ describe('renderLanguagePage', () => {
     const { html } = render([own(text)]);
     assert.match(html, /Only here/);
     assert.doesNotMatch(html, /Tylko tu/);
+  });
+});
+
+describe('renderLanguagePage: what comes with the page', () => {
+  const dates = {
+    published: '2026-01-02T03:04:05Z',
+    modified: '2026-11-06T22:18:37+01:00',
+  };
+  const FAQ =
+    '## FAQ {#faq}\n\n::: q #faq-salt How much **salt**?\nAbout 2.7%, see [the recipe](#quick-start).\n:::\n';
+
+  it('returns the table of contents of the page', () => {
+    const { page } = render([own(INTRO)]);
+    assert.deepEqual(
+      page.toc.map(({ id, level }) => [id, level]),
+      [
+        ['quick-start', 2],
+        ['faq', 2],
+      ],
+    );
+  });
+
+  it('makes a Markdown copy: title, description, address, the sections, the credit', () => {
+    const { page, html } = render([
+      own('## Quick start {#quick-start}\n\nText.\n'),
+      { text: FAQ, path: 'content/pl/02.md', fallback: true },
+    ]);
+    assert.equal(
+      page.markdown,
+      '# Page title en\n\n> Description en.\n\n<https://x.test/en/>\n\n' +
+        '## Quick start\n\nText.\n\n## FAQ\n\n### How much **salt**?\n\n' +
+        'About 2.7%, see [the recipe](https://x.test/en/#quick-start).\n\n---\n\ncredit\n',
+    );
+    assert.match(
+      html,
+      /<link rel="alternate" type="text\/markdown" href="index\.md">/,
+    );
+  });
+
+  it('dates the copy and the footer with the date the text last changed', () => {
+    const { page, html } = render([own(INTRO)], { dates });
+    assert.match(
+      page.markdown,
+      /<https:\/\/x\.test\/en\/>\\\nupdated 6 November 2026\n/,
+    );
+    assert.match(html, /<time datetime="2026-11-06">6 November 2026<\/time>/);
+    const article = graphOf(html).find((node) => node['@type'] === 'Article');
+    assert.equal(article.datePublished, dates.published);
+    assert.equal(article.dateModified, dates.modified);
+  });
+
+  it('puts the translation note of the language into the copy', () => {
+    const { page } = render([own(INTRO)], {
+      lang: lang('en', { ui: { translationNote: 'Machine translated.' } }),
+    });
+    assert.match(page.markdown, /\n\n\*Machine translated\.\*\n\n/);
+  });
+
+  it('gives a draft no Markdown copy and no link to one', () => {
+    const { page, html } = render([own(INTRO)], {
+      lang: lang('en', { status: 'draft' }),
+    });
+    assert.equal(page.markdown, null);
+    assert.doesNotMatch(html, /text\/markdown/);
+  });
+
+  it('describes the page in structured data, with every question and its answer', () => {
+    const { html, reporter } = render([
+      own(INTRO.replace('## FAQ {#faq}\n\nAnswer.\n', FAQ)),
+    ]);
+    assert.deepEqual(codes(reporter), []);
+    const graph = graphOf(html);
+    const article = graph.find((node) => node['@type'] === 'Article');
+    assert.equal(article.headline, 'Page title en');
+    assert.deepEqual(article.translationOfWork, {
+      '@id': 'https://x.test/pl/#article',
+    });
+    assert.equal(article.datePublished, undefined);
+    const faq = graph.find((node) => node['@type'] === 'FAQPage');
+    assert.deepEqual(faq.mainEntity, [
+      {
+        '@type': 'Question',
+        '@id': 'https://x.test/en/#faq-salt',
+        url: 'https://x.test/en/#faq-salt',
+        name: 'How much salt?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'About 2.7%, see the recipe.',
+        },
+      },
+    ]);
   });
 });
