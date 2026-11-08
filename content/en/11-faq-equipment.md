@@ -52,7 +52,7 @@ If you cannot carry out pyrolysis, wash the stone with water alone and remove ba
 ::: q #faq-pyrometer What is a pyrometer used for when baking pizza?
 A pyrometer is used primarily to measure the approximate temperature of the stone in the oven. You can also use it for a very rough measurement of the dough temperature during kneading, but the reading is only indicative.
 
-![Two views of a pyrometer (infrared thermometer)](img/pyrometer.webp)
+![A pyrometer (infrared thermometer)](img/pyrometer.webp)
 :::
 
 ::: q #faq-new-stone Does a new stone need any preparation before the first bake?

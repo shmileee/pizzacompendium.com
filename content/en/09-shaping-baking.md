@@ -5,7 +5,7 @@
 1. Take the bulk dough out of the fridge and wait 1–2 h (2 h in the schedule) until it warms up a little.
 2. Lift the dough out of the container carefully with a spatula (do not tear it out) and place it on the work surface.
 3. Divide the dough into portions with the spatula and weigh them (240 g each in the example).
-4. Shape each portion into a ball: pull the edges of the dough towards the centre and press, turning the portion. Then place it seam side down and make a few circular movements with your hand over the work surface until the ball is smooth and taut on top. A well-closed ball has a smooth top, with the seam sealed underneath ([photo of a well-closed ball](#faq-closed-ball)).
+4. Shape each portion into a ball: pull the edges of the dough towards the centre and press, turning the portion. Then place it seam side down and make a few circular movements with your hand over the work surface until the ball is smooth and taut on top. A well-closed ball has a smooth top, with the seam sealed underneath ([what a well-closed ball looks like](#faq-closed-ball)).
 5. Place the balls in an airtight container, leaving gaps between them because they will grow. Do not dust them with flour or oil them. Close the container and leave it at room temperature for 4–5 h (about 20–23°C; less on hot days, and up to about 5–6 h if the room is cooler than about 20°C).
 6. About an hour before baking, switch on the oven with the stone ([how to set it up](#faq-stone-setup)): stone on the highest shelf, grill mode at the maximum temperature, everything else taken out of the oven. If you are switching on grill mode at the maximum for the first time, first read the “Hot oven” warning below. Prepare the toppings in the meantime.
 
