@@ -42,7 +42,7 @@ describe('renderNotFound', () => {
   });
 
   it('has only the theme script, allowed by its hash', () => {
-    assert.equal((html.match(/<script>/g) ?? []).length, 1);
+    assert.equal(html.split('<script>').length - 1, 1);
     assert.ok(html.includes(`<script>${themeScript()}</script>`));
     assert.ok(html.includes(scriptHash(themeScript())));
     assert.doesNotMatch(html, /<script[^>]* src=/);
