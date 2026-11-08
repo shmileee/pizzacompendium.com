@@ -23,7 +23,7 @@ paths = [
 # `gitleaks dir` scans the filesystem, not git, so it needs an explicit
 # exemption.
 description = "ignore agent scratch state"
-paths = ['''^\.omo/''']
+paths = ['''^\.omo/''', '''^\.claude/worktrees/''']
 
 [[allowlists]]
 # Translation bookkeeping written by `mise run i18n:sync`: section file name ->
