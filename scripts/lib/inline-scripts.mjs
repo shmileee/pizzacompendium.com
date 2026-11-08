@@ -30,13 +30,19 @@ export const inlineScript = (fn, args = [], globals = []) =>
 
 /**
  * Marks the page as scripted before it is painted, so the stylesheet can
- * style the parts that only work with JavaScript.
+ * style the parts that only work with JavaScript, and makes jumps instant
+ * (`jump-instant`) until the page has loaded: the address the page is opened
+ * at is scrolled to while it loads, long before the scripts start, and a
+ * smooth scroll over the whole page would still be under way when they
+ * change it. `src/js/progress.js` lets smooth scrolling back in once the page
+ * has loaded.
  *
  * @param {{ documentElement: { classList: { add(name: string): void } } }} doc
  * @returns {void}
  */
 export function markScripted(doc) {
   doc.documentElement.classList.add('js');
+  doc.documentElement.classList.add('jump-instant');
 }
 
 /**

@@ -154,9 +154,12 @@ export function fakeImages(table = {}) {
  * @param {(id: string) => boolean} [options.isReserved]
  * @param {Record<string, any>} [options.blocks]
  * @param {boolean} [options.strict]
+ * @param {string} [options.textLang] The language the text is written in,
+ *   when it is not the page's (a section the language shows from the source).
  */
 export function renderer({
   code = 'en',
+  textLang,
   typography = {},
   images = {},
   ui: uiOver = {},
@@ -179,7 +182,9 @@ export function renderer({
     toc: md.toc,
     records: md.records,
     images: resolver,
-    render: (text, file = 'case.md') => md.render(text, file),
+    render: (text, file = 'case.md', from = textLang) =>
+      md.render(text, file, from),
+    checkAnchors: () => md.checkAnchors(),
   };
 }
 

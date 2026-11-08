@@ -62,7 +62,7 @@ Dopasuj [siłę mąki (W)](#flour-strength) do planowanego czasu dojrzewania cia
 - siła: producent nie podaje (przy białku 10,5% to zwykle niska siła)
 - białko 10,5%
 - sprawdzona hydratacja 57–58%
-- niska siła: nadaje się do krótszych harmonogramów
+- nadaje się do krótszych harmonogramów
 - wersja Farina 00 Pizza (zwykła Divella 00 to mąka uniwersalna)
 :::
 

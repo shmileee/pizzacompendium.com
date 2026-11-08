@@ -4,7 +4,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { checkOutDir, writeOutput } from '../scripts/lib/output.mjs';
 import { capture, codes, view } from './helpers/capture.mjs';
-import { failing } from './helpers/fake-fs.mjs';
+import { counting, failing } from './helpers/fake-fs.mjs';
 import { createTree } from './helpers/repo.mjs';
 
 let tree;
@@ -132,21 +132,72 @@ describe('writeOutput', () => {
     );
   });
 
-  it('replaces the previous output and leaves no .tmp or .old', () => {
+  /** What is beside the output, besides the repository and the copied file. */
+  const besideOut = () =>
+    nodeFs
+      .readdirSync(tree.root)
+      .filter((name) => name !== 'repo' && name !== 'src.bin')
+      .sort();
+
+  it('replaces the previous output and leaves nothing of its own beside it', () => {
     tree.write('out/old.txt', 'old');
     assert.equal(write(nodeFs), true);
     assert.deepEqual(tree.list('out'), ['a.txt', 'd/b.txt']);
-    assert.equal(tree.exists('out.tmp'), false);
-    assert.equal(tree.exists('out.old'), false);
+    assert.deepEqual(besideOut(), ['out']);
   });
 
-  it('starts from clean .tmp and .old left by a crashed build', () => {
-    tree.write('out.tmp/stale', 'x');
-    tree.write('out.old/stale', 'x');
+  it('never removes a folder beside the output that it did not make', () => {
+    tree.write('out.tmp/notes.txt', 'mine');
+    tree.write('out.old/thesis.txt', 'irreplaceable');
+    tree.write('out.old/.git/HEAD', 'ref');
     assert.equal(write(nodeFs), true);
     assert.deepEqual(tree.list('out'), ['a.txt', 'd/b.txt']);
-    assert.equal(tree.exists('out.tmp'), false);
-    assert.equal(tree.exists('out.old'), false);
+    assert.equal(tree.read('out.tmp/notes.txt'), 'mine');
+    assert.equal(tree.read('out.old/thesis.txt'), 'irreplaceable');
+    assert.deepEqual(besideOut(), ['out', 'out.old', 'out.tmp']);
+  });
+
+  it('never removes a repository that is the output with .old after its name', () => {
+    tree.write('site.old/content/x', 'x');
+    tree.write('site.old/.git/HEAD', 'ref');
+    const fs = counting(nodeFs);
+    for (const text of ['A', 'B'])
+      assert.equal(
+        writeOutput({
+          fs,
+          out: tree.path('site'),
+          files: new Map([['a.txt', text]]),
+          copies: [],
+          reporter,
+        }),
+        true,
+      );
+    assert.equal(tree.read('site/a.txt'), 'B');
+    assert.deepEqual(tree.list('site.old'), ['.git/HEAD', 'content/x']);
+    assert.equal(fs.count('rmSync', 'site.old'), 0);
+  });
+
+  it('makes the folders above the output', () => {
+    const ok = writeOutput({
+      fs: nodeFs,
+      out: tree.path('deep/er/out'),
+      files: new Map([['a.txt', 'A']]),
+      copies: [],
+      reporter,
+    });
+    assert.equal(ok, true);
+    assert.deepEqual(tree.list('deep'), ['er/out/a.txt']);
+  });
+
+  it('reports when it cannot make its working folder, and changes nothing', () => {
+    tree.write('out/old.txt', 'old');
+    const fs = failing(nodeFs, { op: 'mkdtempSync', code: 'EACCES' });
+    assert.equal(write(fs), false);
+    assert.deepEqual(view(reporter), [
+      { level: 'error', code: 'E_WRITE', file: tree.path('out') },
+    ]);
+    assert.deepEqual(tree.list('out'), ['old.txt']);
+    assert.deepEqual(besideOut(), ['out']);
   });
 
   const failures = [
@@ -168,7 +219,7 @@ describe('writeOutput', () => {
       ]);
       assert.deepEqual(tree.list('out'), ['old.txt']);
       assert.equal(tree.read('out/old.txt'), 'old');
-      assert.equal(tree.exists('out.tmp'), false);
+      assert.deepEqual(besideOut(), ['out']);
     });
   }
 
@@ -176,54 +227,53 @@ describe('writeOutput', () => {
     const fs = failing(nodeFs, { op: 'writeFileSync', code: 'EACCES' });
     assert.equal(write(fs), false);
     assert.equal(tree.exists('out'), false);
-    assert.equal(tree.exists('out.tmp'), false);
+    assert.deepEqual(besideOut(), []);
   });
 
   it('puts the old output back when the final rename fails', () => {
     tree.write('out/old.txt', 'old');
     const fs = failing(nodeFs, {
       op: 'renameSync',
-      match: (from) => from.endsWith('out.tmp'),
+      match: (from) => from.endsWith(`${path.sep}new`),
     });
     assert.equal(write(fs), false);
     assert.equal(tree.read('out/old.txt'), 'old');
-    assert.equal(tree.exists('out.old'), false);
-    assert.equal(tree.exists('out.tmp'), false);
+    assert.deepEqual(besideOut(), ['out']);
   });
 
   it('does not move anything back when moving the old output aside fails', () => {
     tree.write('out/old.txt', 'old');
     const fs = failing(nodeFs, {
       op: 'renameSync',
-      match: (from) => from.endsWith('/out'),
+      match: (from) => from === tree.path('out'),
     });
     assert.equal(write(fs), false);
     assert.equal(tree.read('out/old.txt'), 'old');
-    assert.equal(tree.exists('out.tmp'), false);
-    assert.equal(tree.exists('out.old'), false);
+    assert.deepEqual(besideOut(), ['out']);
   });
 
-  it('reports that the previous output is in .old when it cannot be put back', () => {
+  it('keeps the previous output, and says where, when it cannot be put back', () => {
     tree.write('out/old.txt', 'old');
     const fs = failing(nodeFs, [
-      { op: 'renameSync', match: (from) => from.endsWith('out.tmp') },
+      { op: 'renameSync', match: (from) => from.endsWith(`${path.sep}new`) },
       {
         op: 'renameSync',
-        match: (from) => from.endsWith('out.old'),
+        match: (from) => from.endsWith(`${path.sep}old`),
         code: 'EBUSY',
       },
     ]);
     assert.equal(write(fs), false);
     assert.deepEqual(codes(reporter), ['E_WRITE', 'E_WRITE']);
-    assert.match(reporter.entries[1].message, /out\.old/);
-    assert.match(reporter.entries[1].message, /EBUSY/);
-    assert.equal(tree.read('out.old/old.txt'), 'old');
+    const [work] = besideOut().filter((name) => name !== 'out');
+    assert.ok(work, 'the working folder that holds it is kept');
+    assert.equal(tree.read(`${work}/old/old.txt`), 'old');
+    assert.equal(tree.exists('out'), false);
   });
 
   it('reports when the temporary folder cannot be removed after a failure', () => {
     const fs = failing(nodeFs, [
       { op: 'writeFileSync', match: 'a.txt' },
-      { op: 'rmSync', after: 2 },
+      { op: 'rmSync' },
     ]);
     assert.equal(write(fs), false);
     assert.deepEqual(codes(reporter), ['E_WRITE', 'E_WRITE']);

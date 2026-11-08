@@ -194,6 +194,42 @@ test.describe('switching language', () => {
     expect(await stored(page)).toBe('uk');
   });
 
+  test('a middle click opens the section in a new tab and remembers the choice', async ({
+    page,
+    context,
+  }) => {
+    await visit(page, '/en/');
+    const id = await longSection(page);
+    await readAt(page, id);
+    await press(page, summary(page));
+    const link = page.locator('#lang-picker a[data-lang="uk"]');
+    const box = await link.boundingBox();
+    const opened = context.waitForEvent('page');
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2, {
+      button: 'middle',
+    });
+    const tab = await opened;
+    await expect(tab).toHaveURL(new RegExp(`/uk/#${id}$`));
+    await expect(page).toHaveURL(/\/en\/$/);
+    expect(await stored(page)).toBe('uk');
+  });
+
+  test('the context menu finds the link pointing at the section, and remembers nothing yet', async ({
+    page,
+  }) => {
+    await visit(page, '/en/');
+    const id = await longSection(page);
+    await readAt(page, id);
+    await press(page, summary(page));
+    const link = page.locator('#lang-picker a[data-lang="pl"]');
+    const box = await link.boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2, {
+      button: 'right',
+    });
+    expect(await link.getAttribute('href')).toMatch(new RegExp(`#${id}$`));
+    expect(await stored(page)).toBeNull();
+  });
+
   test('keeps the open question being read', async ({ page }) => {
     await visit(page, '/en/#faq-stone');
     await expect(page.locator('#faq-stone')).toHaveAttribute('open', '');

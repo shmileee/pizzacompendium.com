@@ -11,5 +11,5 @@ The Italian rule is that less is more. A few good ingredients taste better than 
 - **Prosciutto crudo e rucola** – tomato sauce and mozzarella, with raw cured ham (for example Parma ham) and rocket added after baking.
 
 ::: tip
-It is best to add delicate ingredients such as raw cured ham and rocket only after baking. Fresh basil can go on after baking or, as on a Neapolitan pizza, before baking (best under the cheese, so that it does not burn). Use ingredients rich in water (e.g. fresh tomatoes) sparingly.
+It is best to add delicate ingredients such as raw cured ham and rocket only after baking. Fresh basil can go on after baking or, as on a Neapolitan pizza, on top before baking. In a home oven, where the pizza bakes longer, it is better tucked under the cheese so that it does not burn. Use ingredients rich in water (e.g. fresh tomatoes) sparingly.
 :::

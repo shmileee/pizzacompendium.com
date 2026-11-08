@@ -90,7 +90,7 @@ A bulk dough works very well for a long maturation in the fridge or at room temp
 Biga and poolish are both preferments used for making dough. Biga usually has a hydration of about 45–60% (depending on the recipe), and poolish most often 100% (equal amounts of flour and water). They give the dough a deeper flavour and aroma that are hard to get in single-stage processes. Biga usually gives a springier, stronger dough, and poolish a more extensible one. These are methods for more advanced bakers – to start with, single-stage dough is enough.
 :::
 
-::: q #faq-bubbles Should I pop the bubbles in the shaped dough disc or in the risen dough?
+::: q #faq-bubbles Should I pop the bubbles in the dough (the risen dough or the shaped disc)?
 Yes, it is worth popping bubbles, especially on the edge (cornicione) of the dough disc. Such bubbles puff up a lot in the oven and burn quickly, which leaves burnt patches on the edge. An illustrative photo is below.
 
 ![A burnt bubble on the edge (cornicione) of a pizza](img/cornicione-bubbles.webp)
@@ -105,7 +105,7 @@ White sauces based on cream, gorgonzola and herbs are not a classic part of Ital
 ::: q #faq-hydration-flour What hydration can a given flour handle?
 Not every flour can hold every hydration in pizza dough (this differs somewhat from bread dough). To find out what hydration a given flour can “carry”:
 
-1. **First step:** check the flour’s strength and protein content. The higher the strength and the more protein, the more water the dough absorbs. The [section on flour strength](#flour-strength) will help.
+1. **First step:** check the flour’s strength and protein content. The higher the strength and the more protein, the more water the flour absorbs. The [section on flour strength](#flour-strength) will help.
 2. **Second step:** check the [list of flours](#popular-flours), which gives a proven hydration for many flours, or the manufacturer’s recommendation on the packaging. Start with a hydration of 55–58% and increase it gradually, bake by bake.
 :::
 

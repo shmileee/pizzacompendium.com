@@ -32,10 +32,10 @@ describe('the local block', () => {
     assert.match(html, /<strong>big<\/strong>/);
   });
 
-  it('renders nothing on the page of another language', () => {
+  it('renders nothing on the page of another language that shows its text', () => {
     const { html, reporter } = renderOnce(
       '::: local lang=pl Tytuł\nTekst.\n:::\n',
-      { code: 'en' },
+      { code: 'en', textLang: 'pl' },
     );
     assert.equal(html, '');
     assert.deepEqual(codes(reporter), []);
@@ -44,10 +44,34 @@ describe('the local block', () => {
   it('does not leave a trace of a local note of another language between other blocks', () => {
     const { html } = renderOnce(
       'Before.\n\n::: local lang=pl\nTekst.\n:::\n\nAfter.\n',
-      { code: 'en' },
+      { code: 'en', textLang: 'pl' },
     );
     assert.equal(html, '<p>Before.</p>\n<p>After.</p>\n');
   });
+
+  for (const [what, options] of [
+    ['on its own page', { code: 'en' }],
+    [
+      'on the page of another language that shows it',
+      { code: 'uk', textLang: 'en' },
+    ],
+  ])
+    it(`refuses a note for another language than the file's own, ${what}`, () => {
+      const { html, reporter } = renderOnce(
+        'Before.\n\n::: local lang=pl Tytuł\nTekst.\n:::\n',
+        options,
+      );
+      assert.deepEqual(view(reporter), [
+        {
+          level: 'error',
+          code: 'E_BLOCK_ATTR',
+          file: 'case.md',
+          line: 3,
+          field: 'lang',
+        },
+      ]);
+      assert.equal(html, '<p>Before.</p>\n');
+    });
 
   it('needs the language it is for', () => {
     const { reporter } = renderOnce('::: local Title\nBody.\n:::\n', {
@@ -93,7 +117,7 @@ describe('the local block', () => {
   it('checks the content of a note that it then does not show', () => {
     const { html, reporter } = renderOnce(
       '::: local lang=pl T\n> quoted\n:::\n',
-      { code: 'en' },
+      { code: 'en', textLang: 'pl' },
     );
     assert.equal(html, '');
     assert.ok(codes(reporter).includes('E_BLOCK_CONTENT'));

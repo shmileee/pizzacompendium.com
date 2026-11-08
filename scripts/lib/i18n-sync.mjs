@@ -35,7 +35,8 @@ export const hashText = (text) =>
 /**
  * What a translator has confirmed: for each file, the hash of the source
  * text it was last brought in line with (`mise run i18n:sync`). A file with
- * no entry has never been confirmed and is never reported as stale.
+ * no entry has never been confirmed: it is `unconfirmed`, since nothing tells
+ * whether the source has changed under it.
  *
  * @param {object} options
  * @param {typeof nodeFs} [options.fs]
@@ -62,11 +63,12 @@ export function loadSync({ fs = nodeFs, root, language, reporter }) {
 }
 
 /**
- * @typedef {'ok' | 'stale' | 'untranslated' | 'missing' | 'extra'} State
+ * @typedef {'ok' | 'stale' | 'unconfirmed' | 'untranslated' | 'missing' | 'extra'} State
  *
  *   ok            translated, and the source has not changed since it was
- *                 last confirmed (or it was never confirmed)
+ *                 last confirmed
  *   stale         the source changed after the last confirmation
+ *   unconfirmed   translated, but never confirmed: no entry in .sync.json
  *   untranslated  byte for byte the source text (or, if the source has
  *                 local blocks, the source text without them)
  *   missing       there is no file (the page shows the source text)
@@ -96,7 +98,8 @@ export function sectionStates({ language, source, content, sync }) {
       mine.text === withoutLocalBlocks(original.text)
     )
       state = 'untranslated';
-    else if (recorded && recorded !== hashText(original.text)) state = 'stale';
+    else if (!recorded) state = 'unconfirmed';
+    else if (recorded !== hashText(original.text)) state = 'stale';
     return { file: original.file, state };
   });
   return [...rows, ...own.extra.map((file) => ({ file, state: 'extra' }))];
@@ -104,8 +107,10 @@ export function sectionStates({ language, source, content, sync }) {
 
 /**
  * The warnings the build gives for published translations (a draft is
- * allowed to be unfinished). Missing and extra files are reported when the
- * content is loaded.
+ * allowed to be unfinished, and `i18n:status` shows what it still owes):
+ * an untranslated copy, a stale file and a file never confirmed, which could
+ * be stale without anyone knowing. Missing and extra files are reported when
+ * the content is loaded.
  *
  * @param {object} options
  * @param {typeof nodeFs} [options.fs]
@@ -143,6 +148,12 @@ export function warnAboutTranslations({
         reporter.warn(
           'W_STALE',
           `the ${source.code} text changed since this file was last confirmed; update it, then run: mise run i18n:sync ${language.code} ${file}`,
+          where,
+        );
+      else if (state === 'unconfirmed')
+        reporter.warn(
+          'W_UNCONFIRMED',
+          `never confirmed against the ${source.code} text; check that it says what the source says, then run: mise run i18n:sync ${language.code} ${file}`,
           where,
         );
     }
@@ -194,8 +205,8 @@ export function recordSync({
   const chosen = states.filter(
     (row) => files.length === 0 || files.includes(row.file),
   );
-  const recorded = chosen.filter(
-    (row) => row.state === 'ok' || row.state === 'stale',
+  const recorded = chosen.filter((row) =>
+    ['ok', 'stale', 'unconfirmed'].includes(row.state),
   );
   const hashes = new Map(states.map((row) => [row.file, sync.get(row.file)]));
   for (const { file } of recorded)

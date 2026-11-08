@@ -30,7 +30,7 @@ mise run lighthouse      # Lighthouse (mobile) on the built site; needs Chrome (
 mise run smoke           # smoke test of a deployed site (-- <url> for a local preview)
 mise run images          # regenerate the derived images (srcset copies, og.jpg, icons; sharp)
 mise run content:lint    # the hard content rules only, in a fraction of a second
-mise run i18n:status     # which translated files are ok, stale, untranslated, …
+mise run i18n:status     # which translated files are ok, stale, unconfirmed, untranslated, …
 mise run i18n:sync en    # confirm that `en` matches the current Polish text
 mise run new-lang de "Deutsch"   # start a language as a draft
 ```
@@ -78,7 +78,7 @@ content/rules.json  the hard content rules: what the text must never contain
 static/img/         images (copied to dist/img); the -480w/-800w copies are derived (see tools/images)
 static/fonts/       the self-hosted Vollkorn woff2 files and their licence (OFL.txt)
 static/             also the app icons (favicon-32.png, favicon.ico, apple-touch-icon.png, icon-*.png)
-site.json           siteUrl, ogImage and themeColor: SEO tags, the manifest and the sitemap
+site.json           siteUrl, ogImage, themeColor and defaultLanguage: SEO tags, the manifest, the sitemap, the root page
 src/css/            the stylesheet in pieces, concatenated in file-name order (00 tokens, 05 fonts, 10 base, 20-26 layout, header, contents, wayfinding, 30-38 prose, hero, cards, FAQ, gallery, 40 search, 45 root and 404, 90 print, 95 motion)
 src/js/             the browser code, one ES module per job (util, theme, lang, toc, progress, search, faq, cards), each with a pure part and `init()`
 src/app.js          the entry: imports the modules and runs their `init()`; src/favicon.svg is the mark
@@ -101,7 +101,10 @@ slash (and without a user name), and `ogImage`, the preview image as
 `img/<file>` (required: link previews and the manifest need one); `themeColor`
 is optional, `"#rrggbb"` or `{ "light": "#rrggbb", "dark": "#rrggbb" }`, and
 adds `theme-color` tags. It should equal `--paper` of `src/css/00-tokens.css`
-in both schemes, so that the browser bar matches the page.
+in both schemes, so that the browser bar matches the page. `defaultLanguage`
+(optional, the code of a published language; the source language when absent)
+is where the root page sends a visitor whose browser asks for no language of
+the site, and the language of the root and 404 pages.
 
 ## The page
 
@@ -139,17 +142,20 @@ diagnostic with a stable code (`E_IMG_MISSING`, `W_STALE`, …), the file and th
 line; errors fail the build, warnings do not (`--strict`: they do too, and
 GitHub Actions shows them as annotations on the changed files).
 
-*   **The output is replaced atomically.** The site is written to `dist.tmp/`
-    only when the build had no errors, then the old `dist/` is moved to
-    `dist.old/`, the new one renamed into place and the old one deleted. If a
-    step fails the old `dist/` is put back and nothing is left behind, so a
-    failed build never leaves a half-written site. (A folder cannot be swapped
-    in one step: a process killed in the instant between the two renames leaves
-    no `dist/`, the complete old site in `dist.old/` and the complete new one in
-    `dist.tmp/`. The next build starts clean.) `--out` refuses the repository
-    and the folders around it, `content/`, `static/`, `src/`, `scripts/` and
-    anything inside them, a Git checkout, and any folder that is not empty and
-    not a previous build (a build has a `.nojekyll`).
+*   **The output is replaced atomically.** The site is written to a working
+    folder made fresh beside `dist/` (`.dist.build-XXXXXX/`) only when the
+    build had no errors, then the old `dist/` is moved into that folder, the
+    new one renamed into place and the working folder deleted. If a step fails
+    the old `dist/` is put back and nothing is left behind, so a failed build
+    never leaves a half-written site. A build deletes nothing but `dist/` and
+    the folder it made itself, never a `dist.old/` or `dist.tmp/` that happens
+    to be there. (A folder cannot be swapped in one step: a process killed in
+    the instant between the two renames leaves no `dist/` and both sites in the
+    working folder, to be removed by hand.) `--out` (relative to the
+    repository) refuses the repository and the folders around it, `content/`,
+    `static/`, `src/`, `scripts/` and anything inside them, a Git checkout,
+    and any folder that is not empty and not a previous build (a build has a
+    `.nojekyll`).
 *   **Hard content rules are errors, always.** `content/rules.json` forbids
     exclamation chains, smileys, outside links, shop names, prices in anything
     but US dollars, country-specific remarks in shared text and more; the
@@ -216,8 +222,9 @@ Edit the Markdown in `content/<code>/`. Change the Polish text → mirror it in
 the other languages. The build tells you what to mirror: a changed structure is
 an error, and `mise run i18n:sync <code> [files]` records that a translated file
 matches the current Polish text, so the build warns (`W_STALE`) when the Polish
-file changes afterwards. Nothing is recorded until you run it, so a language
-that has never been confirmed is never reported as stale.
+file changes afterwards. A translated file of a published language that has
+never been confirmed is a warning as well (`W_UNCONFIRMED`), so `build:strict`
+fails until every one is.
 
 ## Tests
 

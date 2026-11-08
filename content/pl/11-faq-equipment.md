@@ -24,7 +24,7 @@ Na nagrzewanie kamienia zaplanuj 45–60 min (z zapasem względem czasów z przy
 ::: q #faq-granite-slab Czy mogę użyć do wypieku zwykłej płyty granitowej (np. budowlanej)?
 Granit stosowany w budownictwie, do wykończeń i do użytku domowego bywa polerowany lub impregnowany chemicznie, żeby chronić go przed wilgocią i mrozem. Zapytaj sprzedawcę lub producenta, czy i jak granit był obrabiany, ponieważ kontakt żywności z takim kamieniem może być niebezpieczny dla zdrowia. Granit może też pęknąć przy gwałtownych zmianach temperatury, dlatego nagrzewaj go powoli, razem z piekarnikiem.
 
-Opinie są podzielone: jedni używają taniej płyty granitowej za ok. $4–5 i twierdzą, że sprawdza się bardzo dobrze, inni uważają, że lepiej dopłacić do kamienia przeznaczonego do kontaktu z żywnością (ok. $4–5 wobec ok. $15–25). Bezpieczniej kupić szamot (ok. $15–25): zazwyczaj jest lepszym kamieniem do pizzy i posłuży długo; ewentualnie granit przeznaczony do kontaktu z żywnością.
+Opinie są podzielone: jedni używają taniej płyty granitowej za ok. $4–5 i twierdzą, że sprawdza się bardzo dobrze, inni uważają, że lepiej dopłacić do kamienia przeznaczonego do kontaktu z żywnością (ok. $15–25). Bezpieczniej kupić szamot (ok. $15–25): zazwyczaj jest lepszym kamieniem do pizzy i posłuży długo; ewentualnie granit przeznaczony do kontaktu z żywnością.
 :::
 
 ::: q #faq-cracked-stone Pękł mi kamień do pizzy. Czy jego efektywność spada?
@@ -77,7 +77,7 @@ Do pieca F1 stosuje się dwa rodzaje kamienia biscotto (poniższe opisy opieraj�
 To zależy od co najmniej dwóch czynników:
 
 1. Głębokość wsunięcia placka do pieca. Jeśli placek leży zbyt głęboko, górna grzałka z tyłu pieca nie ogrzeje równomiernie jego boków. Wtedy obróć go i przesuń do centralnej części kamienia.
-2. Różnice między piecami F1. Wersje klasyczne z oryginalnymi termostatami mogą nagrzewać się do 450°C, a nawet ok. 500°C. Przez takie różnice ciepło rozkłada się na placku nieco inaczej i wtedy warto go obrócić. W piecach z termostatami 500°C ten problem jest prawdopodobnie mniejszy.
+2. Różnice między piecami F1. Wersje klasyczne z oryginalnymi termostatami nagrzewają się do ok. 450°C, a wersje z termostatem 500°C – do ok. 500°C i więcej. Przez takie różnice ciepło rozkłada się na placku nieco inaczej i wtedy warto go obrócić. W piecach z termostatami 500°C ten problem jest prawdopodobnie mniejszy.
 :::
 
 ::: q #faq-stone-setup Jak ustawić i nagrzewać kamień w piekarniku?
@@ -99,7 +99,7 @@ Domowe piekarniki są zaprojektowane do dłuższej pracy w temperaturach, do kt�
 5. uszkodzone meble po bokach zabudowy piekarnika, np. odchodząca okleina lub farba
 
 ::: warning Nie modyfikuj piekarnika
-Modyfikowanie piekarnika (ingerencja w termostat, zabezpieczenia lub grzałki) jest ryzykowne: wiąże się z bardzo wysokimi temperaturami i prądem, grozi pożarem i uszkodzeniem urządzenia, zwykle powoduje utratę gwarancji i nie jest zalecane. Do pierwszych pizz wystarczy zwykły piekarnik z kamieniem.
+Modyfikowanie piekarnika (ingerencja w termostat, zabezpieczenia lub grzałki) jest ryzykowne: wiąże się z bardzo wysokimi temperaturami i prądem, grozi pożarem i uszkodzeniem urządzenia, może skutkować utratą gwarancji i nie jest zalecane. Do pierwszych pizz wystarczy zwykły piekarnik z kamieniem.
 :::
 :::
 
@@ -146,6 +146,6 @@ Poniższe zestawienie opiera się na opiniach domowych piekarzy i na tym, które
 
 - **Budżet ok. $125** – w tym budżecie znajdziesz dziesiątki robotów, które często mają ten sam mechanizm w innej obudowie. Najczęściej pojawiają się roboty marki Bosch z serii MUM. W praktyce roboty z tej półki nie radzą sobie z dużymi ilościami ciasta (powyżej ok. 1 kg), mimo że producenci deklarują więcej. Nie sugeruj się mocą ani wydajnością podawaną przez producentów.
 - **Budżet ok. $250** – wyróżnia się G3 Ferrari G20075. Jest wiele innych, prawdopodobnie równie dobrych.
-- **Budżet ok. $500** – wyróżniają się dwie marki: KitchenAid (seria Artisan) oraz Kenwood (seria Chef). Te roboty są przystosowane do wyrabiania ciasta i wyrabiają nawet 1,5–2 kg (i więcej) ciasta naraz, zależnie od modelu. To także dobre wielofunkcyjne urządzenia domowe, ale tu liczy się przede wszystkim wyrabianie ciasta.
+- **Budżet ok. $500** – wyróżniają się dwie marki: KitchenAid (seria Artisan) oraz Kenwood (seria Chef). Te roboty są przystosowane do wyrabiania ciasta; większe modele wyrabiają nawet 1,5–2 kg (i więcej) ciasta naraz, mniejsze – wyraźnie mniej. To także dobre wielofunkcyjne urządzenia domowe, ale tu liczy się przede wszystkim wyrabianie ciasta.
 - **Budżet powyżej $750** (dla profesjonalistów i doświadczonych amatorów) – to już grupa profesjonalnych mikserów, które można stosować w domu. Najlepsze z nich to miksery spiralne.
 :::

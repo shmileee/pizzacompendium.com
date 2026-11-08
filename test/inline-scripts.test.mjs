@@ -67,10 +67,13 @@ describe('inlineScript', () => {
 });
 
 describe('markScripted', () => {
-  it('adds the js class to <html>', () => {
+  it('adds the js class to <html>, and makes the opening jump instant', () => {
     const doc = fakeDocument();
     markScripted(doc);
-    assert.deepEqual(doc.documentElement.classList.names(), ['js']);
+    assert.deepEqual(doc.documentElement.classList.names(), [
+      'js',
+      'jump-instant',
+    ]);
   });
 
   it('does the same as its emitted text', () => {

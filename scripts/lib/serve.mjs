@@ -31,9 +31,30 @@ const COMPRESSIBLE =
   /^(text\/|application\/(json|xml|manifest\+json)|image\/svg)/;
 
 /**
+ * Does an `Accept-Encoding` header accept gzip? It does when it names gzip
+ * with a weight above 0 (`gzip`, `gzip;q=0.5`), or names no gzip and accepts
+ * anything (`*`); `gzip;q=0` refuses it. A weight that is no number counts
+ * as 0.
+ *
+ * @param {string} header
+ * @returns {boolean}
+ */
+function acceptsGzip(header) {
+  const weights = new Map();
+  for (const part of header.split(',')) {
+    const [coding, ...params] = part.split(';').map((s) => s.trim());
+    const q = params.find((param) => /^q\s*=/i.test(param));
+    const weight = q === undefined ? 1 : Number(q.replace(/^q\s*=\s*/i, ''));
+    weights.set(coding.toLowerCase(), Number.isNaN(weight) ? 0 : weight);
+  }
+  return (weights.get('gzip') ?? weights.get('*') ?? 0) > 0;
+}
+
+/**
  * A request handler that serves a built site read-only, the way GitHub
- * Pages does: `/dir` goes to `/dir/`, a directory serves its `index.html`,
- * an unknown address gets `404.html` with status 404. Nothing outside
+ * Pages does: `/dir` goes to `/dir/` (301), a directory serves its
+ * `index.html`, a file asked for with a slash after it (`/a.html/`) and an
+ * unknown address get `404.html` with status 404. Nothing outside
  * `distDir` is reachable (the containment is checked on the real path, so
  * neither `..`, a sibling folder that merely starts with the same name nor
  * a symbolic link gets out), and a wrong-case address is a 404 as it is on
@@ -96,18 +117,21 @@ export function createHandler({ distDir, fs = nodeFs }) {
       .split(/[\\/]+/)
       .filter((part) => part && part !== '.');
 
+    const slash = /[\\/]$/.test(pathname);
     let found = locate(segments);
     if (found?.stat.isDirectory()) {
-      if (segments.length > 0 && !/[\\/]$/.test(pathname))
+      if (segments.length > 0 && !slash)
         return send(
           res,
-          302,
+          301,
           {
             Location: `/${segments.map(encodeURIComponent).join('/')}/${search}`,
           },
           '',
         );
       found = locate([...segments, 'index.html']);
+    } else if (slash) {
+      found = null;
     }
     const ok = found?.stat.isFile() === true;
     const served = ok ? found : locate(['404.html']);
@@ -124,7 +148,7 @@ export function createHandler({ distDir, fs = nodeFs }) {
     const headers = { 'Content-Type': type };
     if (COMPRESSIBLE.test(type)) {
       headers.Vary = 'Accept-Encoding';
-      if (/\bgzip\b/.test(req.headers?.['accept-encoding'] ?? '')) {
+      if (acceptsGzip(req.headers?.['accept-encoding'] ?? '')) {
         body = zlib.gzipSync(body);
         headers['Content-Encoding'] = 'gzip';
       }

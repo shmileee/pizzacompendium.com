@@ -37,7 +37,8 @@ describe('the rule table: every rule of content/rules.json has its proof', () =>
   // id -> level, what the rule must flag, what it must let through. `langs`
   // says in which languages the text is tried (default: every language the
   // rule applies to). Every language of the rule's scope needs a "flag" and a
-  // "pass" case.
+  // "pass" case. A rule that reads `acrossLines` flags a phrase that a line
+  // break splits, on the line where it starts.
   const TABLE = {
     'exclamation-chain': {
       level: 'error',
@@ -92,7 +93,10 @@ describe('the rule table: every rule of content/rules.json has its proof', () =>
     },
     'retailer-or-where-to-buy': {
       level: 'error',
+      acrossLines: true,
       flag: [
+        { text: 'and where to\nbuy flour', langs: ['en'] },
+        { text: 'buy at Del\nDuca' },
         { text: 'buy at Lidl' },
         { text: 'buy at Biedronka' },
         { text: 'buy at Allegro' },
@@ -144,7 +148,12 @@ describe('the rule table: every rule of content/rules.json has its proof', () =>
     },
     'club-mention': {
       level: 'error',
-      flag: [{ text: 'thanks to KMP' }, { text: 'thanks to klub miłośników' }],
+      acrossLines: true,
+      flag: [
+        { text: 'thanks to KMP' },
+        { text: 'thanks to klub miłośników' },
+        { text: 'thanks to the Klub\nMiłośników' },
+      ],
       pass: [{ text: 'thanks to the people' }, { text: 'the KM distance' }],
     },
     'social-link': {
@@ -195,10 +204,17 @@ describe('the rule table: every rule of content/rules.json has its proof', () =>
     'country-specific-remark-outside-local-block': {
       level: 'error',
       localExempt: true,
+      acrossLines: true,
       flag: [
         { text: 'in Poland' },
+        { text: 'made in poland, sold in ukraine' },
         { text: 'Polish pizzerias' },
+        { text: 'POLISH pizzerias' },
         { text: 'our country' },
+        { text: 'in our\ncountry' },
+        { text: 'Piec ' + 'ukraiński'.replace('ń', 'n\u0301'), langs: ['pl'] },
+        { text: 'Піца У ПОЛЬЩІ', langs: ['uk'] },
+        { text: 'у нашій\nкраїні', langs: ['uk'] },
         { text: 'w Polsce', langs: ['pl'] },
         { text: 'polskie sklepy', langs: ['pl'] },
         { text: 'w naszym kraju', langs: ['pl'] },
@@ -210,6 +226,39 @@ describe('the rule table: every rule of content/rules.json has its proof', () =>
         { text: 'Neapolitan pizza' },
         { text: 'Italian flour' },
         { text: 'polished stone' },
+        { text: 'polish the stone, then the tent poles' },
+        { text: 'our\n\ncountry' },
+      ],
+    },
+    'mixed-script-word': {
+      level: 'error',
+      flag: [
+        { text: 'In P\u043eland' },
+        { text: 'Піц\u0061 тут' },
+        { text: 'a \u0441aputo flour' },
+      ],
+      pass: [
+        { text: 'Caputo і борошно' },
+        { text: 'mąka Caputo' },
+        { text: '180°С in an oven' },
+      ],
+    },
+    'en-article-before-vowel': {
+      level: 'error',
+      only: ['en'],
+      acrossLines: true,
+      flag: [
+        { text: 'in a ordinary oven' },
+        { text: 'Bake it. A ordinary oven works.' },
+        { text: 'A hour later' },
+        { text: 'in a\nordinary oven' },
+      ],
+      pass: [
+        { text: 'in an ordinary oven' },
+        { text: 'a one-hour rest and a useful tool' },
+        { text: 'a unique, uniform dough' },
+        { text: 'Plan a. Other things' },
+        { text: 'data ordinary' },
       ],
     },
     'en-american-spelling': {
@@ -232,7 +281,11 @@ describe('the rule table: every rule of content/rules.json has its proof', () =>
     },
     'all-caps-word': {
       level: 'warning',
-      flag: [{ text: 'the PIZZA oven' }],
+      flag: [
+        { text: 'the PIZZA oven' },
+        { text: 'піца У ПЕЧІ' },
+        { text: 'mąka ŻÓŁTA' },
+      ],
       pass: [
         { text: 'the FAQ and the HTML' },
         { text: 'ids {#PIZZA}' },
@@ -289,6 +342,7 @@ describe('the rule table: every rule of content/rules.json has its proof', () =>
         assert.equal(rule.level, entry.level);
         assert.deepEqual(entry.only ?? ALL, scope);
         assert.equal(rule.localExempt, entry.localExempt === true);
+        assert.equal(rule.acrossLines, entry.acrossLines === true);
       });
 
       for (const lang of scope)
@@ -435,6 +489,73 @@ describe('pattern rules, with the small default rules', () => {
 const apart = (reporter) =>
   codes(reporter).filter((code) => code !== 'W_EXCLAMATION_MARK');
 
+describe('a rule that reads across lines', () => {
+  const phrase = (over = {}) =>
+    compileRules({
+      views: { 'no-ids': [{ replace: '\\{#[\\w-]+\\}', with: '' }] },
+      rules: [
+        {
+          id: 'phrase',
+          level: 'error',
+          message: 'no phrase',
+          patterns: ['\\bour country\\b', '\\bwhere to buy\\b'],
+          flags: 'i',
+          acrossLines: true,
+          ...over,
+        },
+      ],
+    }).set;
+  const found = (text, rules = phrase()) =>
+    view(lintIn('en', section(text), rules)).map((e) => `${e.code}:${e.line}`);
+
+  it('finds a phrase broken over two lines or more, on the line it starts', () => {
+    assert.deepEqual(found('Made in our\ncountry.'), ['E_PHRASE:3']);
+    assert.deepEqual(found('Text.\nAnd where\n  to\nbuy it.'), ['E_PHRASE:4']);
+    assert.deepEqual(found('- where to\n  buy'), ['E_PHRASE:3']);
+  });
+
+  it('reports a line once, whether its phrase is on it or runs on from it', () => {
+    assert.deepEqual(found('our country, our\ncountry'), ['E_PHRASE:3']);
+    assert.deepEqual(found('a\n\nour country\n\nb'), ['E_PHRASE:5']);
+  });
+
+  it('does not join across a blank line, a new block, a heading or a list item', () => {
+    for (const text of [
+      'our\n\ncountry',
+      'our\n::: tip\ncountry\n:::',
+      'our\n## country {#c}',
+      'our\n- country',
+      'our\n1. country',
+      'our\n| country |',
+      'where to\n* buy',
+    ])
+      assert.deepEqual(found(text), [], text);
+  });
+
+  it('does not join across a line the rule leaves alone', () => {
+    assert.deepEqual(
+      found('our\nskip\ncountry', phrase({ skip: '^skip' })),
+      [],
+    );
+    const local = '::: local lang=en Note\ncountry\n:::';
+    assert.deepEqual(found(`our\n${local}`, phrase({ localExempt: true })), []);
+  });
+
+  it('reads the lines through the view, and lets an allowed phrase through', () => {
+    assert.deepEqual(found('our {#x}\ncountry', phrase({ view: 'no-ids' })), [
+      'E_PHRASE:3',
+    ]);
+    assert.deepEqual(
+      found('our\ncountry', phrase({ allow: ['our country'] })),
+      [],
+    );
+  });
+
+  it('is not done for a rule that does not ask for it', () => {
+    assert.deepEqual(found('our\ncountry', phrase({ acrossLines: false })), []);
+  });
+});
+
 describe('views and replacement text', () => {
   const one = (view, text, pattern = 'x') =>
     codes(
@@ -466,10 +587,10 @@ describe('views and replacement text', () => {
 });
 
 describe('what the pattern rules read', () => {
-  it('skips fenced code', () => {
+  it('reads fenced code too, which is refused besides', () => {
     assert.deepEqual(
-      codes(lintIn('en', section('```\nPoland!!\n```\n\n~~~\nPoland\n~~~'))),
-      [],
+      codes(lintIn('en', section('```\nPoland\n```\n\n~~~\nPoland\n~~~'))),
+      ['E_CODE_BLOCK', 'E_CODE_BLOCK', 'E_COUNTRY_REMARK', 'E_COUNTRY_REMARK'],
     );
   });
 
@@ -490,7 +611,11 @@ describe('what the pattern rules read', () => {
     const text = section(
       '```\n::: local lang=en Note\n```\nPoland\n```\n:::\n```',
     );
-    assert.deepEqual(codes(lintIn('en', text)), ['E_COUNTRY_REMARK']);
+    assert.deepEqual(codes(lintIn('en', text)), [
+      'E_CODE_BLOCK',
+      'E_CODE_BLOCK',
+      'E_COUNTRY_REMARK',
+    ]);
   });
 
   it('exempts a country remark inside a real local block, not around it', () => {
@@ -510,6 +635,57 @@ describe('what the pattern rules read', () => {
       'E_EXCLAMATION_CHAIN',
       'W_EXCLAMATION_MARK',
     ]);
+  });
+});
+
+describe('Markdown the outline cannot read', () => {
+  it('refuses fenced code, in a draft too, at the line that opens it', () => {
+    const reporter = lintIn('en', section('Text.\n\n```\ncode\n```'));
+    assert.deepEqual(view(reporter), [
+      {
+        level: 'error',
+        code: 'E_CODE_BLOCK',
+        file: `content/en/${FILE}`,
+        line: 5,
+      },
+    ]);
+  });
+
+  it('refuses fenced code inside a list item', () => {
+    const reporter = lintIn('pl', section('- item\n\n  ```\n  x\n  ```'));
+    assert.deepEqual(codes(reporter), ['E_CODE_BLOCK']);
+  });
+
+  it('reads the lines of refused code with the pattern rules all the same', () => {
+    const reporter = lintIn('pl', section('```\nWow!!\n```'));
+    assert.deepEqual(apart(reporter), ['E_CODE_BLOCK', 'E_EXCLAMATION_CHAIN']);
+  });
+
+  for (const [form, body, line] of [
+    ['setext-heading', 'Title {#t}\n---', 4],
+    ['blockquote', '> quoted', 3],
+    ['link-definition', 'See [this][r].\n\n[r]: #nowhere', 5],
+    ['table-without-leading-pipe', 'a | b\n---|---', 4],
+  ])
+    it(`refuses ${form} with E_MARKDOWN_FORM, naming it`, () => {
+      const reporter = lintIn('en', section(body));
+      assert.deepEqual(view(reporter), [
+        {
+          level: 'error',
+          code: 'E_MARKDOWN_FORM',
+          file: `content/en/${FILE}`,
+          line,
+          field: form,
+        },
+      ]);
+    });
+
+  it('refuses the forms in a published translation as in the source', () => {
+    const reporter = lint({
+      pl: { files: { [FILE]: section('Tekst.') } },
+      en: { files: { [FILE]: section('Text.\n\n+ item') } },
+    });
+    assert.ok(codes(reporter).includes('E_MARKDOWN_FORM'));
   });
 });
 
@@ -585,13 +761,13 @@ describe('links to an id', () => {
     assert.deepEqual(codes(lint(spec)), []);
   });
 
-  it('does not read a link inside code or a comment', () => {
+  it('does not read a link inside code (refused) or a comment', () => {
     const spec = {
       pl: {
         files: { [FILE]: section('```\n[a](#no)\n```\n<!--\n[b](#no)\n-->') },
       },
     };
-    assert.deepEqual(apart(lint(spec)), []);
+    assert.deepEqual(apart(lint(spec)), ['E_CODE_BLOCK']);
   });
 
   it('reads a link inside a local block', () => {
@@ -609,6 +785,21 @@ describe('links to an id', () => {
       en: { status: 'draft', files: { [FILE]: section('[a](#no)') } },
     };
     assert.deepEqual(codes(lint(spec)), ['E_BROKEN_ANCHOR']);
+  });
+
+  it('leaves the links to the renderer when the build asks it to', () => {
+    const { languages, content } = memory({
+      pl: { files: { [FILE]: section('[a](#no)') } },
+    });
+    const reporter = capture();
+    lintContent({
+      rules: defaultRules(),
+      languages,
+      content,
+      reporter,
+      anchors: false,
+    });
+    assert.deepEqual(codes(reporter), []);
   });
 });
 
@@ -659,10 +850,15 @@ describe('local blocks', () => {
   });
 
   it('may not hold a heading, at any level, or a bare #', () => {
-    for (const heading of ['# H', '###### H', '#', '   ## H'])
+    for (const heading of ['# H', '###### H', '#'])
       assert.deepEqual(local('lang=en T', heading), [
         'E_LOCAL_BLOCK_HAS_STRUCTURE',
       ]);
+    // An indented heading is refused wherever it is.
+    assert.deepEqual(local('lang=en T', '   ## H'), [
+      'E_MARKDOWN_FORM',
+      'E_LOCAL_BLOCK_HAS_STRUCTURE',
+    ]);
   });
 
   it('may not hold an FAQ item, but another block is fine', () => {
@@ -676,8 +872,8 @@ describe('local blocks', () => {
     assert.deepEqual(local('lang=en T', '#hashtag and #1'), []);
   });
 
-  it('may hold a heading inside fenced code', () => {
-    assert.deepEqual(local('lang=en T', '```\n# H\n```'), []);
+  it('take a heading inside fenced code for code, which is refused', () => {
+    assert.deepEqual(local('lang=en T', '```\n# H\n```'), ['E_CODE_BLOCK']);
   });
 
   it('are exempt from structure parity (they have no counterpart)', () => {

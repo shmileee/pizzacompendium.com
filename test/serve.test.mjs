@@ -125,10 +125,10 @@ describe('createHandler: paths', () => {
     );
   });
 
-  it('redirects a folder to its slash form and keeps the query', async () => {
+  it('redirects a folder to its slash form for good, as Pages does, and keeps the query', async () => {
     await withSite(({ handler }) => {
       const res = call(handler, '/en?x=1&y=2');
-      assert.equal(res.status, 302);
+      assert.equal(res.status, 301);
       assert.equal(res.headers.location, '/en/?x=1&y=2');
       assert.equal(res.text, '');
       assert.equal(call(handler, '/en').headers.location, '/en/');
@@ -143,6 +143,17 @@ describe('createHandler: paths', () => {
       assert.equal(call(handler, '/h%23sh').headers.location, '/h%23sh/');
       assert.equal(call(handler, '/./en').headers.location, '/en/');
       assert.equal(call(handler, '/a b/').text, 'spaced');
+    });
+  });
+
+  it('answers 404 for a file asked for as a folder, with a slash after it', async () => {
+    await withSite(({ handler }) => {
+      for (const target of ['/en/index.html/', '/file.unknown/', '/.hidden/']) {
+        const res = call(handler, target);
+        assert.equal(res.status, 404, target);
+        assert.equal(res.text, '<h1>gone</h1>', target);
+      }
+      assert.equal(call(handler, '/en/index.html').status, 200);
     });
   });
 
@@ -282,6 +293,11 @@ describe('createHandler: compression', () => {
         { 'accept-encoding': 'br, deflate' },
         { 'accept-encoding': 'xgzip' },
         { 'accept-encoding': 'gzipx' },
+        { 'accept-encoding': 'gzip;q=0' },
+        { 'accept-encoding': 'br, GZIP ; Q=0.000' },
+        { 'accept-encoding': 'gzip;q=0, *;q=1' },
+        { 'accept-encoding': '*;q=0' },
+        { 'accept-encoding': 'gzip;q=x' },
       ]) {
         const res = callWith(handler, '/a.html', headers);
         assert.equal(res.headers['content-encoding'], undefined);
@@ -293,12 +309,18 @@ describe('createHandler: compression', () => {
     }, files);
   });
 
-  it('accepts gzip among other encodings', async () => {
+  it('accepts gzip among other encodings, with any weight above 0, or as *', async () => {
     await withSite(({ handler }) => {
-      const res = callWith(handler, '/a.html', {
-        'accept-encoding': 'br, gzip;q=0.8, deflate',
-      });
-      assert.equal(res.headers['content-encoding'], 'gzip');
+      for (const value of [
+        'br, gzip;q=0.8, deflate',
+        'Gzip; q=0.001',
+        'gzip;q=1.0',
+        'br, *',
+        'identity;q=1, *;q=0.5',
+      ]) {
+        const res = callWith(handler, '/a.html', { 'accept-encoding': value });
+        assert.equal(res.headers['content-encoding'], 'gzip', value);
+      }
     }, files);
   });
 
@@ -520,7 +542,7 @@ describe('a real server', () => {
         assert.equal(ok.status, 200);
         assert.equal(ok.body, '<h1>en</h1>');
         const redirect = await rawRequest(url, '/en?x=1');
-        assert.equal(redirect.status, 302);
+        assert.equal(redirect.status, 301);
         assert.equal(redirect.headers.location, '/en/?x=1');
         const head = await rawRequest(url, '/', { method: 'HEAD' });
         assert.equal(head.status, 200);

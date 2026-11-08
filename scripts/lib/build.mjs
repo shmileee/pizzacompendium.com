@@ -23,7 +23,7 @@ import {
   renderRobots,
   renderSitemap,
 } from './seo.mjs';
-import { loadSite } from './site-config.mjs';
+import { loadSite, pickDefaultLanguage } from './site-config.mjs';
 
 const { inlineScript, LANG_KEY, redirect } = inlineScripts;
 
@@ -33,10 +33,10 @@ const STORAGE_KEYS = Object.fromEntries(
 );
 
 /**
- * Builds the site into `outDir`. The output is written to `<outDir>.tmp` and
- * moved into place only when the build had no errors, so a failed build
- * leaves the previous output untouched. Everything that goes wrong is a
- * diagnostic on the reporter; nothing is printed here.
+ * Builds the site into `outDir`. The output is written to a working folder
+ * beside it (`writeOutput`) and moved into place only when the build had no
+ * errors, so a failed build leaves the previous output untouched. Everything
+ * that goes wrong is a diagnostic on the reporter; nothing is printed here.
  *
  * @param {object} options
  * @param {string} options.root Repository root.
@@ -108,7 +108,8 @@ export function build({
       { file: 'src/css/32-hero.css' },
     );
 
-  lintContent({ rules, languages, content, reporter });
+  // The renderer checks the links (every one it writes), not the linter.
+  lintContent({ rules, languages, content, reporter, anchors: false });
   warnAboutTranslations({ fs, root, languages, content, reporter });
 
   const history = git
@@ -122,6 +123,12 @@ export function build({
     );
 
   const visible = published(languages);
+  const fallback = pickDefaultLanguage({
+    site,
+    source,
+    languages: visible,
+    reporter,
+  });
   const files = new Map(assets.files);
   const pages = new Map();
   const tocs = new Map();
@@ -147,12 +154,12 @@ export function build({
     'index.html',
     renderRoot({
       site,
-      source,
+      lang: fallback,
       languages: visible,
       assets,
       script: inlineScript(
         redirect,
-        [visible.map((lang) => lang.code), source.code, LANG_KEY],
+        [visible.map((lang) => lang.code), fallback.code, LANG_KEY],
         ['window'],
       ),
       image,
@@ -160,7 +167,7 @@ export function build({
   );
   pages.set(
     '404.html',
-    renderNotFound({ site, source, languages: visible, assets }),
+    renderNotFound({ site, lang: fallback, languages: visible, assets }),
   );
   checkPages(pages, reporter);
 

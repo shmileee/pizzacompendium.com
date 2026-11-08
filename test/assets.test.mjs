@@ -9,6 +9,7 @@ import {
   fontsFor,
   storageKeyMismatches,
 } from '../scripts/lib/assets.mjs';
+import { MAX_TEXT_BYTES } from '../scripts/lib/files.mjs';
 import { capture, codes, view } from './helpers/capture.mjs';
 import { failing } from './helpers/fake-fs.mjs';
 import { withRepo, withTree } from './helpers/repo.mjs';
@@ -292,7 +293,7 @@ describe('buildAssets', () => {
         'assets/util.js',
         'favicon.svg',
       ]);
-      assert.equal(assets.files.get('favicon.svg').toString(), '<svg></svg>');
+      assert.equal(assets.files.get('favicon.svg'), '<svg></svg>');
     });
   });
 
@@ -451,6 +452,20 @@ describe('buildAssets', () => {
           { level: 'error', code: 'E_READ', file },
         ]);
       }
+    });
+  });
+
+  it('reads a source as the other text files are read: valid UTF-8, of a sensible size', async () => {
+    await withRepo(fresh(), (repo) => {
+      repo.write('src/util.js', Buffer.from([0x61, 0xff, 0x0a]));
+      repo.write('src/css/05-a.css', 'a'.repeat(MAX_TEXT_BYTES + 1));
+      repo.write('src/favicon.svg', '﻿<svg>\r\n</svg>');
+      const { assets, reporter } = build(repo, { fingerprint: false });
+      assert.deepEqual(view(reporter), [
+        { level: 'error', code: 'E_TOO_LARGE', file: 'src/css/05-a.css' },
+        { level: 'error', code: 'E_ENCODING', file: 'src/util.js' },
+      ]);
+      assert.equal(assets.files.get('favicon.svg'), '<svg>\n</svg>');
     });
   });
 

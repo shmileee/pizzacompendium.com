@@ -94,6 +94,28 @@ describe('lintProject', () => {
       ]);
     }));
 
+  it('sees a word stored with decomposed letters as the word it is', () =>
+    withRepo((repo) => {
+      repo.editJson('content/rules.json', (rules) => {
+        rules.rules.push({
+          id: 'country-uk',
+          level: 'error',
+          message: 'country-neutral',
+          patterns: ['Україн\\p{L}*'],
+          flags: 'u',
+        });
+      });
+      const text = introText('en').replace(
+        'A short text about pizza.',
+        'Піца в Україні.'.normalize('NFD'),
+      );
+      assert.ok(!text.includes('Україн'), 'the file holds no composed ї');
+      repo.write('content/en/01-intro.md', text);
+      const reporter = capture();
+      lintProject({ root: repo.root, reporter });
+      assert.deepEqual(codes(reporter), ['E_COUNTRY_UK']);
+    }));
+
   it('checks one file only when asked', () =>
     withRepo((repo) => {
       repo.write('content/pl/02-b.md', '## B {#b}\n\nWow!!\n');

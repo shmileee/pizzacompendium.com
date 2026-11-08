@@ -54,9 +54,17 @@ export function checkOutDir({ fs, root, out, reporter }) {
 }
 
 /**
- * Writes the site to `<out>.tmp`, then puts it in place: the old output is
- * moved aside, the new one renamed in, and the old one deleted. If anything
- * fails the old output is back where it was and nothing is left behind.
+ * Writes the site to a working folder beside `out`, then puts it in place:
+ * the old output is moved aside into the same working folder, the new one
+ * renamed in, and the working folder deleted. If anything fails the old output
+ * is back where it was and nothing is left behind.
+ *
+ * The working folder is made fresh for every build (`.<name>.build-XXXXXX`,
+ * by `mkdtempSync`), so the only things a build ever deletes are `out`, which
+ * `checkOutDir` has vetted, and what it made itself: never a folder that merely
+ * happens to be called `<out>.tmp` or `<out>.old`, which could be a clone, or
+ * the repository itself. A build that crashed half-way leaves its working
+ * folder behind, to be removed by hand.
  *
  * @param {object} options
  * @param {typeof nodeFs} options.fs
@@ -67,18 +75,24 @@ export function checkOutDir({ fs, root, out, reporter }) {
  * @returns {boolean} False when it failed (reported).
  */
 export function writeOutput({ fs, out, files, copies, reporter }) {
-  const tmp = `${out}.tmp`;
-  const old = `${out}.old`;
-  const put = (to, action) => {
-    const target = path.join(tmp, to);
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    action(target);
-  };
-  const remove = (dir) => fs.rmSync(dir, { recursive: true, force: true });
+  let work = null;
   let aside = false;
+  const remove = (dir) => fs.rmSync(dir, { recursive: true, force: true });
   try {
-    remove(tmp);
-    remove(old);
+    fs.mkdirSync(path.dirname(out), { recursive: true });
+    work = fs.mkdtempSync(
+      path.join(path.dirname(out), `.${path.basename(out)}.build-`),
+    );
+    // Folders inside the working folder get the usual permissions (the
+    // working folder itself is private to its owner, as mkdtemp makes it).
+    const next = path.join(work, 'new');
+    const old = path.join(work, 'old');
+    const put = (to, action) => {
+      const target = path.join(next, to);
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      action(target);
+    };
+    fs.mkdirSync(next);
     for (const [to, content] of files)
       put(to, (target) => fs.writeFileSync(target, content));
     for (const { from, to } of copies)
@@ -87,21 +101,22 @@ export function writeOutput({ fs, out, files, copies, reporter }) {
       fs.renameSync(out, old);
       aside = true;
     }
-    fs.renameSync(tmp, out);
+    fs.renameSync(next, out);
     aside = false;
-    remove(old);
+    remove(work);
     return true;
   } catch (error) {
     reporter.error('E_WRITE', `cannot write the output: ${error.code}`, {
       file: out,
     });
+    if (work === null) return false;
     try {
-      if (aside) fs.renameSync(old, out);
-      remove(tmp);
+      if (aside) fs.renameSync(path.join(work, 'old'), out);
+      remove(work);
     } catch (restore) {
       reporter.error(
         'E_WRITE',
-        `cannot put the previous output back (it is in ${old}): ${restore.code}`,
+        `cannot clean up after it (${aside ? 'the previous output is' : 'what is left is'} in ${work}): ${restore.code}`,
         { file: out },
       );
     }

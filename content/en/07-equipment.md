@@ -42,7 +42,7 @@ Look for a smooth bottom: with embossed patterns or an uneven surface it is hard
 
 ![Stainless steel spatula with a wooden handle](img/spatula.webp)
 
-**Pizza stone** – for people who bake in a ordinary oven. Most are made of cordierite or fireclay, and some of granite. At a similar thickness they give similar results in a home oven; they differ mainly in how well they withstand sudden temperature changes and in their porosity.
+**Pizza stone** – for people who bake in an ordinary oven. Most are made of cordierite or fireclay, and some of granite. At a similar thickness they give similar results in a home oven; they differ mainly in how well they withstand sudden temperature changes and in their porosity.
 
 Stones come in a thin version (about 1 cm) and a thicker one (about 2–3 cm), round or rectangular. A rectangular stone is more convenient and more forgiving when you slide the pizza on unevenly, because a pizza slips off a round stone more easily. A thicker stone takes a long time to heat up (3 cm: about 1 h), but it holds the temperature longer, which is useful if you bake many pizzas in a row. For an oven, a good compromise is a thickness of about 1.5–2 cm: it heats up relatively quickly, and the temperature drop when you open the oven is smaller than with a thinner stone. For your first stone, choose a rectangular one (about 35×40 cm), 1.5–2 cm thick and intended for food contact ([how to choose a pizza stone](#faq-stone)).
 

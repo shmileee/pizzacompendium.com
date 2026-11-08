@@ -11,5 +11,5 @@ Włoska zasada brzmi: mniej znaczy lepiej. Kilka dobrych składników smakuje le
 - **Prosciutto crudo e rucola** – sos pomidorowy i mozzarella, a po wypieku surowa szynka dojrzewająca (np. parmeńska) i rukola.
 
 ::: tip Wskazówka
-Delikatne składniki, takie jak surowa szynka dojrzewająca i rukola, najlepiej dodać dopiero po wypieku. Świeżą bazylię możesz dodać po wypieku albo, jak w pizzy neapolitańskiej, położyć przed pieczeniem (najlepiej pod serem, żeby się nie przypaliła). Składniki bogate w wodę (np. świeże pomidory) stosuj oszczędnie.
+Delikatne składniki, takie jak surowa szynka dojrzewająca i rukola, najlepiej dodać dopiero po wypieku. Świeżą bazylię możesz dodać po wypieku albo, jak w pizzy neapolitańskiej, położyć na wierzchu przed pieczeniem. W domowym piekarniku, gdzie pizza piecze się dłużej, lepiej schować ją pod ser, żeby się nie przypaliła. Składniki bogate w wodę (np. świeże pomidory) stosuj oszczędnie.
 :::

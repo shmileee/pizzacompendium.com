@@ -5,11 +5,14 @@ import { classifyLines } from './markdown/fences.mjs';
 
 /**
  * @typedef {object} Scan
- * @property {string[]} lines The lines with fenced code blanked out: what the
- *   pattern rules read (a comment is not published, but it is public).
- * @property {string[]} structure The same with HTML comments blanked out as
- *   well: what the blocks, ids and counts are read from, because a comment
- *   renders as nothing.
+ * @property {string[]} lines The lines as written: what the pattern rules
+ *   read (a comment is not published, but it is public, and fenced code is
+ *   refused, so nothing is left out).
+ * @property {string[]} structure The same with fenced code and HTML comments
+ *   blanked out: what the blocks, ids and counts are read from, because a
+ *   comment renders as nothing and code renders as it is.
+ * @property {number[]} codeStarts 0-based lines that open fenced code (the
+ *   first of two blocks that touch only).
  * @property {boolean[]} inLocal Is the line inside a `::: local` block?
  * @property {{ start: number, end: number, info: string }[]} locals The local
  *   blocks: 0-based first and last line, and what follows `local` on the
@@ -26,11 +29,13 @@ import { classifyLines } from './markdown/fences.mjs';
  * @returns {Scan}
  */
 export function scan(text) {
-  const raw = text.split('\n');
-  const kinds = classifyLines(raw);
-  const lines = raw.map((line, index) => (kinds[index] === 'code' ? '' : line));
-  const structure = raw.map((line, index) =>
+  const lines = text.split('\n');
+  const kinds = classifyLines(lines);
+  const structure = lines.map((line, index) =>
     kinds[index] === 'text' ? line : '',
+  );
+  const codeStarts = kinds.flatMap((kind, index) =>
+    kind === 'code' && kinds[index - 1] !== 'code' ? [index] : [],
   );
   const inLocal = structure.map(() => false);
   const locals = [];
@@ -47,7 +52,92 @@ export function scan(text) {
       }
     }
   });
-  return { lines, structure, inLocal, locals };
+  return { lines, structure, codeStarts, inLocal, locals };
+}
+
+// What a line starts with before its text: quote markers, list markers and
+// the spaces around them. `- `, `1. `, `  > `, `- 1. `.
+const PREFIX = /^(?:[ \t]*(?:>|(?:[-*+]|\d{1,9}[.)])(?=[ \t]|$)))*[ \t]*/;
+const LIST_MARKER = /(?:[-*+]|\d{1,9}[.)])(?=[ \t]|$)/g;
+const HEADING = /^#{1,6}(?:[ \t]|$)/;
+const CODE_FENCE = /^(?:`{3,}|~{3,})/;
+const SETEXT = /^ {0,3}(?:=+|-+)[ \t]*$/;
+const CLOSING_HASHES = /^ {0,3}#{1,6}[ \t].*[ \t]#+[ \t]*$/;
+const SPACED_RULE = /^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/;
+const TABLE_DELIMITER =
+  /^\|?[ \t]*:?-+:?[ \t]*(?:\|[ \t]*:?-+:?[ \t]*)*\|?[ \t]*$/;
+const LINK_DEFINITION = /^\[[^\]]*\]:/;
+
+/**
+ * The Markdown that `marked` reads and the outline above does not: a line
+ * of structure (a heading, a block fence, a table row, a list item) that
+ * the outline would not count, or count as something else. Every such form
+ * is refused, so that for every text that passes, the outline is exact:
+ * structure drift cannot hide in it, and every id and link is seen.
+ *
+ *   code-block                  fenced code anywhere (top-level code is in
+ *                               `codeStarts`), an indented code fence
+ *   setext-heading              a line of `===` or `---` under text
+ *   closing-hashes              `## Title {#id} ##`
+ *   blockquote                  `> text`, in a list too
+ *   nested-structure            a heading, `:::` or a table that does not
+ *                               start at the beginning of its line
+ *   plus-bullet, paren-list     `+ item`, `1) item`
+ *   stacked-list-marker         `- 1. item`: two list items on one line
+ *   spaced-rule                 `- - -`, `* * *` (it would count as an item)
+ *   table-without-leading-pipe  a table row that does not start with `|`,
+ *                               or a line that runs on from a table
+ *   link-definition             `[r]: #id`, which reference links point at
+ *
+ * @param {Scan} scanned
+ * @returns {{ index: number, form: string }[]} 0-based lines.
+ */
+export function unsupportedForms({ structure }) {
+  const found = [];
+  let table = false;
+  structure.forEach((line, index) => {
+    const form = formOf(line, structure[index - 1] ?? '', table);
+    if (line.trim() === '') table = false;
+    else if (!form && isDelimiterRow(line)) table = true;
+    if (form) found.push({ index, form });
+  });
+  return found;
+}
+
+/** A table's delimiter row (`|---|:-:|`), wherever it is written. */
+const isDelimiterRow = (rest) =>
+  rest.includes('|') && rest.includes('-') && TABLE_DELIMITER.test(rest);
+
+/**
+ * @param {string} line
+ * @param {string} previous The line before it.
+ * @param {boolean} table Is the line inside a table (below its delimiter)?
+ * @returns {string | null} The form, or null for a line that is fine.
+ */
+function formOf(line, previous, table) {
+  if (line.trim() === '') return null;
+  if (table) return line.startsWith('|') ? null : 'table-without-leading-pipe';
+  if (SETEXT.test(line) && previous.trim() !== '') return 'setext-heading';
+  if (CLOSING_HASHES.test(line)) return 'closing-hashes';
+  if (SPACED_RULE.test(line))
+    return /\s/.test(line.trim()) ? 'spaced-rule' : null;
+  const prefix = PREFIX.exec(line)[0];
+  const rest = line.slice(prefix.length);
+  const markers = prefix.match(LIST_MARKER) ?? [];
+  if (CODE_FENCE.test(rest) && prefix) return 'code-block';
+  if (prefix.includes('>')) return 'blockquote';
+  if (LINK_DEFINITION.test(rest)) return 'link-definition';
+  if (markers.length > 1) return 'stacked-list-marker';
+  if (markers.some((marker) => marker === '+')) return 'plus-bullet';
+  if (markers.some((marker) => marker.endsWith(')'))) return 'paren-list';
+  if (prefix && (HEADING.test(rest) || rest.startsWith(':::')))
+    return 'nested-structure';
+  if (isDelimiterRow(rest)) {
+    if (prefix) return 'nested-structure';
+    if (!line.startsWith('|') || !previous.startsWith('|'))
+      return 'table-without-leading-pipe';
+  }
+  return null;
 }
 
 /**

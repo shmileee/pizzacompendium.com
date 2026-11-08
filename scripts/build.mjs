@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // mise run build [-- --strict --out <dir> --no-fingerprint --quiet --format text|github|json]
 // Diagnostics: stderr (text) or stdout (github, json). The summary is for people: stderr.
+// --out is relative to the repository (or COMPENDIUM_ROOT), not to the working directory.
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { imageSize } from 'image-size';
@@ -25,7 +26,8 @@ if (error) {
   process.exitCode = 1;
 } else {
   const { strict, quiet, out } = values;
-  const outDir = path.resolve(out ?? path.join(root, 'dist'));
+  // Relative to the repository, as every other path of a command line is.
+  const outDir = path.resolve(root, out ?? 'dist');
   const fingerprint = !values['no-fingerprint'];
   // The dates of the text come from the history of the repository.
   const git = (args) =>

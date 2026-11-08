@@ -1,6 +1,6 @@
 import { PAGE_IDS } from './html/ids.mjs';
 import { parseFenceLine, parseInfo } from './markdown/container-syntax.mjs';
-import { compareOutlines, outline, scan } from './parity.mjs';
+import { compareOutlines, outline, scan, unsupportedForms } from './parity.mjs';
 
 // THE HARD CONTENT RULES. The engine is generic; what it forbids lives in
 // content/rules.json (read by `rules.mjs`). Dependency-free: it runs from a
@@ -13,10 +13,14 @@ const codeOf = (level, id) =>
  * Checks every section of every language against the rules.
  *
  * What is checked, in one pass over the text (no rendering):
- *   - every pattern rule of rules.json, line by line, outside fenced code;
+ *   - the Markdown is of the forms the outline reads: no fenced code
+ *     (`E_CODE_BLOCK`), and none of the forms `unsupportedForms` names
+ *     (`E_MARKDOWN_FORM`, with the form as the `field`);
+ *   - every pattern rule of rules.json, line by line;
  *   - `::: local` blocks: `lang=` equal to the folder, a title, no headings
  *     or FAQ items inside;
- *   - every `](#id)` link must hit an id of the same language;
+ *   - every `](#id)` link must hit an id of the same language (left to the
+ *     renderer by the build, which sees every link it writes: `anchors`);
  *   - for published translations: the same structure as the source section
  *     (fences, ids in order, heading levels, images, links, table rows, list
  *     items; local blocks do not count), the same ids overall, and the same
@@ -31,6 +35,9 @@ const codeOf = (level, id) =>
  * @param {import('./diagnostics.mjs').Reporter} options.reporter
  * @param {string | null} [options.only] A section file name: check that file
  *   only (the whole-language id comparison is skipped).
+ * @param {boolean} [options.anchors] Check the links to ids (the build turns
+ *   it off: the renderer checks every link it writes, so each is reported
+ *   once).
  * @returns {void}
  */
 export function lintContent({
@@ -39,6 +46,7 @@ export function lintContent({
   content,
   reporter,
   only = null,
+  anchors = true,
 }) {
   const source = languages.find((language) => language.source);
   const sourceFiles = content.get(source.code).sections.map((s) => s.file);
@@ -83,13 +91,14 @@ export function lintContent({
       if (!section) continue;
       const { shape, outline: shapeOutline } = scanned(section);
       outlines.set(language.code, shapeOutline);
+      lintForms(section, shape, reporter);
       lintLocalBlocks(language, section, shape, emit);
       lintLines(
         rules,
         language,
         section,
         shape,
-        defined.get(language.code),
+        anchors ? defined.get(language.code) : null,
         emit,
       );
     }
@@ -143,6 +152,46 @@ export function lintContent({
   }
 }
 
+/** Markdown the outline cannot read, so that nothing escapes it. */
+function lintForms(section, shape, reporter) {
+  const found = [
+    ...shape.codeStarts.map((index) => ({ index, form: 'code-block' })),
+    ...unsupportedForms(shape),
+  ].sort((a, b) => a.index - b.index);
+  for (const { index, form } of found) {
+    const where = { file: section.path, line: index + 1 };
+    if (form === 'code-block')
+      reporter.error(
+        'E_CODE_BLOCK',
+        'no code blocks: the guide has none, and the content rules cannot read one',
+        where,
+      );
+    else
+      reporter.error('E_MARKDOWN_FORM', `${FORM_HINTS[form]} (${form})`, {
+        ...where,
+        field: form,
+      });
+  }
+}
+
+/** What to write instead of each form `unsupportedForms` refuses. */
+const FORM_HINTS = {
+  'setext-heading':
+    'a heading is written "## Title {#id}"; put a blank line before a rule (---)',
+  'closing-hashes': 'a heading ends with its {#id}, not with #',
+  blockquote: 'no quotes (>): use a ::: note or ::: tip block',
+  'nested-structure':
+    'headings, ::: blocks and tables start at the beginning of the line, outside lists',
+  'plus-bullet': 'a list item starts with "- " or "* ", not "+ "',
+  'paren-list': 'a numbered item is written "1. ", not "1) "',
+  'stacked-list-marker': 'one list marker per line',
+  'spaced-rule': 'a rule is written ---, without spaces',
+  'table-without-leading-pipe':
+    'every row of a table starts with |, and a blank line ends the table',
+  'link-definition':
+    'no reference links or link definitions: write [text](#id)',
+};
+
 function lintLocalBlocks(language, section, { structure, locals }, emit) {
   for (const block of locals) {
     const at = (index) => ({ file: section.path, line: index + 1 });
@@ -184,39 +233,97 @@ function lintLocalBlocks(language, section, { structure, locals }, emit) {
   }
 }
 
-function lintLines(
-  rules,
-  language,
-  section,
-  { lines, structure, inLocal },
-  ids,
-  emit,
-) {
+/**
+ * A line that starts a block of its own, so a paragraph does not run on
+ * into it: a heading, a `:::` fence, a table row, a list item.
+ */
+const STARTS_BLOCK = /^[ \t]*(?:#{1,6}(?:[ \t]|$)|:::|\||(?:[-*]|\d+\.)[ \t])/;
+
+/**
+ * What one rule finds in a section: for each line (0-based), the matches
+ * that start on it. A rule reads every line through its view; a rule that
+ * reads `acrossLines` also reads each paragraph with its lines joined by a
+ * space, and a match that runs over a line break counts on the line it
+ * starts on.
+ *
+ * @returns {Map<number, Set<string>>}
+ */
+function findMatches(rules, rule, { lines, inLocal }) {
+  const read = (line) =>
+    rule.view
+      ? rules.views
+          .get(rule.view)
+          .reduce((text, [re, to]) => text.replace(re, () => to), line)
+      : line;
+  const seen = lines.map((line, index) =>
+    !line.trim() ||
+    (rule.localExempt && inLocal[index]) ||
+    rule.skip?.test(line)
+      ? null
+      : read(line),
+  );
+  const hits = new Map();
+  const hit = (index, text) => {
+    if (rule.allow.has(text)) return;
+    if (!hits.has(index)) hits.set(index, new Set());
+    hits.get(index).add(text);
+  };
+  const matches = (text) =>
+    rule.regexps.flatMap((regexp) => [...text.matchAll(regexp)]);
+  seen.forEach((text, index) => {
+    if (text !== null) for (const [match] of matches(text)) hit(index, match);
+  });
+  if (!rule.acrossLines) return hits;
+  // Paragraphs: runs of lines the rule reads, a new block ends one.
+  let run = [];
+  const flush = () => {
+    if (run.length > 1) {
+      const starts = [];
+      let joined = '';
+      for (const index of run) {
+        starts.push(joined.length);
+        joined += `${seen[index].trim()} `;
+      }
+      const lineAt = (offset) =>
+        run[starts.findLastIndex((start) => start <= offset)];
+      for (const match of matches(joined)) {
+        const first = lineAt(match.index);
+        if (first !== lineAt(match.index + match[0].length - 1))
+          hit(first, match[0]);
+      }
+    }
+    run = [];
+  };
+  seen.forEach((text, index) => {
+    if (text === null || STARTS_BLOCK.test(lines[index])) flush();
+    if (text !== null) run.push(index);
+  });
+  flush();
+  return hits;
+}
+
+function lintLines(rules, language, section, shape, ids, emit) {
+  const { lines, structure } = shape;
+  const applied = rules.rules.filter(
+    (rule) => !rule.languages || rule.languages.has(language.code),
+  );
+  const found = applied.map((rule) => findMatches(rules, rule, shape));
   lines.forEach((line, index) => {
     if (!line.trim()) return;
     const where = { file: section.path, line: index + 1 };
-    for (const rule of rules.rules) {
-      if (rule.languages && !rule.languages.has(language.code)) continue;
-      if (rule.localExempt && inLocal[index]) continue;
-      if (rule.skip?.test(line)) continue;
-      const seen = rule.view
-        ? rules.views
-            .get(rule.view)
-            .reduce((text, [re, to]) => text.replace(re, () => to), line)
-        : line;
-      const found = rule.regexps
-        .flatMap((regexp) => [...seen.matchAll(regexp)])
-        .map((match) => match[0])
-        .filter((text) => !rule.allow.has(text));
-      if (found.length > 0)
+    applied.forEach((rule, at) => {
+      const texts = found[at].get(index);
+      if (texts)
         emit(
           rule.level,
           rule.id,
-          `${rule.message}: "${[...new Set(found)].join('", "')}"`,
+          `${rule.message}: "${[...texts].join('", "')}"`,
           where,
         );
-    }
-    for (const [, id] of structure[index].matchAll(/\]\(#([\w-]+)\)/g))
+    });
+    for (const [, id] of ids
+      ? structure[index].matchAll(/\]\(#([\w-]+)\)/g)
+      : [])
       if (!ids.has(id) && !PAGE_IDS.includes(id))
         emit(
           'error',

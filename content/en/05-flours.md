@@ -62,7 +62,7 @@ Match the [flour strength (W)](#flour-strength) to the planned maturation time o
 - strength: the manufacturer gives no figure (with 10.5% protein it is usually low strength)
 - protein 10.5%
 - proven hydration 57–58%
-- low strength: suits shorter schedules
+- suits shorter schedules
 - the Farina 00 Pizza version (ordinary Divella 00 is a general-purpose flour)
 :::
 

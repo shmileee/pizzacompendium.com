@@ -51,6 +51,13 @@ describe('normalise', () => {
     assert.equal(normalise('﻿a\r\nb\rc\n'), 'a\nb\nc\n');
   });
 
+  it('composes decomposed letters (NFC), so that a rule sees one letter', () => {
+    const decomposed = 'ukraiński zażółć'.normalize('NFD');
+    assert.notEqual(decomposed, 'ukraiński zażółć');
+    assert.equal(normalise(decomposed), 'ukraiński zażółć');
+    assert.equal(normalise('й'.normalize('NFD')), 'й');
+  });
+
   it('keeps a mark that is not at the start', () => {
     assert.equal(normalise('a﻿b'), 'a﻿b');
   });

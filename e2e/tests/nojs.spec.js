@@ -64,8 +64,8 @@ test('the language list opens by itself and leads to another page', async ({
 test('the root page sends the visitor to the guide by itself', async ({
   page,
 }) => {
-  // The <noscript> refresh of the root page, to the language of the source.
+  // The <noscript> refresh of the root page, to the default language.
   await page.goto('/');
-  await expect(page).toHaveURL(/\/pl\/$/);
+  await expect(page).toHaveURL(/\/en\/$/);
   await expect(page.locator('h1')).toBeVisible();
 });

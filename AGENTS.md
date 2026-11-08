@@ -21,13 +21,13 @@ When in doubt, do what they do.
     generator, one small module per job: `build.mjs` (the pipeline),
     `language-page.mjs` (one language's sections, rendered into its page),
     `output.mjs` (the output folder: what may be replaced, the atomic swap),
-    `files.mjs` (the one place a file is read), `project.mjs` (the languages and
-    sections every command starts from), `markdown/` (the `:::` container
-    extension and its syntax in `container-syntax.mjs`, `fences.mjs` for code
-    and comments, heading, image and link rules, `copy.mjs` for the Markdown
-    copy of a page), `blocks/` (one module per block, each with its HTML and
-    its Markdown, `render` and `markdown`; registering a new block is one
-    export line in `blocks/index.mjs`),
+    `files.mjs` (the one place a text file is read), `project.mjs` (the
+    languages and sections every command starts from), `markdown/` (the `:::`
+    container extension and its syntax in `container-syntax.mjs`, `fences.mjs`
+    for code and comments, heading, image and link rules, `copy.mjs` for the
+    Markdown copy of a page), `blocks/` (one module per block, each with its
+    HTML and its Markdown, `render` and `markdown`; registering a new block is
+    one export line in `blocks/index.mjs`),
     `html/` (page, root, 404, head, header, language list, icon sprite, hero,
     search, table of contents, footer), `rules.mjs` (reads
     `content/rules.json`), `content-rules.mjs` and `parity.mjs` (the hard
@@ -54,7 +54,9 @@ When in doubt, do what they do.
     `mise run images` makes the `-480w`/`-800w` copies, `og.jpg` and the icons
     and never rewrites a master
 *   `site.json` — `siteUrl` (canonical URLs, `hreflang`, the sitemap, the
-    manifests), `ogImage` (required) and `themeColor` (equals `--paper`)
+    manifests), `ogImage` (required), `themeColor` (equals `--paper`) and
+    `defaultLanguage` (the root page's fallback and the language of the root
+    and 404 pages; the source language when absent)
 *   `mise.toml`, `mise/conf.d/` — Node pin, tool pins and tasks
 *   `.github/` — the workflows (`checks.yaml`, `codeql.yaml`,
     `dependency-review.yaml`), `renovate.json` and the tool configs;
@@ -76,9 +78,16 @@ When in doubt, do what they do.
 *   **Content is Polish-source.** `content/pl/` is the truth; `en` and `uk`
     mirror it with identical structure: file names, `{#ids}`, `:::` blocks, list
     items, table rows, images and links. Change the Polish, then mirror it. The
-    build and `mise run content:lint` fail on any structural difference. A new
-    language starts as a draft (`"status": "draft"`) and is published when it is
-    complete.
+    build and `mise run content:lint` fail on any structural difference. The
+    structure is read line by line without a parser, so Markdown it could not
+    read is refused (`E_CODE_BLOCK`, `E_MARKDOWN_FORM` with the form: setext
+    headings, quotes, indented or nested headings and fences, `+` and `1)`
+    lists, tables without a leading `|`, link definitions; see
+    `unsupportedForms` in `parity.mjs` and `TRANSLATING.md`). A new language
+    starts as a draft (`"status": "draft"`) and is published when it is
+    complete; a translated file of a published language must be confirmed with
+    `mise run i18n:sync` (`W_UNCONFIRMED` until it is, `W_STALE` when the
+    Polish changes after).
 *   **Shared text is country-neutral.** Never refer to the reader's own
     country, nationality or local market: no "in Poland", "Polish pizzerias",
     "our country", no local shops, laws, institutions, units or currency.
@@ -115,13 +124,16 @@ When in doubt, do what they do.
     `scripts/build.mjs` passes in (tests pass a fake one). A problem is a
     diagnostic (`{ level, code, message, file, line }`) with a stable code, and
     tests assert codes, never messages (a code that covers a family of mistakes,
-    such as `E_LANG_META`, also names the `field`). Files are read through
+    such as `E_LANG_META`, also names the `field`). Text files are read through
     `files.mjs` only, which refuses symbolic links, non-files, files over 1 MB
-    and invalid UTF-8. `lint-content.mjs`, `i18n.mjs`, `new-language.mjs` and
-    `serve.mjs` use Node only, so the commit hook works without `npm ci`: keep
-    `marked` and `image-size` out of their imports. Every command line works on
-    the repository its script is in, or on the folder `COMPENDIUM_ROOT` names:
-    that is how the tests run the real scripts on a throwaway tree.
+    and invalid UTF-8, and normalises what it reads (no BOM, `\n`, NFC). The one
+    binary read is an image's header in `images.mjs` (a regular file, at most 20
+    MB); everything else is copied, not read. `lint-content.mjs`, `i18n.mjs`,
+    `new-language.mjs` and `serve.mjs` use Node only, so the commit hook works
+    without `npm ci`: keep `marked` and `image-size` out of their imports. Every
+    command line works on the repository its script is in, or on the folder
+    `COMPENDIUM_ROOT` names: that is how the tests run the real scripts on a
+    throwaway tree.
 *   **Never commit secrets or personal data.** The repository and the site are
     public.
 *   **Tests: 100% coverage of the shipped code** (`scripts/` and the browser

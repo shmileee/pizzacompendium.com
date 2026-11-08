@@ -212,6 +212,42 @@ test.describe('without scripts', () => {
   });
 });
 
+test.describe('the root page', () => {
+  test('wears the saved mode while it sends the reader on', async ({
+    page,
+  }) => {
+    // The installed app starts here, so it must not flash light before the
+    // language page is there. The page sends the reader on from its head,
+    // and the browser may never get to its body: the mode it has is the one
+    // it has when its last script, the one that sends the reader on, is in.
+    const seen = [];
+    await page.exposeBinding('__pcThemeAtScript', (_source, path, theme) =>
+      seen.push([path, theme]),
+    );
+    await page.addInitScript(() => {
+      new MutationObserver((records, observer) => {
+        const scripts = records.flatMap((record) =>
+          [...record.addedNodes].filter(
+            (node) =>
+              node.nodeName === 'SCRIPT' &&
+              node.textContent.includes('location'),
+          ),
+        );
+        if (scripts.length === 0) return;
+        observer.disconnect();
+        window.__pcThemeAtScript(
+          location.pathname,
+          document.documentElement.dataset.theme ?? null,
+        );
+      }).observe(document, { childList: true, subtree: true });
+    });
+    await remember(page, 'dark');
+    await page.goto('/');
+    await page.waitForURL(/\/en\/$/);
+    await expect.poll(() => seen).toContainEqual(['/', 'dark']);
+  });
+});
+
 test.describe('the 404 page', () => {
   test('wears the saved mode too', async ({ page, problems }) => {
     problems.allow(/status of 404/);

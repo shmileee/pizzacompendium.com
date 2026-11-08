@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import { scriptHash } from '../scripts/lib/csp.mjs';
 import { HERO_SQUARE, HERO_WIDE } from '../scripts/lib/html/hero.mjs';
 import { renderLanguagePage } from '../scripts/lib/language-page.mjs';
-import { capture, codes, find } from './helpers/capture.mjs';
+import { capture, codes, find, view } from './helpers/capture.mjs';
 import { fakeImages, lang, ui } from './helpers/render.mjs';
 
 const site = { siteUrl: 'https://x.test', themeColors: [{ content: '#fff' }] };
@@ -154,12 +154,40 @@ describe('renderLanguagePage', () => {
     assert.match(html, /<ul class="toc-list"><\/ul>/);
   });
 
-  it('shows a local note only on its own language', () => {
-    const text =
-      '::: local lang=en Only here\nNote.\n:::\n\n::: local lang=pl Tylko tu\nUwaga.\n:::\n' +
-      INTRO;
-    const { html } = render([own(text)]);
+  it('shows a local note only on its own language, also in the source text it shows', () => {
+    const { html, reporter } = render([
+      own('::: local lang=en Only here\nNote.\n:::\n'),
+      {
+        text: `::: local lang=pl Tylko tu\nUwaga.\n:::\n\n${INTRO}`,
+        path: 'content/pl/02.md',
+        fallback: true,
+      },
+    ]);
+    assert.deepEqual(codes(reporter), []);
     assert.match(html, /Only here/);
+    assert.doesNotMatch(html, /Tylko tu/);
+  });
+
+  it('reports a link to an id that no section of the page defines', () => {
+    const { reporter } = render([
+      own('## A {#a}\n\nSee [b](#b), [top](#top) and [none](#none).\n'),
+      own(`## B {#b}\n\nText.\n\n${INTRO}`, 'content/en/02.md'),
+    ]);
+    assert.deepEqual(view(reporter), [
+      {
+        level: 'error',
+        code: 'E_BROKEN_ANCHOR',
+        file: 'content/en/01.md',
+        line: 3,
+      },
+    ]);
+  });
+
+  it('refuses a local note for another language inside a file of its own', () => {
+    const text = `::: local lang=pl Tylko tu\nUwaga.\n:::\n\n${INTRO}`;
+    const { html, reporter } = render([own(text)]);
+    assert.deepEqual(codes(reporter), ['E_BLOCK_ATTR']);
+    assert.equal(find(reporter, 'E_BLOCK_ATTR').field, 'lang');
     assert.doesNotMatch(html, /Tylko tu/);
   });
 });

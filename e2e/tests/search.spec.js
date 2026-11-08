@@ -76,6 +76,51 @@ test.describe('opening and closing', () => {
     });
   }
 
+  for (const chord of ['Control+K', 'Meta+K']) {
+    test(`${chord} pressed while the scripts are still loading opens it once they are there`, async ({
+      page,
+    }) => {
+      // The last module is held back, so the search is not listening yet.
+      let release;
+      const held = new Promise((resolve) => {
+        release = resolve;
+      });
+      await page.route('**/assets/js/cards.js', async (route) => {
+        await held;
+        await route.continue();
+      });
+      await page.addInitScript(() => {
+        window.__pcTaken = [];
+        window.addEventListener('keydown', (event) => {
+          if (event.code === 'KeyK')
+            window.__pcTaken.push(event.defaultPrevented);
+        });
+      });
+      await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+      await expect(page.locator('html')).toHaveClass(/\bjs\b/);
+      await page.keyboard.press(chord);
+      await expect(dialog(page)).toHaveJSProperty('open', false);
+      // The browser did not take the keys for itself.
+      expect(await page.evaluate(() => window.__pcTaken)).toEqual([true]);
+      release();
+      await expect(dialog(page)).toHaveJSProperty('open', true);
+      await expect(input(page)).toBeFocused();
+    });
+  }
+
+  test('the page behind it keeps the room of its scroll bar', async ({
+    page,
+  }) => {
+    await visit(page, '/en/');
+    await openByButton(page);
+    expect(
+      await page.evaluate(() => {
+        const style = getComputedStyle(document.documentElement);
+        return [style.overflow, style.scrollbarGutter];
+      }),
+    ).toEqual(['hidden', 'stable']);
+  });
+
   test('Ctrl+K with Shift or Alt does nothing, and does not close it', async ({
     page,
   }) => {

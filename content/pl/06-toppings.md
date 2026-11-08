@@ -6,7 +6,7 @@ Znane marki włoskich pomidorów to m.in. Mutti, Petti, Strianese i Rosso Gargan
 
 **Nie gotuj sosu, nie redukuj go, nie pasteryzuj i nie dodawaj do niego cukru** – sos dopiecze się na pizzy. Otwarty sos przechowuj w szczelnym pojemniku w lodówce i zużyj w ciągu 3–4 dni.
 
-**Ile?** Na jedną pizzę o średnicy 30–33 cm wystarczy ok. 60–80 g sosu, 80–100 g mozzarelli, kilka listków bazylii i ok. 5–7 g oliwy (1–1,5 łyżeczki). Na cztery pizze to ok. 250–320 g sosu (wystarczy jedna puszka pomidorów 400 g) i 320–400 g sera. Nie przesadzaj: nadmiar dodatków puści wodę.
+**Ile?** Na jedną pizzę o średnicy 30–33 cm wystarczy ok. 60–80 g sosu, 80–100 g mozzarelli, kilka listków bazylii i ok. 5–7 g oliwy (1–1,5 łyżeczki). Na cztery pizze to ok. 240–320 g sosu (wystarczy jedna puszka pomidorów 400 g) i 320–400 g sera. Nie przesadzaj: nadmiar dodatków puści wodę.
 
 **Ser – mozzarella.** Używaj mozzarelli dobrej jakości, najlepiej świeżej i włoskiej. Poniżej opisane są rodzaje tego sera.
 

@@ -1,8 +1,14 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, it } from 'node:test';
-import { checkSite, loadSite } from '../scripts/lib/site-config.mjs';
-import { capture, view } from './helpers/capture.mjs';
-import { withRepo } from './helpers/repo.mjs';
+import {
+  checkSite,
+  loadSite,
+  pickDefaultLanguage,
+} from '../scripts/lib/site-config.mjs';
+import { capture, errorCodes, view } from './helpers/capture.mjs';
+import { langJson, REAL_ROOT, withRepo } from './helpers/repo.mjs';
 
 const valid = { siteUrl: 'https://example.com', ogImage: 'img/og.webp' };
 const fields = (data) =>
@@ -17,8 +23,22 @@ describe('checkSite', () => {
       basePath: '/',
       ogImage: 'img/og.webp',
       themeColors: [],
+      defaultLanguage: null,
     });
   });
+
+  it('keeps the default language it is given', () => {
+    const { site } = checkSite({ ...valid, defaultLanguage: 'en' });
+    assert.equal(site.defaultLanguage, 'en');
+  });
+
+  for (const defaultLanguage of [3, ['en'], { code: 'en' }]) {
+    it(`refuses defaultLanguage ${JSON.stringify(defaultLanguage)}`, () => {
+      assert.deepEqual(fields({ ...valid, defaultLanguage }), [
+        'defaultLanguage',
+      ]);
+    });
+  }
 
   it('keeps a sub-path with a trailing slash', () => {
     const { site } = checkSite({
@@ -167,5 +187,105 @@ describe('loadSite', () => {
       assert.equal(loadSite({ root: repo.root, reporter }), null);
       assert.equal(reporter.entries[0].code, 'E_JSON');
     });
+  });
+});
+
+describe('pickDefaultLanguage', () => {
+  const pl = { code: 'pl' };
+  const en = { code: 'en' };
+  const pick = (defaultLanguage, languages = [pl, en]) => {
+    const reporter = capture();
+    const lang = pickDefaultLanguage({
+      site: { defaultLanguage },
+      source: pl,
+      languages,
+      reporter,
+    });
+    return { lang, reporter };
+  };
+
+  it('is the language site.json names', () => {
+    const { lang, reporter } = pick('en');
+    assert.equal(lang, en);
+    assert.deepEqual(reporter.entries, []);
+  });
+
+  it('is the source language when site.json names none', () => {
+    const { lang, reporter } = pick(null);
+    assert.equal(lang, pl);
+    assert.deepEqual(reporter.entries, []);
+  });
+
+  for (const [name, code, languages] of [
+    ['a language the site does not have', 'de', [pl, en]],
+    ['a language that is not published', 'en', [pl]],
+    ['the code in another case', 'EN', [pl, en]],
+  ])
+    it(`refuses ${name} with E_SITE, and the source stands in`, () => {
+      const { lang, reporter } = pick(code, languages);
+      assert.equal(lang, pl);
+      assert.deepEqual(view(reporter), [
+        {
+          level: 'error',
+          code: 'E_SITE',
+          file: 'site.json',
+          field: 'defaultLanguage',
+        },
+      ]);
+    });
+
+  it('is English on the real site', () => {
+    const site = JSON.parse(
+      readFileSync(path.join(REAL_ROOT, 'site.json'), 'utf8'),
+    );
+    assert.equal(checkSite(site).site.defaultLanguage, 'en');
+  });
+});
+
+describe('the default language in a build', () => {
+  const site = (defaultLanguage) => ({
+    'site.json': {
+      siteUrl: 'https://pizza.example',
+      ogImage: 'img/og.webp',
+      defaultLanguage,
+    },
+  });
+
+  it('is the language of the root and 404 pages and where the root page sends the rest', async () => {
+    await withRepo(site('en'), async (repo) => {
+      const { ok, reporter } = repo.build();
+      assert.deepEqual(errorCodes(reporter), []);
+      assert.equal(ok, true);
+      const root = readFileSync(path.join(repo.dist, 'index.html'), 'utf8');
+      const missing = readFileSync(path.join(repo.dist, '404.html'), 'utf8');
+      assert.match(root, /<html lang="en/);
+      assert.match(root, /url=en\/"><\/noscript>/);
+      assert.match(root, /\["pl","en"\], "en", "pizzacompendium-lang"/);
+      assert.match(missing, /<html lang="en/);
+    });
+  });
+
+  it('fails the build when it is no published language', async () => {
+    await withRepo(
+      {
+        ...site('de'),
+        'content/de/lang.json': langJson('de', { status: 'draft' }),
+      },
+      async (repo) => {
+        const { ok, reporter } = repo.build();
+        assert.equal(ok, false);
+        assert.deepEqual(
+          view(reporter).filter((entry) => entry.code === 'E_SITE'),
+          [
+            {
+              level: 'error',
+              code: 'E_SITE',
+              file: 'site.json',
+              field: 'defaultLanguage',
+            },
+          ],
+        );
+      },
+    );
   });
 });

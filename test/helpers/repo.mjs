@@ -19,6 +19,8 @@
 //   content/pl/01-intro.md          three headings: {#intro}, and {#quick-start}, {#faq} that the hero points to
 //   content/en/lang.json            a published translation, one section:
 //   content/en/01-intro.md          the same structure, different words
+//   content/en/.sync.json           the translation confirmed against the
+//                                   source (see `confirm`)
 //   static/img/og.webp              the preview image, 1200 x 630
 //   static/img/hero*.webp, static/*.png   what the page templates name: the
 //                                   photographs of the hero, the icons of the
@@ -42,6 +44,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { imageSize } from 'image-size';
 import { build } from '../../scripts/lib/build.mjs';
+import { normalise } from '../../scripts/lib/files.mjs';
+import { hashText } from '../../scripts/lib/i18n-sync.mjs';
 import * as inlineScripts from '../../scripts/lib/inline-scripts.mjs';
 import { checkLanguage } from '../../scripts/lib/languages.mjs';
 
@@ -498,6 +502,13 @@ export async function withTree(fn) {
  *
  * Besides the methods of a `Tree`:
  *
+ * Every translation (a folder with a `lang.json` that is not the source's)
+ * is confirmed against the source text as it is once the overrides are
+ * written, as `mise run i18n:sync` would: the build warns about a published
+ * translation that never was (`W_UNCONFIRMED`). An override of its
+ * `.sync.json`, `null` included, is written instead. A test that changes the
+ * source afterwards and does not want `W_STALE` calls `confirm()` again.
+ *
  *   dist                       where `build()` writes by default
  *   image(rel, { width, height, variants })
  *                              a WebP at `static/<rel>` (default 960 x 640)
@@ -506,7 +517,11 @@ export async function withTree(fn) {
  *   addLanguage(code, patch)   `content/<code>/lang.json` (see `langJson`)
  *                              and a copy of every section of the source
  *                              language, with a closing paragraph so that it
- *                              is a translation and no untranslated copy
+ *                              is a translation and no untranslated copy,
+ *                              confirmed against the source
+ *   confirm(codes)             `content/<code>/.sync.json` for the given
+ *                              translations (default: all of them), each
+ *                              section confirmed against the current source
  *   build(options)             the real `build()` on this folder: `strict`,
  *                              `fingerprint`, `outDir` (relative to the
  *                              folder, default `dist`), `fs`, `reporter`
@@ -522,11 +537,19 @@ export function createRepo(overrides = {}) {
       if (data === null) files.delete(rel);
       else files.set(rel, data);
     for (const [rel, data] of files) tree.write(rel, data);
+    const repo = asRepo(tree);
+    repo.confirm(
+      repo
+        .translations()
+        .filter(
+          (code) => !Object.hasOwn(overrides, `content/${code}/.sync.json`),
+        ),
+    );
+    return repo;
   } catch (error) {
     tree.cleanup();
     throw error;
   }
-  return asRepo(tree);
 }
 
 /** What of the real repository `createRealRepo` copies. */
@@ -555,8 +578,30 @@ export function createRealRepo(paths = REAL_PATHS) {
   return asRepo(tree);
 }
 
+/** The parsed `lang.json` of a folder of `content/`, or null. */
+function readLang(tree, code) {
+  try {
+    return tree.readJson(`content/${code}/lang.json`);
+  } catch {
+    return null;
+  }
+}
+
 /** The methods of a compendium, on a tree. */
 function asRepo(tree) {
+  /** The folders of `content/` with a readable lang.json, the source first. */
+  const languages = () => {
+    let names = [];
+    try {
+      names = fs.readdirSync(tree.path('content')).sort();
+    } catch {
+      // No content at all: nothing to confirm.
+    }
+    return names
+      .map((code) => ({ code, lang: readLang(tree, code) }))
+      .filter(({ lang }) => lang !== null && typeof lang === 'object')
+      .sort((a, b) => (b.lang.source === true) - (a.lang.source === true));
+  };
   return Object.assign(tree, {
     dist: path.join(tree.root, 'dist'),
     image(rel, { width = 960, height = 640, variants = [] } = {}) {
@@ -579,6 +624,27 @@ function asRepo(tree) {
               ? introText(code)
               : `${tree.read(`content/${SOURCE}/${file}`).trimEnd()}\n\nTranslation ${code}.\n`,
           );
+      tree.confirm([code]);
+    },
+    translations: () =>
+      languages()
+        .filter(({ lang }) => lang.source !== true)
+        .map(({ code }) => code),
+    confirm(codes = tree.translations()) {
+      const [source] = languages();
+      if (source?.lang.source !== true) return;
+      const sections = tree
+        .list(`content/${source.code}`)
+        .filter((file) => file.endsWith('.md') && !file.includes('/'));
+      for (const code of codes) {
+        const hashes = {};
+        for (const file of sections)
+          if (tree.exists(`content/${code}/${file}`))
+            hashes[file] = hashText(
+              normalise(tree.read(`content/${source.code}/${file}`)),
+            );
+        tree.write(`content/${code}/.sync.json`, hashes);
+      }
     },
     build: (options = {}) => build({ root: tree.root, imageSize, ...options }),
   });

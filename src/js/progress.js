@@ -54,8 +54,10 @@ function wireLabel(root) {
 /**
  * A jump of more than a screen is made at once, not over a second or two (the
  * page scrolls smoothly otherwise): a link to a place that far away, and the
- * address the page is opened at, which is scrolled to while the page loads. A
- * place inside a closed question has no position yet and counts as far.
+ * address the page is opened at, which is scrolled to while the page loads
+ * (the inline script of the head puts `jump-instant` on the page before it is
+ * painted, and it is taken off here once the page has loaded). A place inside
+ * a closed question has no position yet and counts as far.
  */
 function wireJumps(root) {
   const html = root.documentElement;
@@ -63,7 +65,6 @@ function wireJumps(root) {
   const instant = () => html.classList.add('jump-instant');
   const smooth = () =>
     setTimeout(() => html.classList.remove('jump-instant'), 300);
-  instant();
   // The scripts are loaded one by one (app.js), so the page may be loaded
   // already by the time this runs: then there is no load event to wait for.
   if (root.readyState === 'complete') smooth();

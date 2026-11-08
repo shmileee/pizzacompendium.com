@@ -13,9 +13,10 @@ outputs = ["node_modules/.package-lock.json"]
 # Writes the whole site to dist/, atomically: it is built next to dist/ and
 # swapped in, and a failed build leaves the last good dist/ alone. Errors fail
 # the build (broken links, missing images, the hard content rules, structure
-# drift between languages); warnings (untranslated or stale files) do not.
-# Options pass through: `mise run build -- --out /tmp/site --no-fingerprint
-# --quiet`. COMPENDIUM_ROOT=<folder> points every script at another tree.
+# drift between languages); warnings (untranslated, stale or unconfirmed
+# files) do not. Options pass through: `mise run build -- --out /tmp/site
+# --no-fingerprint --quiet` (a relative --out is relative to the repository).
+# COMPENDIUM_ROOT=<folder> points every script at another tree.
 [tasks.build]
 description = "Build the site into dist/"
 depends = ["install"]
@@ -36,7 +37,7 @@ description = "Check the hard content rules (no build, no npm packages)"
 run = "node scripts/lint-content.mjs"
 
 [tasks."i18n:status"]
-description = "Show which translated sections are ok, stale, untranslated, missing or extra"
+description = "Show which translated sections are ok, stale, unconfirmed, untranslated, missing or extra"
 run = "node scripts/i18n.mjs status"
 
 # Run it after bringing a translation in line with the source text:

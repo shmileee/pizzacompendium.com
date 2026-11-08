@@ -38,12 +38,24 @@ export function init(root = document) {
       top: el.getBoundingClientRect().top,
     }));
   // The link is changed before the browser follows it, so that the page
-  // opens at the section also in a new tab.
-  for (const link of queryAll('a[data-lang]', root))
-    link.addEventListener('click', () => {
-      storage.set(LANG_KEY, link.dataset.lang);
-      link.hash = currentSection(marks(), view.innerHeight * READING_LINE);
+  // opens at the section also in a new tab: a click (with Ctrl or Cmd too), a
+  // click of the middle button, and the context menu, whose "open in a new
+  // tab" reads the link as it is when the menu opens. Following the link is a
+  // choice to remember; opening the menu is not yet one.
+  const aim = (link) => {
+    link.hash = currentSection(marks(), view.innerHeight * READING_LINE);
+  };
+  const follow = (link) => {
+    storage.set(LANG_KEY, link.dataset.lang);
+    aim(link);
+  };
+  for (const link of queryAll('a[data-lang]', root)) {
+    link.addEventListener('click', () => follow(link));
+    link.addEventListener('auxclick', (event) => {
+      if (event.button === 1) follow(link);
     });
+    link.addEventListener('contextmenu', () => aim(link));
+  }
 
   root.addEventListener('click', (event) => {
     if (!picker.contains(event.target)) close();

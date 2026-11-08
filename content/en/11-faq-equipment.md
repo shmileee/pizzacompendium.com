@@ -7,7 +7,7 @@
 
 **How long should I heat the stone in the oven?** It depends on the maximum temperature of the oven, the position of the stone and its thickness. For example (approximate values, which depend on the oven):
 
-- A 2 cm thick stone placed in a ordinary oven about 8 cm below the heating element heats up to 300–330°C (or more) in about 30–35 min (grill mode at the maximum temperature, usually 250–270°C).
+- A 2 cm thick stone placed in a standard oven about 8 cm below the heating element heats up to 300–330°C (or more) in about 30–35 min (grill mode at the maximum temperature, usually 250–270°C).
 - A 3 cm thick stone in the same oven needs about an hour.
 
 Plan 45–60 min for heating the stone (a margin over the times in the examples, because ovens differ in power). The best indicator is a measurement with a pyrometer (an infrared thermometer), which helps you understand your own oven and stone. For more on heating the stone, see the question [How do I position and heat the stone in the oven?](#faq-stone-setup)
@@ -24,7 +24,7 @@ Plan 45–60 min for heating the stone (a margin over the times in the examples,
 ::: q #faq-granite-slab Can I use an ordinary granite slab (for example a building-grade one) for baking?
 Granite for construction, finishing or everyday use is sometimes polished or chemically impregnated to protect it from moisture and frost. Ask the seller or manufacturer how it was processed, because contact between food and such a stone can be dangerous to health. Granite can also crack with sudden changes in temperature, so heat it slowly, together with the oven.
 
-Opinions are divided: some people use a cheap granite slab for about $4–5 and say it works very well, while others think it is better to pay extra for a stone intended for food contact (about $4–5 vs about $15–25). It is safer to buy fireclay (about $15–25): it is usually a better pizza stone and will serve you for a long time; granite intended for food contact is another option.
+Opinions are divided: some people use a cheap granite slab for about $4–5 and say it works very well, while others think it is better to pay extra for a stone intended for food contact (about $15–25). It is safer to buy fireclay (about $15–25): it is usually a better pizza stone and will serve you for a long time; granite intended for food contact is another option.
 :::
 
 ::: q #faq-cracked-stone My pizza stone cracked. Is it still effective?
@@ -44,7 +44,7 @@ The combo method lets you bake pizza in the oven without a pizza stone. The name
 :::
 
 ::: q #faq-clean-stone How do I clean a pizza stone?
-**Do not clean a stone with chemicals.** A porous stone absorbs cleaning products. The best way is pyrolysis (ashing), which happens at a temperature above 400°C and turns all the dirt into ash. In a ordinary oven you can try to achieve this effect partly, by placing the stone on the highest shelf, right under the top heating element (without touching it), and setting the heating to maximum. After 30–40 min at full temperature (counted from the moment the oven has heated up), lighter dirt should disappear; this way the stone usually reaches about 300–330°C, which is less than in an oven with a pyrolytic function (about 500°C). If the marks do not disappear, repeat the process. A red-hot heating element is above 500°C (usually much more), which is why the stone right under it heats up the most.
+**Do not clean a stone with chemicals.** A porous stone absorbs cleaning products. The best way is pyrolysis (ashing), which happens at a temperature above 400°C and turns all the dirt into ash. In an ordinary oven you can try to achieve this effect partly, by placing the stone on the highest shelf, right under the top heating element (without touching it), and setting the heating to maximum. After 30–40 min at full temperature (counted from the moment the oven has heated up), lighter dirt should disappear; this way the stone usually reaches about 300–330°C, which is less than in an oven with a pyrolytic function (about 500°C). If the marks do not disappear, repeat the process. A red-hot heating element is above 500°C (usually much more), which is why the stone right under it heats up the most.
 
 If you cannot carry out pyrolysis, wash the stone with water alone and remove baked-on dirt with a spatula or a stiff bristle brush (not a wire one). Dry the stone thoroughly before heating it again, and never pour water on a hot stone.
 :::
@@ -77,7 +77,7 @@ Two kinds of biscotto stone are used with the F1 oven (the descriptions below ar
 It depends on at least two factors:
 
 1. How far into the oven you launch the dough disc. If it is launched too far in, the top heating element at the back of the oven does not heat the sides evenly. Turn the pizza and move it to the central part of the stone.
-2. F1 ovens are not all equal. The classic versions, with the original thermostats, can heat up to 450°C or even around 500°C. Because of these differences the heat reaches the pizza slightly differently, and then it is worth turning it. In ovens with 500°C thermostats the problem is probably smaller.
+2. F1 ovens are not all equal. The classic versions, with the original thermostats, heat up to about 450°C, and the versions with a 500°C thermostat to about 500°C or more. Because of these differences the heat reaches the pizza slightly differently, and then it is worth turning it. In ovens with 500°C thermostats the problem is probably smaller.
 :::
 
 ::: q #faq-stone-setup How do I position and heat the stone in the oven?
@@ -99,7 +99,7 @@ Home ovens are built for longer operation at the temperatures they were designed
 5. Damage to the furniture next to the oven housing, for example peeling veneer or paint
 
 ::: warning Do not modify your oven
-Modifying an oven (interfering with its thermostat, safety devices or heating elements) is risky: it involves very high temperatures and mains electricity, can cause a fire or damage the appliance, usually voids the warranty and is not recommended. An ordinary oven with a stone is enough for your first pizzas.
+Modifying an oven (interfering with its thermostat, safety devices or heating elements) is risky: it involves very high temperatures and mains electricity, can cause a fire or damage the appliance, can void the warranty and is not recommended. An ordinary oven with a stone is enough for your first pizzas.
 :::
 :::
 
@@ -138,7 +138,7 @@ In the factory version, usually not (for example the G3 Ferrari Delizia reaches 
 ::: q #faq-thermomix Can I knead pizza dough in a Thermomix or a similar multifunction kitchen machine?
 “Thermomix”-type machines are multifunctional kitchen tools for home use. They also have a dough kneading option, but because of their construction and built-in blades, according to home bakers’ experience, they are not a good choice. During mixing the structure of the dough is constantly torn instead of being strengthened by stretching. The dough may also overheat faster, so after stronger stretching it tears more easily.
 
-The best solution is to use the Thermomix for the initial kneading of the dough (2–3 min) and then finish kneading by hand. Home bakers have tested this in practice.
+If you still want to use one, the best approach is to use the Thermomix for the initial kneading of the dough (2–3 min) and then finish kneading by hand. Home bakers have tested this in practice.
 :::
 
 ::: q #faq-stand-mixer Which stand mixer should I buy to start with?
@@ -146,6 +146,6 @@ The comparison below is based on the opinions of home pizza makers and on which 
 
 - **Budget of about $125** – at this price you can find dozens of different mixers, which often have the same mechanism in a different housing. The most common in this segment are Bosch mixers from the MUM series. In practice, mixers in this range cannot cope with large amounts of dough (over about 1 kg), even though the manufacturers claim more. Do not rely on the power or capacity figures manufacturers state.
 - **Budget of about $250** – the G3 Ferrari G20075 stands out here. There are many others, probably just as good.
-- **Budget of about $500** – two brands stand out here: KitchenAid (Artisan series) and Kenwood (Chef series). These mixers are built for kneading dough and can knead even 1.5–2 kg (and more) of dough at once, depending on the model. They are also good multifunctional tools for the home, but here what matters most is kneading dough.
+- **Budget of about $500** – two brands stand out here: KitchenAid (Artisan series) and Kenwood (Chef series). These mixers are built for kneading dough; the larger models can knead even 1.5–2 kg (and more) of dough at once, the smaller ones noticeably less. They are also good multifunctional tools for the home, but here what matters most is kneading dough.
 - **Budget of over $750** (for professionals and experienced amateurs) – here you enter the group of professional mixers that you can use at home. The best of them are spiral mixers.
 :::

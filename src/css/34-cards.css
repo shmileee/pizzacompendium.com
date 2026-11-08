@@ -14,7 +14,9 @@
   }
 }
 
-/* the filter: buttons for scripts only (cards.js shows the group) */
+/* the filter: buttons for scripts only (cards.js shows the group). On a
+   scripted page its place is kept, unseen, until cards.js shows it, so that
+   showing it does not push down a place the page was opened at. */
 .cards-filter {
   display: flex;
   flex-wrap: wrap;
@@ -23,7 +25,16 @@
   margin-block-end: var(--space-4);
 }
 
+.js .cards-filter[hidden] {
+  display: flex !important;
+  visibility: hidden;
+}
+
+/* as wide as its longest text and a line high before it has any, so that it
+   goes beside the buttons or under them the same with and without its text */
 .cards-status {
+  min-inline-size: 12em;
+  min-block-size: calc(var(--step--1) * var(--leading));
   margin: 0;
   color: var(--ink-2);
   font-size: var(--step--1);

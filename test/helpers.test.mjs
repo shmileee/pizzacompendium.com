@@ -89,6 +89,7 @@ describe('the default compendium', () => {
   it('holds the files it documents, and no others', async () => {
     await withRepo((repo) => {
       assert.deepEqual(repo.list(), [
+        'content/en/.sync.json',
         'content/en/01-intro.md',
         'content/en/lang.json',
         'content/pl/01-intro.md',
@@ -277,6 +278,7 @@ describe('createRepo', () => {
           `content/${code}/01-intro.md`,
           `${introText(code)}\n![Pizza](img/photo.webp)\n`,
         );
+      repo.confirm();
       const size = (rel) =>
         imageSize(nodeFs.readFileSync(repo.path(`static/${rel}`)));
       assert.deepEqual(
@@ -312,6 +314,7 @@ describe('createRepo', () => {
       ]);
       assert.deepEqual(result.languages.sort(), ['de', 'en', 'es', 'fr', 'pl']);
       assert.deepEqual(repo.list('content/es'), [
+        '.sync.json',
         '01-intro.md',
         '02-more.md',
         'lang.json',
@@ -321,6 +324,49 @@ describe('createRepo', () => {
       assert.match(sitemap, /\/de\//);
       assert.doesNotMatch(sitemap, /\/fr\//);
       assert.match(repo.read('dist/fr/index.html'), /noindex/);
+    });
+  });
+
+  it('confirms every translation against the source as written, unless told otherwise', async () => {
+    await withRepo(
+      {
+        'content/pl/01-intro.md': `${introText('pl')}\nWięcej.\n`,
+        'content/de/lang.json': langJson('de'),
+        'content/de/01-intro.md': introText('de'),
+        'content/de/.sync.json': null,
+      },
+      (repo) => {
+        assert.deepEqual(repo.translations(), ['de', 'en']);
+        assert.deepEqual(Object.keys(repo.readJson('content/en/.sync.json')), [
+          '01-intro.md',
+        ]);
+        assert.equal(repo.exists('content/de/.sync.json'), false);
+        assert.deepEqual(codes(repo.build().reporter), ['W_UNCONFIRMED']);
+        repo.write('content/pl/01-intro.md', introText('pl'));
+        assert.deepEqual(codes(repo.build().reporter), [
+          'W_STALE',
+          'W_UNCONFIRMED',
+        ]);
+        repo.confirm();
+        assert.deepEqual(codes(repo.build({ strict: true }).reporter), []);
+      },
+    );
+  });
+
+  it('confirms nothing when there is no source language to confirm against', async () => {
+    await withRepo({ 'content/pl/lang.json': '{' }, (repo) => {
+      assert.equal(repo.exists('content/en/.sync.json'), false);
+      assert.deepEqual(repo.translations(), ['en']);
+    });
+    await withRepo({ 'content/pl/lang.json': 'null' }, (repo) => {
+      repo.remove('content/en');
+      repo.confirm();
+      assert.deepEqual(repo.translations(), []);
+    });
+    await withRepo((repo) => {
+      repo.remove('content');
+      repo.confirm();
+      assert.deepEqual(repo.translations(), []);
     });
   });
 
@@ -828,7 +874,8 @@ describe('runCli', () => {
   it('builds in the tree, from the working directory it is given', async () => {
     await withRepo((repo) => {
       repo.write('sub/keep.txt', '');
-      const built = runCli('build.mjs', ['--out', 'site'], {
+      // --out is relative to the tree; the summary to the working directory.
+      const built = runCli('build.mjs', ['--out', 'sub/site'], {
         root: repo.root,
         cwd: repo.path('sub'),
       });
@@ -1085,6 +1132,9 @@ describe('the browser fakes', () => {
     assert.equal(doc.documentElement.classList.contains('js'), false);
     runInline(inlineScript(markScripted, [], ['document']), { document: doc });
     assert.equal(doc.documentElement.classList.contains('js'), true);
-    assert.deepEqual(doc.documentElement.classList.names(), ['js']);
+    assert.deepEqual(doc.documentElement.classList.names(), [
+      'js',
+      'jump-instant',
+    ]);
   });
 });
