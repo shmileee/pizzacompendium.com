@@ -11,7 +11,7 @@ Gotowa kulka jest wyraźnie większa, miękka i napowietrzona, ale się nie rozl
 
 ![Kulki ciasta w pojemnikach po 1, 2, 3 i 4 godzinach od uformowania oraz tuż po uformowaniu (temperatura w pomieszczeniu 24°C)](img/dough-balls-timeline.webp "Zdjęcie pokazuje, jak zmienia się objętość i kształt kulek. Napisy „Po 1h” … „Po 4h” oznaczają kolejne godziny od uformowania kulek, „Po uformowaniu” – moment tuż po uformowaniu, a opis „Temp … 24°” – temperaturę w pomieszczeniu 24°C.")
 
-**Przykład z praktyki.** Ten harmonogram jest inny niż w przepisie podstawowym. Ciasto stało w bloku: 4 h w temperaturze pokojowej, 9 h w lodówce, 7 h w temperaturze pokojowej. Potem uformowano kulki, dla których przy temperaturze w domu ok. 24°C (lato) zaplanowano 4 h na wyrastanie. Hydratacja wynosiła 60%, mąki: Petra 3 i Pasini Verde (50:50). Średnia masa kulek to ok. 260 g, a średnia siła mąki ok. W300 (wartość szacunkowa).
+**Przykład z praktyki.** Ten harmonogram jest inny niż w przepisie podstawowym. Ciasto stało w bloku: 4 h w temperaturze pokojowej, 9 h w lodówce, 7 h w temperaturze pokojowej. Potem uformowano kulki i zaplanowano dla nich 4 h wyrastania w domu, latem, w ok. 24°C. Hydratacja wynosiła 60%, mąki: Petra 3 i Pasini Verde (50:50). Średnia masa kulek to ok. 260 g, a średnia siła mąki ok. W300 (wartość szacunkowa).
 
 Kulki mogły w tym przypadku rosnąć szybciej, ponieważ ilość drożdży zwiększono o ok. 40% względem wyliczonej wartości, a temperatura w pomieszczeniu wynosiła 24°C. Zdjęcie po 4 h zrobiono tuż przed pierwszym wypiekiem.
 
@@ -19,7 +19,7 @@ Kulki uformowane z ciasta, które w bloku jeszcze nie nabrało objętości, mog�
 :::
 
 ::: q #faq-dough-temperature Czy temperatura wyrabianego ciasta jest ważna?
-Przyjmuje się, że wyrabiane ciasto nie powinno długo przekraczać ok. 25–26°C (przy niskiej hydratacji, poniżej 60%, niektórzy piekarze dopuszczają nawet ok. 27–28°C). Jeśli ciasto przez dłuższy czas wyrabiania przekroczy tę temperaturę, struktura powstającej siatki glutenowej może zacząć słabnąć – ciasto łatwo się wtedy rwie i klei. Jeśli pod koniec wyrabiania ciasto lekko przekroczy ten próg, nic się nie stanie i nie musisz się tym przejmować.
+Przyjmuje się, że wyrabiane ciasto nie powinno długo przekraczać ok. 25–26°C (przy niskiej hydratacji, poniżej 60%, niektórzy piekarze dopuszczają nawet ok. 27–28°C). Jeśli ciasto przez dłuższy czas wyrabiania przekroczy tę temperaturę, struktura powstającej siatki glutenowej może zacząć słabnąć – ciasto łatwo się wtedy rwie i klei. Krótkie, lekkie przekroczenie tego progu pod koniec wyrabiania niczemu nie szkodzi.
 
 Przegrzanie ciasta powoduje też szybszą i intensywniejszą pracę drożdży, co zaburza zaplanowany proces wyrastania.
 :::
@@ -45,11 +45,11 @@ Lodówka najczęściej pomaga zaplanować wypiek. Na przykład masz czas w czwar
 :::
 
 ::: q #faq-sifting Czy trzeba przesiewać mąkę przez sitko?
-Nie ma takiej potrzeby. Doświadczenie domowych piekarzy pokazuje, że przesiewanie nie ma realnego wpływu na wymieszanie składników ani na gotowe ciasto.
+Nie. Z doświadczeń domowych piekarzy wynika, że przesiana mąka ani nie miesza się lepiej, ani nie daje lepszego ciasta.
 :::
 
 ::: q #faq-room-temp-only Czy mogę zrobić ciasto całkowicie w temperaturze pokojowej, z pominięciem lodówki?
-Tak. Wyrastanie i dojrzewanie całkowicie w temperaturze pokojowej (ok. 20–23°C) sprawdzi się przy mąkach o sile W270–310. Na przykład ciasto z mąki Polselli Vivace (W290), którą producent poleca do długiego dojrzewania, wytrzymuje tak – według doświadczeń domowych piekarzy – do ok. 16 h. Przy 16 h zaplanuj 11 h w bloku i 5 h w kulkach (przy 20–22°C).
+Tak. Do ciasta, które cały czas stoi w temperaturze pokojowej (ok. 20–23°C), wybierz mąkę o sile W270–310. Na przykład ciasto z mąki Polselli Vivace (W290), którą producent poleca do długiego dojrzewania, wytrzymuje tak – według doświadczeń domowych piekarzy – do ok. 16 h. Taki 16-godzinny harmonogram to 11 h w bloku i 5 h w kulkach, w 20–22°C.
 
 Ilość drożdży z przepisu podstawowego jest dobrana do harmonogramu z 16 h w lodówce. Jeśli ciasto ma rosnąć wyłącznie w temperaturze pokojowej, użyj mniej drożdży niż w przepisie, sprawdzaj ciasto częściej i zmieniaj naraz tylko jedną rzecz ([przepis podstawowy](#recipe)).
 
@@ -59,7 +59,7 @@ Szczególnie uważaj latem, gdy w domu często jest 26–28°C zamiast 20–23°
 :::
 
 ::: q #faq-storing-dough Jak przechowywać ciasto podczas dojrzewania i wyrastania?
-Ciasto na każdym etapie (kulki lub blok) przechowuj w szczelnie zamkniętym pojemniku, żeby nie wysychało. Sprawdź, czy kształt pojemnika nie zniekształca kulek – trudniej je wtedy wyjąć i uformować (okrągłą kulkę łatwiej rozciągnąć w okrągły placek). Z tego samego powodu pojemnik powinien mieć płaskie, gładkie dno.
+Zarówno blok, jak i kulki trzymaj w szczelnie zamkniętym pojemniku, żeby ciasto nie wysychało. Sprawdź, czy kształt pojemnika nie zniekształca kulek – trudniej je wtedy wyjąć i uformować (okrągłą kulkę łatwiej rozciągnąć w okrągły placek). Z tego samego powodu pojemnik powinien mieć płaskie, gładkie dno.
 
 Kulki możesz przechowywać w osobnych pojemnikach na żywność, co ułatwia zorganizowanie miejsca w lodówce i pozwala nie wyjmować wszystkich kulek naraz. Przydaje się metoda układania kulek na pokrywie pudełka i zamykania ich od góry (pudełko jest wtedy odwrócone do góry nogami) – kulki łatwiej wtedy wyjąć.
 :::
@@ -69,7 +69,7 @@ Zwykle warto dać ciastu ogrzać się po wyjęciu z lodówki (umownie dotyczy to
 
 Przyjmuje się, że godzina w temperaturze pokojowej to minimum, żeby ciasto trochę się ogrzało i można było zacząć formować kulki. To uogólnienie: ciasto o hydratacji 55% potrzebuje prawdopodobnie o godzinę więcej niż ciasto o hydratacji ok. 60%. Te sugestie opierają się bardziej na doświadczeniu niż na sztywnych wytycznych.
 
-Ciasta o wysokiej hydratacji (Napoletana typu Canotto, Teglia alla Romana, Pinsa Romana i podobne) możesz formować w kulki bezpośrednio po wyjęciu z lodówki, bo przy ich delikatnej strukturze łatwiej pracować z zimnym ciastem. Ryzyko wypchnięcia powietrza z kulek jest wtedy mniejsze.
+Ciasto o wysokiej hydratacji (np. do Napoletany w stylu Canotto, Teglia alla Romana czy Pinsa Romana) możesz dzielić na kulki od razu po wyjęciu z lodówki: jest delikatne, a zimne łatwiej się formuje. Ryzyko wypchnięcia powietrza z kulek jest wtedy mniejsze.
 :::
 
 ::: q #faq-autolyse Co to jest autoliza?
@@ -91,7 +91,7 @@ Biga i poolish to prefermenty używane do przygotowania ciasta. Biga ma hydratac
 :::
 
 ::: q #faq-bubbles Czy przebijać bąble w uformowanym placku lub wyrośniętym cieście?
-Tak, warto przebijać bąble, zwłaszcza na brzegu (cornicione) placka. Takie bąble w piecu mocno puchną i szybko się przypalają, przez co na brzegu zostają przypalone plamy. Zdjęcie poglądowe poniżej.
+Tak, warto przebijać bąble, zwłaszcza na brzegu (cornicione) placka. W piecu rosną i przypalają się jako pierwsze, zostawiając na brzegu ciemne, spalone plamy. Zdjęcie poglądowe poniżej.
 
 ![Przypalony bąbel na brzegu (cornicione) pizzy](img/cornicione-bubbles.webp)
 :::
@@ -110,9 +110,9 @@ Nie każda mąka utrzyma każdą hydratację w cieście na pizzę (różni się 
 :::
 
 ::: q #faq-tastiest-flour Która mąka jest najsmaczniejsza?
-**Ta, która najbardziej smakuje tobie.**
+**Ta, która smakuje tobie.**
 
-Nie ma takich rankingów, bo smak jest kwestią indywidualną: jedni uwielbiają Caputo i 5 Stagioni, a dla innych te mąki nie mają smaku – podobnie jest z pozostałymi. Opisy wielu mąk znajdziesz w [zestawieniu mąk](#popular-flours).
+Rankingu smaku nie da się ułożyć, bo każdy odbiera go inaczej: jedni chwalą Caputo i 5 Stagioni, inni uważają je za mdłe – i tak jest z każdą mąką. Opisy wielu mąk znajdziesz w [zestawieniu mąk](#popular-flours).
 :::
 
 ::: q #faq-leopard Co to jest panterka na brzegach Napoletany i od czego zależy?

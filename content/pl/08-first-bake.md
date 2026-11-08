@@ -3,7 +3,7 @@
 **Jeden idealny przepis na ciasto nie istnieje.** Żaden przepis nie gwarantuje, że wypiek zawsze się uda i będzie powtarzalny. Na wynik wpływa wiele czynników: temperatura i wilgotność powietrza, rodzaj mąki (siła i stopień zmielenia), czasy dojrzewania i wyrastania oraz – co chyba najważniejsze – twoje umiejętności. Nie bój się próbować i zapisuj, co zmieniasz między wypiekami.
 
 ::: tip Warto wiedzieć
-**Pizza na już nie istnieje.** Na już możesz mieć pizzę mrożoną, zamówioną albo podpłomyk. Ciasto na prawdziwą włoską pizzę potrzebuje czasu i odwdzięcza się za to smakiem. Minimalny czas dojrzewania i wyrastania przy mąkach o [niskiej sile W](#flour-strength) to łącznie 6–8 h (od wyrobienia ciasta do włożenia pizzy do pieca). Traktuj ten czas jako minimum – dłuższe dojrzewanie zwykle poprawia smak i wygląd ciasta po wypieku (o ile nie przesadzisz z czasem – patrz ostrzeżenie „Nie skracaj czasów” niżej).
+**Pizza na już nie istnieje.** Na już możesz mieć pizzę mrożoną, zamówioną albo podpłomyk. Ciasto na prawdziwą włoską pizzę potrzebuje czasu i odwdzięcza się za to smakiem. Przy mąkach o [niskiej sile W](#flour-strength) od wyrobienia ciasta do włożenia pizzy do pieca musi minąć co najmniej 6–8 h dojrzewania i wyrastania. Traktuj ten czas jako minimum – dłuższe dojrzewanie zwykle poprawia smak i wygląd ciasta po wypieku (o ile nie przesadzisz z czasem – patrz ostrzeżenie „Nie skracaj czasów” niżej).
 :::
 
 ### Wyrastanie a dojrzewanie {#rising-vs-maturation}
@@ -72,7 +72,7 @@ Mąka jest produktem surowym i może zawierać bakterie, które zabija dopiero w
 
 ### Kilka ważnych zasad {#dough-tips}
 
-- Przed włożeniem do lodówki drożdże w cieście muszą „ruszyć” – potrzebują na to zwykle co najmniej 2 h w temperaturze pokojowej (dłużej, jeśli wymaga tego twój harmonogram).
+- Zanim ciasto trafi do lodówki, drożdże muszą w nim „ruszyć”, a to zajmuje zwykle co najmniej 2 h w temperaturze pokojowej (dłużej, jeśli wymaga tego twój harmonogram).
 - Podczas wyrastania nie posypuj bloku ani kulek mąką i nie natłuszczaj ich (podsypki używasz dopiero przy formowaniu placka).
 - Po wyjęciu z lodówki odczekaj około 1–2 h, aż ciasto delikatnie się ogrzeje, i dopiero wtedy formuj kulki. Uformowane kulki potrzebują przed wypiekiem ok. 4–5 h (w upały krócej), aby dało się z nich bez problemu uformować pizzę.
 - Nie wałkuj kulek – wypchniesz z nich powietrze, które powstało podczas dojrzewania i wyrastania.

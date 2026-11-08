@@ -1,8 +1,8 @@
 ## Słowniczek {#terms}
 
-**Blok** – wyrobione ciasto w formie dużej kuli.
+**Blok** – całe wyrobione ciasto, zebrane w jedną dużą kulę.
 
-**Kulka** – porcja ciasta na jedną pizzę. Kulka na pizzę Napoletanę waży zwykle ok. 200–290 g (średnica pizzy 22–35 cm), w stylu Canotto ok. 270–300 g, a na pizzę Classica zwykle ok. 220–250 g (średnica 28–33 cm), ponieważ ta pizza ma mniej wyrośnięte brzegi.
+**Kulka** – część ciasta odważona na jedną pizzę. Kulka na pizzę Napoletanę waży zwykle ok. 200–290 g (średnica pizzy 22–35 cm), w stylu Canotto ok. 270–300 g, a na pizzę Classica zwykle ok. 220–250 g (średnica 28–33 cm), ponieważ ta pizza ma mniej wyrośnięte brzegi.
 
 **Kulkowanie** – dzielenie ciasta z bloku na kulki odpowiadające jednej pizzy.
 

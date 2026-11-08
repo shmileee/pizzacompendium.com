@@ -21,11 +21,11 @@ Do wyboru są m.in.:
 - mozzarella w bloku
 
 ::: tip Warto wiedzieć: ser do pizzy
-Wybór sera zależy od tego, co chcesz osiągnąć. Do Napoletany używa się mozzarelli di bufala lub fior di latte.
+Wybór sera zależy od tego, co chcesz osiągnąć. Na Napoletanę kładzie się mozzarellę di bufala albo fior di latte.
 
-Bufalę zawsze trzeba odsączyć, a mozzarellę w zalewie też warto. Odcedź ser, pokrój lub podrzyj go na kawałki i zostaw na kilka godzin na sitku w lodówce; najlepiej zacząć, gdy kulki ciasta odpoczywają. Pamiętaj, że ser wyjęty z lodówki puści jeszcze trochę wody, ogrzewając się w temperaturze pokojowej, a bufala oddaje jej zwykle więcej niż fior di latte.
+Bufalę zawsze trzeba odsączyć, a mozzarellę w zalewie też warto. Odcedź ser, pokrój lub podrzyj go na kawałki i zostaw na kilka godzin na sitku w lodówce; najlepiej zacząć, gdy kulki ciasta odpoczywają. Pamiętaj, że gdy ser ogrzewa się po wyjęciu z lodówki, oddaje jeszcze trochę wody; bufala oddaje jej zwykle więcej niż fior di latte.
 
-Strukturę sera na pizzy regulujesz wielkością kawałków, temperaturą i czasem wypieku. Bufala zachowa się inaczej po 90 sekundach w 480°C, a inaczej po 4–6 minutach w zwykłym piekarniku w 250°C. Jeśli nie masz pieca osiągającego 450–500°C, a nie chcesz mieć na pizzy kałuży wody, wybierz ser mniej wodnisty, np. fior di latte lub mozzarellę w bloku. Zwykle pomagają też większe kawałki sera.
+Strukturę sera na pizzy regulujesz wielkością kawałków, temperaturą i czasem wypieku. Bufala zachowa się inaczej po 90 sekundach w 480°C, a inaczej po 4–6 minutach w zwykłym piekarniku w 250°C. Jeśli nie masz pieca osiągającego 450–500°C, a nie chcesz mieć na pizzy kałuży wody, sięgnij po suchszy ser, np. fior di latte albo mozzarellę w bloku. Zwykle pomagają też większe kawałki sera.
 
 Ser pokrojony w julienne (paski różnej grubości) topi się szybciej, gdy paski są cienkie, a wolniej, gdy są grube. Sucha mozzarella (w bloku lub wiórkach) puści znacznie mniej wody i łatwiej się zapiecze, ale będzie to już inny rodzaj pizzy.
 :::

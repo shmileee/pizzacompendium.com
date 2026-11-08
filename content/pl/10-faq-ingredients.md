@@ -29,7 +29,7 @@ Można, ale po zamrożeniu drożdże zwykle tracą strukturę: stają się bardz
 :::
 
 ::: q #faq-freeze-mozzarella Czy mozzarellę w kulkach można mrozić?
-Mozzarellę można mrozić w oryginalnych opakowaniach (z serwatką lub wodą) lub w postaci samych kulek zamkniętych w szczelnych woreczkach. Po rozmrożeniu ser staje się „luźniejszy” i może bardziej się rozpadać (przez kryształki lodu, które wpływają na jego strukturę). Rozmrażaj ją w lodówce, odsącz wodę, która wypłynie ([odsączanie](#faq-drain-mozzarella)), i używaj jej do pieczenia na pizzy, nie na surowo.
+Tak: w oryginalnym opakowaniu razem z serwatką lub wodą albo same kulki w szczelnym woreczku. Rozmrożony ser jest „luźniejszy” i łatwiej się rozpada (przez kryształki lodu, które wpływają na jego strukturę). Rozmrażaj ją w lodówce, odsącz wodę, która wypłynie ([odsączanie](#faq-drain-mozzarella)), i używaj jej do pieczenia na pizzy, nie na surowo.
 :::
 
 ::: q #faq-leftovers Jak przechowywać i odgrzewać resztki pizzy?

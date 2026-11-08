@@ -14,7 +14,7 @@ Modyfikowanie piekarnika (ingerencja w termostat, zabezpieczenia lub grzałki) j
 
 **Budżet powyżej $250:**
 
-Poniższe piece osiągają temperaturę 450–500°C i nie wymagają modyfikacji.
+Wszystkie piece poniżej dochodzą do 450–500°C bez żadnych przeróbek.
 
 - **Ooni Koda 12, Koda 16 i nowsza Koda 2** – opalane gazem (do użytku na zewnątrz); Koda 16 jest większa, ma palnik w kształcie litery L i więcej miejsca.
 - **Ooni Karu 2** – piec wielopaliwowy (drewno lub węgiel drzewny, opcjonalnie palnik gazowy), do użytku na zewnątrz.
@@ -54,6 +54,6 @@ Dostępne są kamienie cienkie (ok. 1 cm) i grubsze (ok. 2–3 cm), okrągłe i 
 ![Metalowa łopata do pizzy z żółtym uchwytem](img/peel-metal.webp)
 ::::
 
-**Łopata operacyjna** (opcjonalna) – dla bardziej doświadczonych miłośników pizzy; służy do wygodnego obracania pizzy w piecu. Przydaje się, gdy piec grzeje nierówno, np. mocniej z jednej strony (typowe dla pieców gazowych, ale zdarza się też w elektrycznych).
+**Łopata operacyjna** (opcjonalna) – narzędzie dla osób z większym doświadczeniem, do obracania pizzy w piecu w trakcie wypieku. Przydaje się, gdy piec grzeje nierówno, np. mocniej z jednej strony (typowe dla pieców gazowych, ale zdarza się też w elektrycznych).
 
 ![Łopata operacyjna do obracania pizzy](img/peel-turning.webp)
