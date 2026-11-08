@@ -52,7 +52,7 @@ Jeśli nie możesz przeprowadzić pirolizy, umyj kamień samą wodą, a zapieczo
 ::: q #faq-pyrometer Do czego służy pirometr w procesie wypieku pizzy?
 Głównie do szybkiego, przybliżonego sprawdzenia, jak gorący jest kamień w piecu. Można nim też z grubsza zmierzyć temperaturę ciasta podczas wyrabiania, ale wynik będzie tylko orientacyjny.
 
-![Dwa ujęcia pirometru (termometru na podczerwień)](img/pyrometer.webp)
+![Pirometr (termometr na podczerwień)](img/pyrometer.webp)
 :::
 
 ::: q #faq-new-stone Czy trzeba przygotować nowy kamień do pierwszego wypieku?

@@ -9,13 +9,13 @@ Tłuszcz nadaje pizzy kruchość i jest typowym składnikiem pizz wypiekanych w 
 ::: q #faq-ball-ready Jak rozpoznać, że kulka jest gotowa do pieczenia?
 Gotowa kulka jest wyraźnie większa, miękka i napowietrzona, ale się nie rozlewa. Dotknij ją delikatnie palcem: jeśli wgłębienie wraca powoli, kulka jest gotowa; jeśli wraca od razu, potrzebuje jeszcze czasu; jeśli wgłębienie zostaje, a kulka opada, jest przerośnięta.
 
-![Kulki ciasta w pojemnikach po 1, 2, 3 i 4 godzinach od uformowania oraz tuż po uformowaniu (temperatura w pomieszczeniu 24°C)](img/dough-balls-timeline.webp "Zdjęcie pokazuje, jak zmienia się objętość i kształt kulek. Napisy „Po 1h” … „Po 4h” oznaczają kolejne godziny od uformowania kulek, „Po uformowaniu” – moment tuż po uformowaniu, a opis „Temp … 24°” – temperaturę w pomieszczeniu 24°C.")
+![Kulki ciasta w pojemnikach po 1, 2, 3 i 4 godzinach od uformowania oraz tuż po uformowaniu (temperatura w pomieszczeniu 24°C)](img/dough-balls-timeline.webp "Ilustracja pokazuje, jak zmienia się objętość i kształt kulek. Napisy „Po 1 h” … „Po 4 h” oznaczają kolejne godziny od uformowania kulek, a „Po uformowaniu” – moment tuż po uformowaniu.")
 
 **Przykład z praktyki.** Ten harmonogram jest inny niż w przepisie podstawowym. Ciasto stało w bloku: 4 h w temperaturze pokojowej, 9 h w lodówce, 7 h w temperaturze pokojowej. Potem uformowano kulki i zaplanowano dla nich 4 h wyrastania w domu, latem, w ok. 24°C. Hydratacja wynosiła 60%, mąki: Petra 3 i Pasini Verde (50:50). Średnia masa kulek to ok. 260 g, a średnia siła mąki ok. W300 (wartość szacunkowa).
 
-Kulki mogły w tym przypadku rosnąć szybciej, ponieważ ilość drożdży zwiększono o ok. 40% względem wyliczonej wartości, a temperatura w pomieszczeniu wynosiła 24°C. Zdjęcie po 4 h zrobiono tuż przed pierwszym wypiekiem.
+Kulki mogły w tym przypadku rosnąć szybciej, ponieważ ilość drożdży zwiększono o ok. 40% względem wyliczonej wartości, a temperatura w pomieszczeniu wynosiła 24°C. Pierwszy wypiek był tuż po tych 4 h.
 
-Kulki uformowane z ciasta, które w bloku jeszcze nie nabrało objętości, mogą być po uformowaniu mniejsze niż na zdjęciu, więc może być potrzebny dłuższy czas. W tym przykładzie ciasto w bloku zdążyło już nabrać objętości, a podczas porcjowania było w nim dużo powietrza. Przy niższej temperaturze czas również się wydłuża, a przy wyższej hydratacji kształt kulki może być inny. W chłodniejszym pomieszczeniu (poniżej ok. 20°C) kulki mogą potrzebować nawet ok. 5–6 h.
+Kulki uformowane z ciasta, które w bloku jeszcze nie nabrało objętości, mogą być po uformowaniu mniejsze niż tutaj, więc może być potrzebny dłuższy czas. W tym przykładzie ciasto w bloku zdążyło już nabrać objętości, a podczas porcjowania było w nim dużo powietrza. Przy niższej temperaturze czas również się wydłuża, a przy wyższej hydratacji kształt kulki może być inny. W chłodniejszym pomieszczeniu (poniżej ok. 20°C) kulki mogą potrzebować nawet ok. 5–6 h.
 :::
 
 ::: q #faq-dough-temperature Czy temperatura wyrabianego ciasta jest ważna?
@@ -91,7 +91,7 @@ Biga i poolish to prefermenty używane do przygotowania ciasta. Biga ma hydratac
 :::
 
 ::: q #faq-bubbles Czy przebijać bąble w uformowanym placku lub wyrośniętym cieście?
-Tak, warto przebijać bąble, zwłaszcza na brzegu (cornicione) placka. W piecu rosną i przypalają się jako pierwsze, zostawiając na brzegu ciemne, spalone plamy. Zdjęcie poglądowe poniżej.
+Tak, warto przebijać bąble, zwłaszcza na brzegu (cornicione) placka. W piecu rosną i przypalają się jako pierwsze, zostawiając na brzegu ciemne, spalone plamy. Poglądowa ilustracja poniżej.
 
 ![Przypalony bąbel na brzegu (cornicione) pizzy](img/cornicione-bubbles.webp)
 :::
@@ -116,7 +116,7 @@ Rankingu smaku nie da się ułożyć, bo każdy odbiera go inaczej: jedni chwal�
 :::
 
 ::: q #faq-leopard Co to jest panterka na brzegach Napoletany i od czego zależy?
-Panterka to ciemne plamki na brzegach pizzy neapolitańskiej. Najczęściej jest efektem dobrze dojrzałego ciasta i równomiernego rozkładu temperatury w piecu na krawędzie pizzy. Ładną panterkę łatwiej uzyskać w piecach z żywym ogniem, ale można ją uzyskać także w piecach elektrycznych (przykład na zdjęciu poniżej, wypiek w Effeuno P134H).
+Panterka to ciemne plamki na brzegach pizzy neapolitańskiej. Najczęściej jest efektem dobrze dojrzałego ciasta i równomiernego rozkładu temperatury w piecu na krawędzie pizzy. Ładną panterkę łatwiej uzyskać w piecach z żywym ogniem, ale można ją uzyskać także w piecach elektrycznych (np. w Effeuno P134H).
 
 ![Pizza Napoletana z charakterystycznymi ciemnymi plamkami („panterką”) na brzegu](img/leopard-spots.webp)
 :::

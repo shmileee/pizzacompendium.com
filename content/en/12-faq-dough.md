@@ -9,13 +9,13 @@ Fat makes pizza more tender and is a typical ingredient of pizzas baked in a sty
 ::: q #faq-ball-ready How can I tell that a dough ball is ready for baking?
 A ready dough ball is clearly bigger, soft and airy, but it does not spread out. Press it gently with a finger: if the dent springs back slowly, the ball is ready; if it springs back at once, it needs more time; if the dent stays and the ball sinks, it has over-risen.
 
-![Dough balls in containers 1, 2, 3 and 4 hours after shaping and right after shaping (room temperature 24°C)](img/dough-balls-timeline-en.webp "The photo shows how the volume and shape of the dough balls change. The labels “After 1 h” … “After 4 h” mean the hours since the dough balls were shaped, “After shaping” means right after shaping, and “Room temperature 24°” means a room temperature of 24°C.")
+![Dough balls in containers 1, 2, 3 and 4 hours after shaping and right after shaping (room temperature 24°C)](img/dough-balls-timeline-en.webp "The illustration shows how the volume and shape of the dough balls change. The labels “After 1 h” … “After 4 h” mean the hours since the dough balls were shaped, and “After shaping” means right after shaping.")
 
 **A practical example.** This schedule differs from the basic recipe. The dough sat as a bulk dough for 4 h at room temperature, 9 h in the fridge and 7 h at room temperature. Then dough balls were shaped, and 4 h of rising was planned for them at a room temperature of about 24°C (summer). The hydration was 60%, and the flours were Petra 3 and Pasini Verde (50:50). The average weight of the dough balls was about 260 g, and the average flour strength was about W300 (a rough estimate).
 
-In this case the dough balls may have risen faster, because the amount of yeast was increased by about 40% relative to the calculated amount, and the room temperature was 24°C. The photo after 4 h was taken right before the first bake.
+In this case the dough balls may have risen faster, because the amount of yeast was increased by about 40% relative to the calculated amount, and the room temperature was 24°C. The first bake came right after those 4 h.
 
-Dough balls shaped from a bulk dough that has not yet gained volume may be smaller after shaping than in the photo, so more time may be needed. In this example the bulk dough had already gained volume, and there was a lot of air in it when it was portioned. At a lower temperature the time is also longer, and with a higher hydration the shape of the dough ball may be different. In a cooler room (below about 20°C) the dough balls may need up to about 5–6 h.
+Dough balls shaped from a bulk dough that has not yet gained volume may be smaller after shaping than here, so more time may be needed. In this example the bulk dough had already gained volume, and there was a lot of air in it when it was portioned. At a lower temperature the time is also longer, and with a higher hydration the shape of the dough ball may be different. In a cooler room (below about 20°C) the dough balls may need up to about 5–6 h.
 :::
 
 ::: q #faq-dough-temperature Does the temperature of the dough during kneading matter?
@@ -91,7 +91,7 @@ Biga and poolish are both preferments used for making dough. Biga usually has a 
 :::
 
 ::: q #faq-bubbles Should I pop the bubbles in the dough (the risen dough or the shaped disc)?
-Yes, it is worth popping bubbles, especially on the edge (cornicione) of the dough disc. Such bubbles puff up a lot in the oven and burn quickly, which leaves burnt patches on the edge. An illustrative photo is below.
+Yes, it is worth popping bubbles, especially on the edge (cornicione) of the dough disc. Such bubbles puff up a lot in the oven and burn quickly, which leaves burnt patches on the edge. An illustrative picture is below.
 
 ![A burnt bubble on the edge (cornicione) of a pizza](img/cornicione-bubbles.webp)
 :::
@@ -116,7 +116,7 @@ There are no rankings, because taste is individual. Some people love Caputo and 
 :::
 
 ::: q #faq-leopard What is leopard spotting on the edges of Napoletana and what affects it?
-Leopard spotting means the dark spots on the edges of Neapolitan pizza. It is most often the result of well-matured dough combined with an even distribution of the oven’s heat onto the edges of the pizza. Good leopard spotting is easier to achieve in live-fire ovens, but it is also possible in electric ovens (an example in the photo below, baked in the Effeuno P134H).
+Leopard spotting means the dark spots on the edges of Neapolitan pizza. It is most often the result of well-matured dough combined with an even distribution of the oven’s heat onto the edges of the pizza. Good leopard spotting is easier to achieve in live-fire ovens, but it is also possible in electric ovens (for example the Effeuno P134H).
 
 ![Pizza Napoletana with the characteristic dark spots (leopard spotting) on the edge](img/leopard-spots.webp)
 :::
