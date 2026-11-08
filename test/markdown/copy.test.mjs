@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   createMarkdownCopy,
+  dropNotes,
   markdownDocument,
 } from '../../scripts/lib/markdown/copy.mjs';
 import { copyOnce, lang, ui } from '../helpers/render.mjs';
@@ -61,6 +62,10 @@ describe('createMarkdownCopy', () => {
       copyOnce('```\n[x](#a) <!-- kept -->\n```\n'),
       '```\n[x](#a) <!-- kept -->\n```',
     );
+  });
+
+  it('leaves no note behind that taking another out would have made', () => {
+    assert.equal(copyOnce('A <!<!-- x -->-- hidden --> B.\n'), 'A  B.');
   });
 
   it('leaves out a block it does not know, and a stray closing fence', () => {
@@ -139,5 +144,19 @@ describe('markdownDocument', () => {
       }),
       '# Guide: pizza\n\n> All about pizza.\n\n<https://x.test/en/>\\\nUpdated 6 November 2026\n\n*Translated.*\n\n## A\n\n---\n\nBased on a document.\n',
     );
+  });
+});
+
+describe('dropNotes', () => {
+  it('takes out every note, one after another or one hidden in another', () => {
+    assert.equal(dropNotes('a<!-- 1 -->b<!--\n2\n-->c'), 'abc');
+    assert.equal(dropNotes('<!<!-- x -->-- y -->z'), 'z');
+    assert.equal(dropNotes('<<!-- -->!<!-- -->-<!-- -->- y --->z'), 'z');
+    assert.equal(dropNotes('plain'), 'plain');
+  });
+
+  it('writes an opening that nothing closes as text', () => {
+    assert.equal(dropNotes('a <!-- b'), 'a &lt;!-- b');
+    assert.equal(dropNotes('<!<!-- x -->-- open'), '&lt;!-- open');
   });
 });

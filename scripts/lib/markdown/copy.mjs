@@ -7,6 +7,26 @@ import { splitHeadingId } from './text.mjs';
 const COMMENT = /<!--[\s\S]*?-->/g;
 
 /**
+ * The text without its translator's notes. One pass is not enough: taking a
+ * note out can join what was around it into a new one (`<!<!-- a -->-- b -->`
+ * leaves `<!-- b -->`), so notes are taken out until none is left. An opening
+ * `<!--` that nothing closes is text on the page (the renderer escapes it),
+ * and is written as text here too, so that no reader of the copy takes the
+ * rest of the section for a comment.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+export function dropNotes(text) {
+  let out = text;
+  for (let before = ''; out !== before; ) {
+    before = out;
+    out = out.replace(COMMENT, '');
+  }
+  return out.replaceAll('<!--', '&lt;!--');
+}
+
+/**
  * The Markdown copy of a language page (`<code>/index.md`): the same text as
  * the page, for programs that read the guide rather than show it (language
  * models, search tools, agents). It is plain Markdown that any reader
@@ -47,8 +67,7 @@ export function createMarkdownCopy({
    * defined once (`[ref]: #id`); notes dropped.
    */
   const absolute = (text) =>
-    text
-      .replace(COMMENT, '')
+    dropNotes(text)
       .replace(/\](\(|:[ \t]*)#/g, `]$1${url}#`)
       .replace(/\](\(|:[ \t]*)img\//g, `]$1${siteUrl}/img/`);
   /** The level of the last heading: a question goes one below it. */
