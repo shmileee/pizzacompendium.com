@@ -22,7 +22,7 @@ Kluczowe informacje:
 
 - Klasyczna Napoletana „smak Neapolu” – hydratacja ok. 55–60%, waga kulki ok. 250–280 g, niskie, niezbyt mocno wyrośnięte cornicione (brzegi).
 - Napoletana o wyższej hydratacji – 60–67%, waga kulki 250–290 g, mocniej wyrośnięte i bardziej napowietrzone brzegi.
-- Napoletana typu Canotto – hydratacja 70% i więcej, waga kulki 250–300 g, bardzo wyrośnięte i napowietrzone brzegi; często stosuje się większą ilość drożdży, a nawet preferment biga, żeby brzegi mogły bardziej wyrosnąć.
+- Napoletana typu Canotto – hydratacja 70% i więcej, waga kulki 270–300 g, bardzo wyrośnięte i napowietrzone brzegi; często stosuje się większą ilość drożdży, a nawet preferment biga, żeby brzegi mogły bardziej wyrosnąć.
 - Ciasto bez tłuszczu i bez cukru.
 - Oryginalna Napoletana jest wypiekana w temperaturach powyżej 400°C; pizzę upieczoną w niższych temperaturach (domowy piekarnik) można nazywać pizzą w stylu neapolitańskim.
 - Proporcje na start: patrz [przepis podstawowy](#recipe) (jego hydratacja 55% mieści się w zakresie Napoletany 55–60%); pomiń tłuszcz.

@@ -6,7 +6,7 @@ Well-known brands of Italian tomatoes include Mutti, Petti, Strianese and Rosso 
 
 **Do not cook, reduce or pasteurise the sauce, and do not add sugar to it** – it finishes cooking on the pizza. Keep opened sauce in an airtight container in the fridge and use it within 3–4 days.
 
-**How much?** For one pizza of 30–33 cm, about 60–80 g of sauce, 80–100 g of mozzarella, a few basil leaves and about 5–7 g (1–1.5 teaspoons) of olive oil are enough. For four pizzas that is roughly 250–320 g of sauce (one 400 g tin of tomatoes is enough) and 320–400 g of cheese. Do not overdo it: too many toppings release water.
+**How much?** For one pizza of 30–33 cm, about 60–80 g of sauce, 80–100 g of mozzarella, a few basil leaves and about 5–7 g (1–1.5 teaspoons) of olive oil are enough. For four pizzas that is roughly 240–320 g of sauce (one 400 g tin of tomatoes is enough) and 320–400 g of cheese. Do not overdo it: too many toppings release water.
 
 **Cheese – mozzarella.** Use good-quality mozzarella, ideally fresh and Italian. The types are described below.
 

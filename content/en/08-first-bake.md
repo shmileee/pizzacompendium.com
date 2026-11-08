@@ -3,7 +3,7 @@
 **There is no single perfect dough recipe.** No recipe guarantees that every bake will turn out well and be repeatable. Success depends on many factors: air temperature and humidity, the type of flour (strength and fineness of the grind), maturation and rising times and – probably most importantly – your own skills. Do not be afraid to experiment, and write down what you change between bakes.
 
 ::: tip Good to know
-**There is no such thing as instant pizza.** You can have a frozen pizza, a delivered pizza or a flatbread instantly, but dough for real Italian pizza needs time, and it pays you back with flavour. For low-strength flours the minimum maturation and rising time is 6–8 h in total, counted from the moment the dough is kneaded to the moment the pizza goes into the oven. Treat this as a minimum: a longer time usually improves the flavour and look of the baked pizza (as long as you do not overdo it – see the warning “Do not shorten the times” below). Pizza flours start at about W220 (that is still low strength; medium strength is W250–310).
+**There is no such thing as instant pizza.** You can have a frozen pizza, a delivered pizza or a flatbread instantly, but dough for real Italian pizza needs time, and it pays you back with flavour. For [low-strength flours](#flour-strength) the minimum maturation and rising time is 6–8 h in total, counted from the moment the dough is kneaded to the moment the pizza goes into the oven. Treat this as a minimum: a longer time usually improves the flavour and look of the baked pizza (as long as you do not overdo it – see the warning “Do not shorten the times” below).
 :::
 
 ### Rising vs maturation {#rising-vs-maturation}
@@ -35,7 +35,7 @@ Salt is about 50 g per litre of water. Use cold tap water (as a rough guide: whe
 
 **Dry yeast.** Instead of 1.24 g of fresh yeast use about 0.4 g of instant yeast or about 0.5 g of active dry yeast (approximate values, worked out with the [conversion](#faq-yeast-types)). Mix instant yeast into the flour before adding the salt (manufacturers advise avoiding direct contact between yeast and salt). Active dry yeast is usually dissolved first in a few spoonfuls of lukewarm water – the one exception to the cold-water rule – and you measure the rest of the 329 g of water cold.
 
-**Schedule** (24 h in total, room temperature about 20°C): 2 h at room temperature (bulk dough) → 16 h in the fridge (bulk dough) → 2 h at room temperature (bulk dough) → 4 h at room temperature (dough balls) → bake.
+**Schedule** (24 h in total, room temperature about 20°C): 2 h at room temperature (bulk dough) → 16 h in the fridge (bulk dough) → 2 h at room temperature (bulk dough) → 4 h at room temperature (dough balls; give them up to 1 h more if they are not ready yet) → bake.
 
 The amount of yeast is matched to this schedule and to a temperature of about 20°C. The longer the dough rises and the warmer the kitchen is, the less yeast it needs, and vice versa. If you change the schedule, or your kitchen is much warmer, adjust the amount of yeast to match. Beyond that, change only one thing at a time (a new schedule and the yeast adjusted to it count as one change), so that you know what made the difference. Measure the temperature where the dough will stand – an ordinary room thermometer is enough. On hot days (26–28°C) the dough balls may be ready after about 3 h instead of 4–5 h, so start checking them earlier ([when a dough ball is ready](#faq-ball-ready)).
 
@@ -54,7 +54,7 @@ Step by step:
 3. Dissolve 1.24 g of yeast in the water, rubbing it with your fingers.
 4. Add 16 g of salt to the flour (in a stand mixer you can add the salt after a few minutes of kneading – it dissolves more easily).
 5. Add the water with the yeast to the flour (in a stand mixer pour it in gradually).
-6. Add 16 g of oil (in a stand mixer it is best towards the end of kneading – the bowl then comes cleaner of dough residue).
+6. Add 16 g of oil (in a stand mixer it is best towards the end of kneading – the oil then helps clean the dough residue off the bowl).
 7. Knead the dough until it is smooth and elastic.
 8. Shape the dough into one ball (the bulk dough), put it in a container with a tight lid, without oiling the dough, and close the lid. Then follow the schedule above: 2 h at room temperature, then the fridge.
 

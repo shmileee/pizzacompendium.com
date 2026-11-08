@@ -16,7 +16,7 @@ Najlepiej jednak używać drożdży świeżych: są tanie, a potrzebną ilość 
 Zwykła waga kuchenna (dokładność 1 g) nie zmierzy 1,24 g drożdży z przepisu podstawowego. Przygotuj roztwór drożdży o znanym stężeniu:
 
 1. Rozpuść 10 g świeżych drożdży w 490 g zimnej wody i dobrze wymieszaj: drożdże stanowią 2% roztworu.
-2. Do ciasta weź 50 g roztworu na każdy 1 g drożdży z przepisu, czyli 62 g na 1,24 g, i dolej 267 g zimnej wody zamiast 329 g.
+2. Do ciasta weź 50 g roztworu na każdy 1 g drożdży z przepisu, czyli 62 g na 1,24 g, i dolej 268 g zimnej wody zamiast 329 g.
 3. Pozostałego roztworu nie przechowuj.
 
 **Drożdże instant.** Rozpuść całą saszetkę o znanej masie (np. 7 g) w 49 razy większej masie wody o temperaturze pokojowej (343 g); w przepisie podstawowym potrzeba ok. 20 g takiego roztworu, a wody dodaj o tyle mniej.

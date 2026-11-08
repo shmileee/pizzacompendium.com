@@ -29,7 +29,7 @@
 
 ### Teglia alla Romana {#teglia}
 
-**Teglia alla Romana** – Roman pizza baked in a pan. It has a rectangular shape, a very crunchy and light crust and a thicker profile. It is definitely worth trying.
+**Teglia alla Romana** – Roman pizza baked in a pan. It has a rectangular shape, a very crunchy and light crust, and the pizza itself is thicker than Napoletana and Classica. It is definitely worth trying.
 
 - Flours of [strength](#flour-strength) W320 and higher are suitable for this pizza.
 - Dough hydration is 75–80%.

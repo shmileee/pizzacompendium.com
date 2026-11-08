@@ -22,7 +22,7 @@ Key information:
 
 - Classic Napoletana, the “taste of Naples”: hydration of about 55–60%, a dough ball weight of about 250–280 g, and a low, not too puffy cornicione (edge).
 - Napoletana with higher hydration: 60–67%, a dough ball weight of 250–290 g, and edges that rise more and are airier.
-- Canotto-style Napoletana: hydration of 70% or more, a dough ball weight of 250–300 g, and very high, airy edges. An increased amount of yeast, or even a biga preferment, is often used so that the edges can rise more.
+- Canotto-style Napoletana: hydration of 70% or more, a dough ball weight of 270–300 g, and very high, airy edges. An increased amount of yeast, or even a biga preferment, is often used so that the edges can rise more.
 - The dough contains no fat and no sugar.
 - Authentic Napoletana is baked at temperatures above 400°C. A pizza baked at lower temperatures (in a home oven) can be called Neapolitan-style.
 - Starting proportions: see the [basic recipe](#recipe) (its 55% hydration is within the Napoletana range of 55–60%); leave out the fat.

@@ -16,7 +16,7 @@ Fresh yeast is still the best choice: it is inexpensive and makes it easier to c
 An ordinary kitchen scale (accurate to 1 g) cannot measure the 1.24 g of yeast in the basic recipe. Make a yeast solution of known concentration:
 
 1. Dissolve 10 g of fresh yeast in 490 g of cold water and stir well: the yeast makes up 2% of the solution.
-2. Take 50 g of solution for every 1 g of yeast in the recipe, that is 62 g for 1.24 g, and add 267 g of cold water instead of 329 g.
+2. Take 50 g of solution for every 1 g of yeast in the recipe, that is 62 g for 1.24 g, and add 268 g of cold water instead of 329 g.
 3. Do not keep the leftover solution.
 
 **Instant yeast.** Dissolve a whole sachet of known weight (for example 7 g) in 49 times its weight of room-temperature water (343 g); the basic recipe needs about 20 g of this solution, and you add that much less water.
