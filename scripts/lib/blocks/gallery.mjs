@@ -45,4 +45,5 @@ export default {
       error('E_GALLERY', 'the gallery has no images', line);
     return `<div class="gallery" data-count="${images.length}">${images.map((image) => figure(captioned(image), 'gallery')).join('')}</div>\n`;
   },
+  markdown: ({ body }) => body,
 };

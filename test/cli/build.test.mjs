@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { describe, it } from 'node:test';
 import { runCli } from '../helpers/cli.mjs';
 import { hashTree, withRepo } from '../helpers/repo.mjs';
@@ -291,6 +292,51 @@ describe('scripts/build.mjs', () => {
         assert.equal(run(repo, ['dist']).status, 1);
         assert.equal(repo.exists('dist'), false);
       });
+    });
+  });
+});
+
+describe('scripts/build.mjs: the dates of the text', () => {
+  /**
+   * Git in the throwaway folder, with no configuration of the machine or the
+   * user (so no signing, no hooks) and a fixed author, committer and date.
+   */
+  const git = (repo, args) =>
+    execFileSync('git', args, {
+      cwd: repo.root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: {
+        PATH: process.env.PATH,
+        GIT_CONFIG_GLOBAL: '/dev/null',
+        GIT_CONFIG_NOSYSTEM: '1',
+        GIT_AUTHOR_NAME: 'Test',
+        GIT_AUTHOR_EMAIL: 'test@example.invalid',
+        GIT_COMMITTER_NAME: 'Test',
+        GIT_COMMITTER_EMAIL: 'test@example.invalid',
+        GIT_AUTHOR_DATE: '2026-11-06T22:18:37+01:00',
+        GIT_COMMITTER_DATE: '2026-11-06T22:18:37+01:00',
+      },
+    });
+
+  it('takes them from the history of the repository the text is in', async () => {
+    await withRepo((repo) => {
+      git(repo, ['init', '--quiet']);
+      git(repo, ['add', '--all']);
+      git(repo, ['commit', '--quiet', '--message', 'text']);
+      assert.equal(run(repo, ['--quiet', '--strict']).status, 0);
+      assert.match(
+        repo.read('dist/en/index.html'),
+        /"dateModified":"2026-11-06T22:18:37\+01:00"/,
+      );
+      assert.match(repo.read('dist/sitemap.xml'), /<lastmod>2026-11-06T/);
+    });
+  });
+
+  it('builds without them outside a repository', async () => {
+    await withRepo((repo) => {
+      assert.equal(run(repo, ['--quiet', '--strict']).status, 0);
+      assert.doesNotMatch(repo.read('dist/en/index.html'), /dateModified/);
     });
   });
 });

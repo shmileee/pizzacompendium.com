@@ -142,6 +142,7 @@ const UI_KEYS = uiKeys();
 function uiText(key, code) {
   if (key === 'shortName') return `Pizza ${code}`;
   if (key === 'filterStatus') return `{shown} / {total} (${code})`;
+  if (key === 'updated') return `updated {date} (${code})`;
   return `${key} (${code})`;
 }
 

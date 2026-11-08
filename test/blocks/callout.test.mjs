@@ -1,8 +1,12 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { callout, calloutHtml } from '../../scripts/lib/blocks/callout.mjs';
+import {
+  callout,
+  calloutHtml,
+  calloutMarkdown,
+} from '../../scripts/lib/blocks/callout.mjs';
 import { codes, view } from '../helpers/capture.mjs';
-import { renderOnce } from '../helpers/render.mjs';
+import { copyOnce, renderOnce } from '../helpers/render.mjs';
 
 describe('calloutHtml', () => {
   it('is a note with the icon of its kind, the title and the body', () => {
@@ -75,5 +79,44 @@ describe('callout', () => {
     assert.deepEqual(view(reporter), [
       { level: 'error', code: 'E_LINK_TARGET', file: 'case.md', line: 3 },
     ]);
+  });
+});
+
+describe('calloutMarkdown', () => {
+  it('is a quotation with the title in bold, every line of the body quoted', () => {
+    assert.equal(
+      calloutMarkdown('T', 'One.\n\n- a\n- b'),
+      '> **T**\n>\n> One.\n>\n> - a\n> - b',
+    );
+  });
+
+  it('has no title line without a title, and nothing but the title without a body', () => {
+    assert.equal(calloutMarkdown('', 'One.'), '> One.');
+    assert.equal(calloutMarkdown('T', ''), '> **T**');
+  });
+});
+
+describe('a callout in the Markdown copy', () => {
+  it('has the title of the author, else the title of its kind', () => {
+    assert.equal(
+      copyOnce('::: tip Mine\nBody.\n:::\n'),
+      '> **Mine**\n>\n> Body.',
+    );
+    assert.equal(
+      copyOnce('::: warning\nBody.\n:::\n', { ui: { warning: 'Careful' } }),
+      '> **Careful**\n>\n> Body.',
+    );
+  });
+
+  it('has no title when its kind has none (a note)', () => {
+    assert.equal(copyOnce('::: note\nBody.\n:::\n'), '> Body.');
+  });
+
+  it('is given by callout() to every block it makes', () => {
+    const block = callout('tip', (ui) => ui.tip);
+    assert.equal(
+      block.markdown({ title: '', ui: { tip: 'Hint' }, body: 'B' }),
+      '> **Hint**\n>\n> B',
+    );
   });
 });

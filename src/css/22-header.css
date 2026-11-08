@@ -350,6 +350,13 @@
   text-wrap: pretty;
 }
 
+/* the date the text last changed, next to the credit; a date never breaks */
+.site-footer .footer-updated {
+  flex: none;
+  margin: 0;
+  white-space: nowrap;
+}
+
 .footer-top {
   flex: none;
   margin-inline-start: auto;

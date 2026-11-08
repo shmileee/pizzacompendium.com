@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { codes, errorCodes, find, view } from '../helpers/capture.mjs';
-import { renderer, renderOnce } from '../helpers/render.mjs';
+import { copyOnce, renderer, renderOnce } from '../helpers/render.mjs';
 
 const Q = (id, title = 'Why?', body = 'Because.') =>
   `::: q #${id} ${title}\n${body}\n:::\n`;
@@ -112,5 +112,42 @@ describe('the q block', () => {
       /<div class="faq-body"><div class="callout callout-tip"/,
     );
     assert.match(html, /<ul>\n<li>x<\/li>/);
+  });
+});
+
+describe('the q block: the question and its answer as data and as Markdown', () => {
+  it('records the question and the answer as text, under the id', () => {
+    const { records } = renderOnce(
+      Q(
+        'faq-salt',
+        'How much **salt**?',
+        'About &lt;3%: see [this](#faq-salt).\n\n- one\n- two',
+      ),
+    );
+    assert.deepEqual(records, [
+      {
+        type: 'faq',
+        id: 'faq-salt',
+        question: 'How much salt?',
+        answer: 'About <3%: see this. one two',
+      },
+    ]);
+  });
+
+  it('is a heading one level below the last one in the Markdown copy, with the answer under it', () => {
+    assert.equal(
+      copyOnce(
+        `### Dough {#dough}\n\n${Q('a', 'Why [this](#b)?', 'Because.')}`,
+      ),
+      '### Dough\n\n#### Why [this](https://x.test/en/#b)?\n\nBecause.',
+    );
+    assert.equal(copyOnce(Q('a')), '## Why?\n\nBecause.');
+  });
+
+  it('never goes below h6', () => {
+    assert.equal(
+      copyOnce(`###### Deep {#deep}\n\n${Q('a')}`),
+      '###### Deep\n\n###### Why?\n\nBecause.',
+    );
   });
 });

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // mise run build [-- --strict --out <dir> --no-fingerprint --quiet --format text|github|json]
 // Diagnostics: stderr (text) or stdout (github, json). The summary is for people: stderr.
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { imageSize } from 'image-size';
 import { build } from './lib/build.mjs';
@@ -26,7 +27,14 @@ if (error) {
   const { strict, quiet, out } = values;
   const outDir = path.resolve(out ?? path.join(root, 'dist'));
   const fingerprint = !values['no-fingerprint'];
-  const result = build({ root, outDir, imageSize, fingerprint, strict });
+  // The dates of the text come from the history of the repository.
+  const git = (args) =>
+    execFileSync('git', args, {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+  const result = build({ root, outDir, imageSize, fingerprint, strict, git });
   const { entries } = result.reporter;
   const report = formatReport(entries, values);
   if (report) console[report.method](report.text);

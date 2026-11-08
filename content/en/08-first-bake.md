@@ -16,6 +16,8 @@ Both processes happen at the same time, but at different speeds. In a warm place
 To start with, choose a hydration of **55–58%**: this is the lower part of the range used in original Italian pizzerias (the AVPN rules allow about 55–62%). Try a higher hydration only once you have gained experience working with dough.
 :::
 
+:::: recipe time=PT24H
+
 ### Basic recipe {#recipe}
 
 The recipe is given in **baker’s percentages**: the weight of the flour is always 100%, and the other ingredients are a percentage of it. This makes it easy to scale the recipe to any number of pizzas. The example is a **Classica** pizza (diameter 30–33 cm) made from 4 dough balls of 240 g each – each ball makes one pizza, which you can bake even in an ordinary oven on a stone.
@@ -65,6 +67,8 @@ Step by step:
 ::: warning Do not taste raw dough
 Flour is a raw product and can carry harmful bacteria, which only baking kills. Do not eat or taste raw flour or raw dough, and after handling it wash your hands, bowls, utensils and work surface with warm soapy water.
 :::
+
+::::
 
 ### A few important rules {#dough-tips}
 

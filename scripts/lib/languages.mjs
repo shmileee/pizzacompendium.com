@@ -15,6 +15,7 @@ const KEYS = new Set([
   'name',
   'htmlLang',
   'title',
+  'pageTitle',
   'description',
   'dir',
   'order',
@@ -68,13 +69,17 @@ export const REQUIRED_UI = [
   'searchText',
   'searchClose',
   'credit',
+  'updated',
 ];
 
 /** Optional strings: a language may define one the source does not. */
 const OPTIONAL_UI = ['translationNote'];
 
 /** What a string must contain for a script to fill it in. */
-const PLACEHOLDERS = { filterStatus: ['{shown}', '{total}'] };
+const PLACEHOLDERS = {
+  filterStatus: ['{shown}', '{total}'],
+  updated: ['{date}'],
+};
 
 /** The name in the web app manifest: a home screen label is this short. */
 const SHORT_NAME_MAX = 12;
@@ -86,7 +91,10 @@ const SHORT_NAME_MAX = 12;
  * @property {string} file `content/<code>/lang.json`
  * @property {string} name Native name, shown in the picker.
  * @property {string} htmlLang Value of the `lang` attribute and of hreflang.
- * @property {string} title
+ * @property {string} title The name of the guide: the heading of the page,
+ *   the name of the site and of the installed app.
+ * @property {string} pageTitle The `<title>` of the page: the name with the
+ *   topic in it, for search results and link previews (`title` by default).
  * @property {string} description
  * @property {'ltr' | 'rtl'} dir
  * @property {number} order
@@ -251,6 +259,11 @@ export function checkLanguage(code, data) {
     bad('status', 'the source language cannot be a draft');
   if (data.ogImageAlt !== undefined && typeof data.ogImageAlt !== 'string')
     bad('ogImageAlt', '"ogImageAlt" must be a string');
+  if (
+    data.pageTitle !== undefined &&
+    (typeof data.pageTitle !== 'string' || !data.pageTitle.trim())
+  )
+    bad('pageTitle', '"pageTitle" must be a non-empty string when present');
   problems.push(...typographyProblems(data.typography));
   problems.push(...uiProblems(data.ui, data.source === true));
   problems.push(...localeProblems(data));
@@ -264,6 +277,7 @@ export function checkLanguage(code, data) {
       name: data.name,
       htmlLang: data.htmlLang,
       title: data.title,
+      pageTitle: data.pageTitle ?? data.title,
       description: data.description,
       dir: data.dir ?? 'ltr',
       order: data.order ?? 999,

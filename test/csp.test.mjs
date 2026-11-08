@@ -95,6 +95,11 @@ describe('checkPolicy: a good page', () => {
     assert.deepEqual(checkPolicy(page(body)), []);
   });
 
+  it('accepts structured data in the head without a hash: JSON with no "<"', () => {
+    const head = `<script type="application/ld+json">{"a":"\\u003c/script>","b":[1]}</script>`;
+    assert.deepEqual(checkPolicy(page('<p>x</p>', { head })), []);
+  });
+
   it('allows meta and link in the head', () => {
     const head = '<meta name="x" content="y"><link rel="icon" href="x.png">';
     assert.deepEqual(checkPolicy(page('<p>x</p>', { head })), []);
@@ -124,6 +129,26 @@ describe('checkPolicy: what it refuses', () => {
     const html = page().replace('<!doctype html>\n', '');
     assert.equal(checkPolicy(html).length, 1);
     assert.equal(checkPolicy(`\n${page()}`).length, 1);
+  });
+
+  it('refuses structured data that is not JSON, holds a "<" or stands in the body', () => {
+    const data = (text) =>
+      `<script type="application/ld+json">${text}</script>`;
+    const head = (text) => checkPolicy(page('<p>x</p>', { head: data(text) }));
+    assert.deepEqual(head('{"a":'), ['structured data that is not JSON']);
+    assert.deepEqual(head('{"a":"<b"}'), ['structured data with a "<" in it']);
+    assert.deepEqual(head('{"a":"<!--"'), [
+      'structured data with a "<" in it',
+      'structured data that is not JSON',
+    ]);
+    assert.deepEqual(problems(data('{}')), ['structured data in the body']);
+  });
+
+  it('runs a script of any other type only by its hash', () => {
+    const other = '<script type="application/json">{}</script>';
+    assert.equal(problems(other).length, 1);
+    const extra = '<script type="application/ld+json" id="x">{}</script>';
+    assert.equal(problems(extra).length, 1);
   });
 
   it('refuses an inline script without a hash in the policy', () => {

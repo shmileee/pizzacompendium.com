@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { codes, view } from '../helpers/capture.mjs';
-import { renderOnce } from '../helpers/render.mjs';
+import { copyOnce, renderOnce } from '../helpers/render.mjs';
 
 describe('the local block', () => {
   it('is a note with its own icon on the page of its language', () => {
@@ -104,5 +104,17 @@ describe('the local block', () => {
       code: 'en',
     });
     assert.deepEqual(codes(reporter), []);
+  });
+});
+
+describe('the local block in the Markdown copy', () => {
+  it('is a quotation in its own language and nothing in another', () => {
+    const text = '::: local lang=en Only here\nNote.\n:::\n';
+    assert.equal(copyOnce(text, { code: 'en' }), '> **Only here**\n>\n> Note.');
+    assert.equal(copyOnce(text, { code: 'pl' }), '');
+  });
+
+  it('has no title line without a title', () => {
+    assert.equal(copyOnce('::: local lang=en\nNote.\n:::\n'), '> Note.');
   });
 });

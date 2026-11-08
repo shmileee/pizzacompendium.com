@@ -85,9 +85,34 @@ const isLocalSet = (value) =>
     );
   });
 
+/** The one inline script that is data, not code: structured data. */
+const STRUCTURED_DATA = ' type="application/ld+json"';
+
+/**
+ * What is wrong with a block of structured data. A browser never runs it, so
+ * it needs no hash; it must be in the head, be JSON, and hold no `<` (which
+ * is what keeps it from closing its element or opening a comment).
+ *
+ * @param {string} text
+ * @param {boolean} inBody
+ * @returns {string[]}
+ */
+function structuredDataProblems(text, inBody) {
+  const problems = [];
+  if (inBody) problems.push('structured data in the body');
+  if (text.includes('<')) problems.push('structured data with a "<" in it');
+  try {
+    JSON.parse(text);
+  } catch {
+    problems.push('structured data that is not JSON');
+  }
+  return problems;
+}
+
 /**
  * Checks a finished page against its own policy. Every inline script has its
- * hash in the policy and the page is made of nothing but tags the generator
+ * hash in the policy (structured data, which is never run, is plain JSON in
+ * the head instead) and the page is made of nothing but tags the generator
  * writes (see `TAG`), with no event-handler attribute, no inline style, no
  * element that embeds or navigates away (`<iframe>`, `<object>`, `<base>`, a
  * `<meta>` or `<link>` in the body) and no address in the body that leaves
@@ -125,6 +150,11 @@ export function checkPolicy(html) {
         break;
       }
       const text = html.slice(at, end);
+      at = end;
+      if (attributes === STRUCTURED_DATA) {
+        problems.push(...structuredDataProblems(text, inBody));
+        continue;
+      }
       const src = / src="([^"]*)"/.exec(attributes)?.[1];
       if (src === undefined && !policy?.includes(scriptHash(text)))
         problems.push(
@@ -132,7 +162,6 @@ export function checkPolicy(html) {
         );
       if (src !== undefined && !LOCAL.test(src))
         problems.push(`a script from outside the site: ${src.slice(0, 40)}`);
-      at = end;
       continue;
     }
     if (DENIED.has(name) || (inBody && HEAD_ONLY.has(name)))

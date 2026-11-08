@@ -7,5 +7,6 @@ export { default as gallery } from './gallery.mjs';
 export { default as local } from './local.mjs';
 export { default as note } from './note.mjs';
 export { default as q } from './q.mjs';
+export { default as recipe } from './recipe.mjs';
 export { default as tip } from './tip.mjs';
 export { default as warning } from './warning.mjs';

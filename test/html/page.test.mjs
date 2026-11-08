@@ -7,7 +7,11 @@ import { capture, codes } from '../helpers/capture.mjs';
 import { fakeImages, lang, ui } from '../helpers/render.mjs';
 
 const site = { siteUrl: 'https://x.test', themeColors: [{ content: '#fff' }] };
-const en = lang('en', { title: 'Guide <1>', description: 'About "pizza".' });
+const en = lang('en', {
+  title: 'Guide <1>',
+  pageTitle: 'Guide <1>: pizza at home',
+  description: 'About "pizza".',
+});
 const pl = lang('pl');
 const toc = [
   { level: 2, id: 'quick-start', html: 'Quick start' },
@@ -134,8 +138,34 @@ describe('renderPage: the document', () => {
 describe('renderPage: the head', () => {
   const { html } = render();
 
+  it('carries the structured data it is given, last in the head', () => {
+    const data = '<script type="application/ld+json">{}</script>';
+    const page = render({ structuredData: data }).html;
+    assert.ok(page.includes(`${data}\n<script>one();</script>`));
+    assert.ok(page.indexOf(data) < page.indexOf('</head>'));
+    assert.doesNotMatch(html, /ld\+json/);
+  });
+
+  it('links the Markdown copy when there is one, and only then', () => {
+    const link = '<link rel="alternate" type="text/markdown" href="index.md">';
+    assert.ok(render({ markdownCopy: true }).html.includes(link));
+    assert.ok(!html.includes('text/markdown'));
+  });
+
+  it('shows the date of the text in the footer when it is known', () => {
+    const dates = {
+      published: '2026-01-02T03:04:05Z',
+      modified: '2026-11-06T22:18:37+01:00',
+    };
+    assert.match(
+      render({ dates }).html,
+      /<p class="footer-updated">updated <time datetime="2026-11-06">6 November 2026<\/time><\/p>/,
+    );
+    assert.doesNotMatch(html, /footer-updated/);
+  });
+
   it('has the escaped title and description, the canonical address and the alternates', () => {
-    assert.match(html, /<title>Guide &lt;1&gt;<\/title>/);
+    assert.match(html, /<title>Guide &lt;1&gt;: pizza at home<\/title>/);
     assert.match(
       html,
       /<meta name="description" content="About &quot;pizza&quot;\.">/,
@@ -155,7 +185,10 @@ describe('renderPage: the head', () => {
   });
 
   it('describes itself for sharing: the open graph, its locale and the other locales', () => {
-    assert.match(html, /<meta property="og:title" content="Guide &lt;1&gt;">/);
+    assert.match(
+      html,
+      /<meta property="og:title" content="Guide &lt;1&gt;: pizza at home">/,
+    );
     assert.match(html, /<meta property="og:type" content="article">/);
     assert.match(
       html,

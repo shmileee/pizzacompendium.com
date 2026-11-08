@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { renderFooter } from '../../scripts/lib/html/footer.mjs';
+import { formatDate, renderFooter } from '../../scripts/lib/html/footer.mjs';
 import { lang, ui } from '../helpers/render.mjs';
 
 const pl = lang('pl');
@@ -54,5 +54,59 @@ describe('renderFooter', () => {
     assert.match(bad, /&lt;b&gt;E&lt;\/b&gt;/);
     assert.match(bad, /&quot;t&quot;/);
     assert.match(bad, /aria-label="&quot;l&quot;"/);
+  });
+});
+
+describe('renderFooter: the date of the text', () => {
+  const dates = {
+    published: '2026-01-02T03:04:05Z',
+    modified: '2026-11-06T22:18:37+01:00',
+  };
+
+  it('shows when the text last changed, after the credit, in the words of the language', () => {
+    const html = renderFooter({
+      lang: en,
+      languages: [en],
+      ui: ui({ updated: 'Updated <{date}> $&' }),
+      dates,
+    });
+    assert.match(
+      html,
+      /<p class="footer-credit">credit<\/p>\n {4}<p class="footer-updated">Updated &lt;<time datetime="2026-11-06">6 November 2026<\/time>&gt; \$&amp;<\/p>\n {4}<a class="btn footer-top"/,
+    );
+  });
+
+  it('has no date line when the date is unknown', () => {
+    const html = renderFooter({ lang: en, languages: [en], ui: ui() });
+    assert.doesNotMatch(html, /footer-updated/);
+  });
+});
+
+describe('formatDate', () => {
+  const iso = '2026-11-06T23:30:00-02:00';
+
+  it('writes the day in UTC, the way the locale of the language writes dates', () => {
+    assert.deepEqual(formatDate(iso, { htmlLang: 'en', ogLocale: 'en_GB' }), {
+      day: '2026-11-07',
+      text: '7 November 2026',
+    });
+    assert.deepEqual(formatDate(iso, { htmlLang: 'pl', ogLocale: 'pl_PL' }), {
+      day: '2026-11-07',
+      text: '7 listopada 2026',
+    });
+  });
+
+  it('uses the language tag when there is no locale', () => {
+    assert.equal(
+      formatDate(iso, { htmlLang: 'en-US', ogLocale: null }).text,
+      'November 7, 2026',
+    );
+  });
+
+  it('falls back to the ISO day for a locale Intl cannot read', () => {
+    assert.deepEqual(formatDate(iso, { htmlLang: 'en-12', ogLocale: null }), {
+      day: '2026-11-07',
+      text: '2026-11-07',
+    });
   });
 });

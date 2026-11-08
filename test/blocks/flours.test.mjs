@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import flours from '../../scripts/lib/blocks/flours.mjs';
 import { codes, view } from '../helpers/capture.mjs';
-import { renderOnce } from '../helpers/render.mjs';
+import { copyOnce, renderOnce } from '../helpers/render.mjs';
 
 const flour = (title, level = '') =>
   `::: flour ${level}${title}\n- W330\n:::\n`;
@@ -105,5 +105,14 @@ describe('the flours block', () => {
   it('takes a title as an error', () => {
     const { reporter } = renderOnce('::: flours Title\n:::\n');
     assert.deepEqual(codes(reporter), ['E_BLOCK_TITLE']);
+  });
+});
+
+describe('the flours block in the Markdown copy', () => {
+  it('is its cards one after the other', () => {
+    assert.equal(
+      copyOnce(`:::: flours\n${flour('A')}\n${flour('B')}::::\n`),
+      '**A**\n\n- W330\n\n**B**\n\n- W330',
+    );
   });
 });

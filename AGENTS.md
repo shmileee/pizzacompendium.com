@@ -24,13 +24,17 @@ When in doubt, do what they do.
     `files.mjs` (the one place a file is read), `project.mjs` (the languages and
     sections every command starts from), `markdown/` (the `:::` container
     extension and its syntax in `container-syntax.mjs`, `fences.mjs` for code
-    and comments, heading, image and link rules), `blocks/` (one module per
-    block; registering a new block is one export line in `blocks/index.mjs`),
+    and comments, heading, image and link rules, `copy.mjs` for the Markdown
+    copy of a page), `blocks/` (one module per block, each with its HTML and
+    its Markdown, `render` and `markdown`; registering a new block is one
+    export line in `blocks/index.mjs`),
     `html/` (page, root, 404, head, header, language list, icon sprite, hero,
     search, table of contents, footer), `rules.mjs` (reads
     `content/rules.json`), `content-rules.mjs` and `parity.mjs` (the hard
-    rules), `i18n-sync.mjs`, `images.mjs`, `assets.mjs`, `seo.mjs`, `csp.mjs`
-    and `inline-scripts.mjs`
+    rules), `i18n-sync.mjs`, `images.mjs`, `assets.mjs`, `seo.mjs` (sitemap,
+    robots, manifests, `llms.txt`), `structured-data.mjs` (the JSON-LD of a
+    page), `history.mjs` (the dates of the text, from git), `csp.mjs` and
+    `inline-scripts.mjs`
 *   `src/` — `css/` (the stylesheet in pieces, joined in file-name order:
     `00-tokens` `05-fonts` `10-base` `20-layout` `22-header` `24-toc`
     `26-wayfinding` `30-prose` `32-hero` `34-cards` `36-faq` `38-gallery`
@@ -96,18 +100,22 @@ When in doubt, do what they do.
     attributes. The only inline scripts are the three the generator emits (the
     `js` class, the stored theme and the root page's language redirect, all
     functions in `scripts/lib/inline-scripts.mjs`), and each is allowed by its
-    SHA-256 hash in the page's policy. The build checks every page against its
-    own policy (`checkPolicy`: only tags the generator writes, no handlers or
-    styles, no address in the body that leaves the site). Raw HTML in Markdown
-    and links other than `#ids` are errors. `static/` holds pictures, fonts,
-    text and a manifest only: nothing a browser would run from the site's own
-    origin.
+    SHA-256 hash in the page's policy. Structured data
+    (`<script type="application/ld+json">`) is never run, so it has no hash:
+    `checkPolicy` holds it to JSON in the head with no `<` in it. The build
+    checks every page against its own policy (`checkPolicy`: only tags the
+    generator writes, no handlers or styles, no address in the body that leaves
+    the site). Raw HTML in Markdown and links other than `#ids` are errors.
+    `static/` holds pictures, fonts, text and a manifest only: nothing a browser
+    would run from the site's own origin.
 *   **The generator is plain functions with seams.** Nothing in `scripts/lib/`
-    runs on import, calls `process.exit`, prints or reads the clock: the
-    command lines print and set the exit code. A problem is a diagnostic
-    (`{ level, code, message, file, line }`) with a stable code, and tests
-    assert codes, never messages (a code that covers a family of mistakes, such
-    as `E_LANG_META`, also names the `field`). Files are read through
+    runs on import, calls `process.exit`, prints, reads the clock or starts a
+    process: the command lines print and set the exit code. The only dates are
+    those of commits, and `build()` gets them through the `git` function
+    `scripts/build.mjs` passes in (tests pass a fake one). A problem is a
+    diagnostic (`{ level, code, message, file, line }`) with a stable code, and
+    tests assert codes, never messages (a code that covers a family of mistakes,
+    such as `E_LANG_META`, also names the `field`). Files are read through
     `files.mjs` only, which refuses symbolic links, non-files, files over 1 MB
     and invalid UTF-8. `lint-content.mjs`, `i18n.mjs`, `new-language.mjs` and
     `serve.mjs` use Node only, so the commit hook works without `npm ci`: keep

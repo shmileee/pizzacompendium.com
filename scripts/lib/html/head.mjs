@@ -123,3 +123,10 @@ export const MANIFEST_FILE = 'manifest.webmanifest';
 /** @returns {string} The link a language page makes to its own manifest. */
 export const manifestLink = () =>
   `<link rel="manifest" href="${MANIFEST_FILE}">`;
+
+/** Where a language's Markdown copy is, inside that language's folder. */
+export const MARKDOWN_FILE = 'index.md';
+
+/** @returns {string} The link a language page makes to its Markdown copy. */
+export const markdownLink = () =>
+  `<link rel="alternate" type="text/markdown" href="${MARKDOWN_FILE}">`;

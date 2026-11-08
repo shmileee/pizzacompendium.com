@@ -17,6 +17,21 @@ export const calloutHtml = ({ kind, title, body }) =>
   `<div class="callout callout-${kind}" role="note">${icon(kind)}<div class="callout-main">${title ? `<p class="callout-title">${title}</p>` : ''}<div class="callout-body">${body}</div></div></div>\n`;
 
 /**
+ * A boxed note in the Markdown copy: a quotation, its title in bold.
+ *
+ * @param {string} title Markdown; empty for no title.
+ * @param {string} body Markdown.
+ * @returns {string}
+ */
+export const calloutMarkdown = (title, body) =>
+  [title && `**${title}**`, body]
+    .filter(Boolean)
+    .join('\n\n')
+    .split('\n')
+    .map((line) => (line ? `> ${line}` : '>'))
+    .join('\n');
+
+/**
  * A block that renders as a callout.
  *
  * @param {string} name `tip`, `warning`, `note`.
@@ -33,4 +48,6 @@ export const callout = (name, defaultTitle) => ({
       title: title ? inline(title, line) : escapeHtml(defaultTitle(ui)),
       body: body(),
     }),
+  markdown: ({ title, ui, body }) =>
+    calloutMarkdown(title || defaultTitle(ui), body),
 });

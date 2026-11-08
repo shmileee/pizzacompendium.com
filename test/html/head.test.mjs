@@ -7,7 +7,9 @@ import {
   iconLinks,
   MANIFEST_FILE,
   MANIFEST_ICONS,
+  MARKDOWN_FILE,
   manifestLink,
+  markdownLink,
   missingIcons,
   NOINDEX,
   renderHead,
@@ -77,6 +79,11 @@ describe('the head constants', () => {
     assert.equal(
       manifestLink(),
       '<link rel="manifest" href="manifest.webmanifest">',
+    );
+    assert.equal(MARKDOWN_FILE, 'index.md');
+    assert.equal(
+      markdownLink(),
+      '<link rel="alternate" type="text/markdown" href="index.md">',
     );
   });
 });

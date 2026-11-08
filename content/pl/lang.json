@@ -5,6 +5,7 @@
   "order": 1,
   "source": true,
   "title": "Kompendium pizzy",
+  "pageTitle": "Kompendium pizzy: jak zrobić pizzę w domu",
   "description": "Wszystko o robieniu pizzy w domu: rodzaje pizzy, mąki, ciasto, piece, kamienie, przepis krok po kroku i najczęściej zadawane pytania.",
   "ogImageAlt": "Pizza Napoletana z salami i mozzarellą",
   "typography": {
@@ -85,6 +86,7 @@
     "searchClose": "Zamknij wyszukiwanie",
     "tocClose": "Zamknij spis treści",
     "langCode": "PL",
+    "updated": "Aktualizacja: {date}",
     "credit": "Treści opracowano w dużej mierze na podstawie dokumentu Google „Kompendium wiedzy KMP + FAQ” Klubu Miłośników Pizzy."
   }
 }

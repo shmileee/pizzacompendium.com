@@ -32,4 +32,5 @@ export default {
     const marked = cards.some((card) => card.attrs?.level === BEGINNER);
     return `<div class="cards-wrap">${marked ? filter(ui) : ''}<ul class="cards" role="list">${body()}</ul></div>\n`;
   },
+  markdown: ({ body }) => body,
 };

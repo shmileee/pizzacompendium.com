@@ -7,6 +7,29 @@
  */
 export const stripTags = (html) => html.replace(/<[^>]+>/g, '');
 
+const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
+/** The tags that end a run of text: what follows them is a new phrase. */
+const BREAK = /<\/(?:p|li|h[1-6]|figcaption|td|th|tr|div|summary)>|<br>/g;
+
+/**
+ * The text of rendered HTML as a reader sees it, for data that is not HTML
+ * (structured data, `llms.txt`): tags dropped, a space where a paragraph,
+ * cell or list item ends, entities decoded, runs of white space made one.
+ * The renderer escapes with the five entities and numeric references only.
+ *
+ * @param {string} html
+ * @returns {string}
+ */
+export const plainText = (html) =>
+  stripTags(html.replace(BREAK, ' '))
+    .replace(/&(?:#(\d+)|#x([\da-f]+)|(\w+));/gi, (whole, dec, hex, name) => {
+      if (name) return ENTITIES[name] ?? whole;
+      const point = Number.parseInt(dec ?? hex, dec ? 10 : 16);
+      return point <= 0x10ffff ? String.fromCodePoint(point) : whole;
+    })
+    .replace(/[ \t\n\r]+/g, ' ')
+    .trim();
+
 /**
  * Splits `Title {#the-id}` into the title and the id. The id is whatever
  * stands between the last `{#` and the closing `}` that ends the text; it

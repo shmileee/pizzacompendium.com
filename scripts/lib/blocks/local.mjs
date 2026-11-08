@@ -1,4 +1,4 @@
-import { calloutHtml } from './callout.mjs';
+import { calloutHtml, calloutMarkdown } from './callout.mjs';
 
 /** What a local note may hold: running text and lists. */
 const PLAIN = new Set(['paragraph', 'list', 'space', 'html', 'text']);
@@ -40,4 +40,6 @@ export default {
       body: body(),
     });
   },
+  markdown: ({ attrs, title, lang, body }) =>
+    attrs.lang === lang.code ? calloutMarkdown(title, body) : '',
 };
